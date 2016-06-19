@@ -49,7 +49,14 @@ defmodule ACS.Handlers.ACS do
             didstruct -> did=Map.merge(did,Map.from_struct(didstruct))
           end
           resp=Enum.map( entries, fn(e) -> Trigger.event(e,header,did) end ) |> Enum.join("\n\n")
-      %{} -> Logger.debug( "Empty body - dequeue request for cpe" )
+      %{} -> Logger.debug( "Empty body - dequeue request for cpe #{inspect(did)}" )
+             deq=ACS.Queue.dequeue(did["serial_number"])
+             Logger.debug("deq=#{inspect(deq)}")
+             resp=case deq do
+                {:ok,%{"dispatch" => dispatch, "source" => source, "args" => args}} -> gen_request(dispatch,args,source)
+                junk -> Logger.debug("cant match dequeued event: #{inspect(junk)}")
+                ""
+             end
     end
 
     # end - generate and send responses, set cookie
@@ -72,4 +79,21 @@ defmodule ACS.Handlers.ACS do
       [] -> {:error, "No inform request found"}
     end
   end
+
+  # interpret queue data, transform to appropriate CWMP.Protocol.Messages. struct and
+  # ask CWMP.Protocol to generate
+  defp gen_request(method,args,source) do
+    Logger.debug("gen_request: #{method}")
+    case method do
+      "GetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.GetParameterValuesStruct{name: a["name"], type: a["type"]}
+        Logger.debug("  params: #{inspect(params)}")
+          CWMP.Protocol.Generator.generate(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.GetParameterValues{parameters: params})
+        _ -> Logger.error("Cant match request method: #{method}")
+    end
+  end
+
+  defp generateID do
+    Base.encode16(:erlang.md5(:crypto.strong_rand_bytes(32)), case: :lower)
+  end
+
 end
