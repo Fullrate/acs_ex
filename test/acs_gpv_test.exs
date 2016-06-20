@@ -2,22 +2,9 @@ defmodule ACSGetParameterValuesTest do
   use ExUnit.Case
   import PathHelpers
   import RequestSenders
+  import Mock
 
-  @gpv_sample ~s|<SOAP-ENV:Envelope xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cwmp="urn:dslforum-org:cwmp-1-4" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-\t<SOAP-ENV:Header>
-\t\t<cwmp:ID SOAP-ENV:mustUnderstand="1">([a-f0-9]+)</cwmp:ID>
-\t</SOAP-ENV:Header>
-\t<SOAP-ENV:Body>
-\t\t<cwmp:GetParameterValues>
-\t\t\t<ParameterNames>
-\t\t\t\t<string>Device.Test</string>
-\t\t\t\t<string>Device.Test2</string>
-\t\t\t</ParameterNames>
-\t\t</cwmp:GetParameterValues>
-\t</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>|
-
-  @gpv_sample_response ~s|<SOAP-ENV:Envelope xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cwmp="urn:dslforum-org:cwmp-1-4" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2010yy01/XMLSchema-instance">
+  @gpv_sample_response ~s|<SOAP-ENV:Envelope xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cwmp="urn:dslforum-org:cwmp-1-4" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 \t<SOAP-ENV:Header>
 \t\t<cwmp:ID SOAP-ENV:mustUnderstand="1">~s</cwmp:ID>
 \t</SOAP-ENV:Header>
@@ -38,28 +25,33 @@ defmodule ACSGetParameterValuesTest do
 </SOAP-ENV:Envelope>|
 
   test "queue GetParameterValues" do
-    # queue something, so that the server will dequeue it. TODO, clear queue first.
-    ACS.Queue.dequeue_all("SerialNo1")
-    ACS.Queue.enqueue("SerialNo1", "GetParameterValues", [%CWMP.Protocol.Messages.GetParameterValuesStruct{name: "Device.Test", type: "string"}, %CWMP.Protocol.Messages.GetParameterValuesStruct{name: "Device.Test2", type: "string"}], "TEST")
-    {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-    assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
-    assert resp.status_code == 200
-    {:ok,resp,cookie} = sendStr("",cookie)
-    assert resp.status_code == 200
-    {res,regex} = Regex.compile(@gpv_sample)
-    assert res == :ok
-    captures=Regex.run(regex,resp.body,capture: :all)
-    case captures do
-      [all,id] ->
-        # Send a Response to end it. Should return "", end session by sending "" back
-        gpv_response=to_string(:io_lib.format(@gpv_sample_response,[id]))
-        {:ok,resp,cookie} = sendStr(gpv_response,cookie)
-        # resp should no be "", send "" back
-        assert resp.body == ""
-        assert resp.status_code == 200
-      _ -> flunk "no id in header"
-    end
+    # Use mock to make the code pop from Mock instead of actual redis
+    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": [{\"name\": \"Device.Test\", \"type\": \"string\"}, {\"name\": \"Device.Test2\", \"type\": \"string\"}], \"dispatch\": \"GetParameterValues\", \"source\": \"TEST\"}"} end] do
+      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
+     assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert resp.status_code == 200
+      {:ok,resp,cookie} = sendStr("",cookie)
+      assert resp.status_code == 200
 
+      # resp.body should now be a GetParameterValues request with the data
+      # Mock'ed in
+      # Parse the GetParameterValues received
+      {pres,parsed}=CWMP.Protocol.Parser.parse(resp.body)
+      assert pres == :ok
+
+      # header id is now in: parsed.header.id
+
+      # assert values are what we expect them to be.
+      params=for p <- hd(parsed.entries).parameters, do: p
+
+      assert params == ["Device.Test", "Device.Test2"]
+
+      # Send a Response to end it. Should return "", end session by sending "" back
+      gpv_response=to_string(:io_lib.format(@gpv_sample_response,[parsed.header.id]))
+      {:ok,resp,_} = sendStr(gpv_response,cookie)
+      assert resp.body == ""
+      assert resp.status_code == 200
+    end
   end
 
 end
