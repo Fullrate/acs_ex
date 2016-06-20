@@ -86,8 +86,9 @@ defmodule ACS.Handlers.ACS do
     Logger.debug("gen_request: #{method}")
     case method do
       "GetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.GetParameterValuesStruct{name: a["name"], type: a["type"]}
-        Logger.debug("  params: #{inspect(params)}")
           CWMP.Protocol.Generator.generate(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.GetParameterValues{parameters: params})
+      "SetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.ParameterValueStruct{name: a["name"], type: a["type"], value: a["value"]}
+          CWMP.Protocol.Generator.generate(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.SetParameterValues{parameters: params})
         _ -> Logger.error("Cant match request method: #{method}")
     end
   end

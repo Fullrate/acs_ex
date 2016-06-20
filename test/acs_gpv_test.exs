@@ -1,4 +1,4 @@
-defmodule ACSTest do
+defmodule ACSGetParameterValuesTest do
   use ExUnit.Case
   import PathHelpers
   import RequestSenders
