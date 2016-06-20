@@ -28,7 +28,7 @@ defmodule ACSGetParameterValuesTest do
     # Use mock to make the code pop from Mock instead of actual redis
     with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": [{\"name\": \"Device.Test\", \"type\": \"string\"}, {\"name\": \"Device.Test2\", \"type\": \"string\"}], \"dispatch\": \"GetParameterValues\", \"source\": \"TEST\"}"} end] do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-     assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
       assert resp.status_code == 200
       {:ok,resp,cookie} = sendStr("",cookie)
       assert resp.status_code == 200
