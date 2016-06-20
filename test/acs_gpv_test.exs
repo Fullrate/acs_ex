@@ -42,9 +42,7 @@ defmodule ACSGetParameterValuesTest do
       # header id is now in: parsed.header.id
 
       # assert values are what we expect them to be.
-      params=for p <- hd(parsed.entries).parameters, do: p
-
-      assert params == ["Device.Test", "Device.Test2"]
+      assert hd(parsed.entries).parameters == ["Device.Test", "Device.Test2"]
 
       # Send a Response to end it. Should return "", end session by sending "" back
       gpv_response=to_string(:io_lib.format(@gpv_sample_response,[parsed.header.id]))
