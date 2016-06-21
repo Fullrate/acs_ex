@@ -95,12 +95,24 @@ defmodule ACS.Handlers.ACS do
   # ask CWMP.Protocol to generate
   defp gen_request(method,args,source,did) do
     Logger.debug("gen_request: #{method}")
-    case method do
-      "GetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.GetParameterValuesStruct{name: a["name"], type: a["type"]}
-          CWMP.Protocol.Generator.generate(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.GetParameterValues{parameters: params}, did["cwmp_version"])
-      "SetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.ParameterValueStruct{name: a["name"], type: a["type"], value: a["value"]}
-          CWMP.Protocol.Generator.generate(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.SetParameterValues{parameters: params}, did["cwmp_version"])
+    case validateArgs(method,args) do
+      true -> case method do
+        "GetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.GetParameterValuesStruct{name: a["name"], type: a["type"]}
+                                CWMP.Protocol.Generator.generate(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.GetParameterValues{parameters: params}, did["cwmp_version"])
+        "SetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.ParameterValueStruct{name: a["name"], type: a["type"], value: a["value"]}
+                                CWMP.Protocol.Generator.generate(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.SetParameterValues{parameters: params}, did["cwmp_version"])
         _ -> Logger.error("Cant match request method: #{method}")
+      end
+      false -> Logger.error("arguments for request #{method} do not validate")
+    end
+  end
+
+  defp validateArgs(method,args) do
+    case method do
+      "GetParameterValues" -> # args must be map with name and type key in all elements
+        Enum.all?(args, fn(a) -> Map.has_key?(a,"name") && Map.has_key?(a,"type") end)
+      "SetParameterValues" -> # args must be list of maps with name,type and value keys
+        Enum.all?(args, fn(a) -> Map.has_key?(a,"name") && Map.has_key?(a,"type") && Map.has_key?(a,"value") end)
     end
   end
 
