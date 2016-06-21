@@ -24,6 +24,9 @@ defmodule ACS.Handlers.ACS do
   def dispatch(conn, _params) do
     did=%{}
 
+    Logger.debug("Received headers: #{inspect(conn.req_headers)}")
+    Logger.debug("Received body: #{inspect(conn.body_params)}")
+
     # Handle cookies.
     c = fetch_cookies(conn)
 
@@ -43,24 +46,32 @@ defmodule ACS.Handlers.ACS do
 
     resp=""
     case conn.body_params do
-      %{entries: entries, header: header} ->
+      %{cwmp_version: cwmp_ver, entries: entries, header: header} ->
           case hd(Enum.map(entries,fn(entry) -> if(Map.has_key?(entry,:device_id), do: entry.device_id) end)) do
             nil -> Logger.debug( "Cant find device_id in request" )
-            didstruct -> did=Map.merge(did,Map.from_struct(didstruct))
+            didstruct -> did = did |> Map.merge(Map.from_struct(didstruct)) |> Map.merge( %{cwmp_version: extract_cwmp_version(cwmp_ver)})
           end
           resp=Enum.map( entries, fn(e) -> Trigger.event(e,header,did) end ) |> Enum.join("\n\n")
-      %{} -> Logger.debug( "Empty body - dequeue request for cpe #{inspect(did)}" )
-             deq=ACS.Queue.dequeue(did["serial_number"])
-             Logger.debug("deq=#{inspect(deq)}")
-             resp=case deq do
-                {:ok,%{"dispatch" => dispatch, "source" => source, "args" => args}} -> gen_request(dispatch,args,source)
-                junk -> Logger.debug("cant match dequeued event: #{inspect(junk)}")
-                ""
+      %{} ->
+             # empty body could also mean bogus request, meaning request with no cookie, there for no did
+             case  Map.has_key?(did,"serial_number") do
+               true -> Logger.debug( "Empty body - dequeue request for cpe #{inspect(did)}" )
+                       deq=ACS.Queue.dequeue(did["serial_number"])
+                       Logger.debug("deq=#{inspect(deq)}")
+                       resp=case deq do
+                         {:ok,%{"dispatch" => dispatch, "source" => source, "args" => args}} -> gen_request(dispatch,args,source,did)
+                         junk -> Logger.debug("cant match dequeued event: #{inspect(junk)}")
+                                 ""
+                       end
+               false -> Logger.debug("Empty request with no cookie, bogus!")
              end
     end
 
     # end - generate and send responses, set cookie
+    Logger.debug("Response headers: #{inspect(conn.resp_headers)}")
+    Logger.debug("[#{inspect(did)}] Sending response [#{resp}]")
     conn
+    |> put_resp_content_type("text/xml")
     |> put_resp_cookie("session",
               Cryptex.MessageEncryptor.encrypt_and_sign(@encryptor,Poison.encode(did)),
               [{:path, '/'}])
@@ -82,14 +93,21 @@ defmodule ACS.Handlers.ACS do
 
   # interpret queue data, transform to appropriate CWMP.Protocol.Messages. struct and
   # ask CWMP.Protocol to generate
-  defp gen_request(method,args,source) do
+  defp gen_request(method,args,source,did) do
     Logger.debug("gen_request: #{method}")
     case method do
       "GetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.GetParameterValuesStruct{name: a["name"], type: a["type"]}
-          CWMP.Protocol.Generator.generate(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.GetParameterValues{parameters: params})
+          CWMP.Protocol.Generator.generate(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.GetParameterValues{parameters: params}, did["cwmp_version"])
       "SetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.ParameterValueStruct{name: a["name"], type: a["type"], value: a["value"]}
-          CWMP.Protocol.Generator.generate(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.SetParameterValues{parameters: params})
+          CWMP.Protocol.Generator.generate(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.SetParameterValues{parameters: params}, did["cwmp_version"])
         _ -> Logger.error("Cant match request method: #{method}")
+    end
+  end
+
+  defp extract_cwmp_version(versionuri) do
+    case Regex.run(~r/.*dslforum-org:cwmp-(\d-\d)$/,versionuri) do
+      [_,ver] -> ver
+      _ -> "1-0"
     end
   end
 

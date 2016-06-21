@@ -1,6 +1,12 @@
 use Mix.Config
 
-config :logger, level: :info
+config :logger,
+  level: :debug,
+  backends: [{LoggerFileBackend, :trace_log}]
+
+config :logger, :trace_log,
+  path: "test/trace.log",
+  level: :debug
 
 config :acs_ex, logtopic: "log.acs"
 config :acs_ex, eventtopic: "acs.raw"

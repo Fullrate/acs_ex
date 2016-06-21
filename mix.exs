@@ -3,7 +3,7 @@ defmodule ACS.Mixfile do
 
   def project do
     [app: :acs_ex,
-     version: "0.0.1",
+     version: "0.0.2",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -25,7 +25,7 @@ defmodule ACS.Mixfile do
      {:kafka_ex, "~> 0.5.0"},
      {:httpoison, "~> 0.8.0"},
      {:poison, "~> 2.0"},
-     {:poolboy,  github: "devinus/poolboy" },
+     {:poolboy, github: "devinus/poolboy" },
      {:redix, "~> 0.3.6"},
      {:mock, "~> 0.1.1", only: :test},
      {:logger_file_backend, github: "onkel-dirtus/logger_file_backend"},
