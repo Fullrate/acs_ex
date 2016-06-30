@@ -8,7 +8,7 @@ defimpl Trigger, for: CWMP.Protocol.Messages.SetParameterValuesResponse do
     Return the XML to send back to the originating device.
 
   """
-  def event( entry, header, device_id ) do
+  def event( _entry, _header, device_id ) do
     Logger.debug("SetParameterValuesResponse detected: #{inspect(device_id)}")
 
     ""

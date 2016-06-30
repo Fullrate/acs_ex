@@ -43,6 +43,7 @@ defmodule Logger.Backends.Kafka do
   defp log_event(level, msg, ts, md, %{format: format, metadata: metadata}) do
     key=Map.take(msg,"ip")
     fmsg=Logger.Formatter.format(format, level, Poison.encode!(Map.put(msg,:user,:user)), ts, Dict.take(md, metadata))
-    KafkaEx.produce(Application.fetch_env!(:logger, :kafka, :topic), 0, fmsg, key: key)
+    kafka = Keyword.merge(Application.get_env(:logger, :kafka, []), [])
+    KafkaEx.produce(Keyword.get(kafka, :topic, "acs_ex.log"), 0, fmsg, key: key)
   end
 end

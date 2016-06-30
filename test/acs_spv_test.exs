@@ -48,4 +48,35 @@ defmodule ACSSetParameterValuesTest do
     end
   end
 
+  test "queue SetParameterValues, bogus args" do
+    # queue something, so that the server will dequeue it. clear queue first.
+    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": [{\"name\": \"Device.Test\", \"value\": \"SomeValue\"}], \"dispatch\": \"SetParameterValues\", \"source\": \"TEST\"}"} end] do
+      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
+      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert resp.status_code == 200
+      {:ok,resp,_cookie} = sendStr("",cookie)
+      assert resp.status_code == 200
+      assert resp.body == "" # because bogus args are ignored
+    end
+
+    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": [], \"dispatch\": \"SetParameterValues\", \"source\": \"TEST\"}"} end] do
+      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
+      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert resp.status_code == 200
+      {:ok,resp,_cookie} = sendStr("",cookie)
+      assert resp.status_code == 200
+      assert resp.body == "" # because bogus args are ignored
+    end
+
+    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": \"foo\", \"dispatch\": \"SetParameterValues\", \"source\": \"TEST\"}"} end] do
+      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
+      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert resp.status_code == 200
+      {:ok,resp,_cookie} = sendStr("",cookie)
+      assert resp.status_code == 200
+      assert resp.body == "" # because bogus args are ignored
+    end
+
+  end
+
 end

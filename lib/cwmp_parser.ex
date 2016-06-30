@@ -22,8 +22,8 @@ defmodule ACS.CWMP.Parser do
     case body do
       "" -> {:ok, %{}, conn}
       _ -> case CWMP.Protocol.Parser.parse(body) do
-             {:ok,parsed} -> {:ok, parsed, conn}
-             {:error,err} -> raise Plug.Parsers.ParseError, message: err
+             {:ok, parsed} -> {:ok, parsed, conn}
+             {:error, err} -> raise Plug.Parsers.ParseError, exception: err
            end
     end
   end

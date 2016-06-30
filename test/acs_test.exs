@@ -4,12 +4,6 @@ defmodule ACSTest do
   import RequestSenders
   doctest ACS
 
-  test "bogus xml" do
-    {:ok,resp,_} = sendStr("bogus")
-    # parse error yields, 400
-    assert resp.body == "Error handling request" && resp.status_code == 400
-  end
-
   test "plain InformResponse" do
     {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
     assert resp.body == readFixture!(fixture_path("informs/plain1_response"))

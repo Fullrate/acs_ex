@@ -52,4 +52,33 @@ defmodule ACSGetParameterValuesTest do
     end
   end
 
+  test "queue GetParameterValues, bogus params" do
+    # Use mock to make the code pop from Mock instead of actual redis
+    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": [], \"dispatch\": \"GetParameterValues\", \"source\": \"TEST\"}"} end] do
+      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
+      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert resp.status_code == 200
+      {:ok,resp,_cookie} = sendStr("",cookie)
+      assert resp.status_code == 200
+      assert resp.body == "" # because the command is simply ignored
+    end
+    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": [\"name\": \"something\"], \"dispatch\": \"GetParameterValues\", \"source\": \"TEST\"}"} end] do
+      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
+      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert resp.status_code == 200
+      {:ok,resp,_cookie} = sendStr("",cookie)
+      assert resp.status_code == 200
+      assert resp.body == "" # because the command is simply ignored
+    end
+    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": \"foo\", \"dispatch\": \"GetParameterValues\", \"source\": \"TEST\"}"} end] do
+      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
+      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert resp.status_code == 200
+      {:ok,resp,_cookie} = sendStr("",cookie)
+      assert resp.status_code == 200
+      assert resp.body == "" # because the command is simply ignored
+    end
+  end
+
+
 end

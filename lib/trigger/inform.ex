@@ -12,7 +12,7 @@ defimpl Trigger, for: CWMP.Protocol.Messages.Inform do
     Logger.debug("inform header: #{inspect(header)}")
     Logger.debug("inform entry: #{inspect(entry)}")
 
-    CWMP.Protocol.Generator.generate(
+    CWMP.Protocol.Generator.generate!(
       %CWMP.Protocol.Messages.Header{id: header.id},
       %CWMP.Protocol.Messages.InformResponse{
         max_envelopes: 1}, device_id.cwmp_version)

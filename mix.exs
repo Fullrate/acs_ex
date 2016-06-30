@@ -8,12 +8,12 @@ defmodule ACS.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps,
-     dialyzer: [plt_apps: [:cwmp_ex, :plug, :poison, :timex, :kafka_ex]]]
+     dialyzer: [plt_apps: [:cwmp_ex, :plug, :poison, :timex]]]
   end
 
   def application do
-    [applications: [:logger, :cowboy, :plug, :kafka_ex, :httpoison, :redix,
-      :tzdata, :poolboy],
+    [applications: [:logger, :cowboy, :plug, :httpoison, :redix,
+      :tzdata, :poolboy, :gproc],
      included_applications: [:cwmp_ex, :tools, :timex, :poison],
      mod: {ACS, []}]
   end
@@ -29,6 +29,7 @@ defmodule ACS.Mixfile do
      {:redix, "~> 0.3.6"},
      {:mock, "~> 0.1.1", only: :test},
      {:logger_file_backend, github: "onkel-dirtus/logger_file_backend"},
+     {:gproc, "~> 0.5.0"},
      {:cryptex, "~> 0.0.1"}]
   end
 end
