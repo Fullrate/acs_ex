@@ -18,7 +18,8 @@ defmodule ACSGetParameterValuesTest do
 \t\t</cwmp:GetParameterValuesResponse>
 \t</SOAP-ENV:Body>
 </SOAP-ENV:Envelope>|
-@doc """
+
+
   test "queue GetParameterValues" do
     # Install a Session Script that send's the GetParameterValues
     Application.put_env(:acs_ex, :session_script, ACS.Test.Sessions.SingleGetParameterValues, persistent: false)
@@ -46,7 +47,6 @@ defmodule ACSGetParameterValuesTest do
     assert resp.status_code == 200
     assert Supervisor.count_children(:session_supervisor).active == 0
   end
-  """
 
   test "queue GetParameterValues, bogus params" do
     # Install a Session Script that send's the GetParameterValues
