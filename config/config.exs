@@ -14,8 +14,7 @@ config :acs_ex, :acs_port, 65432
 config :acs_ex,
   crypt_keybase: "31de9f7d766287c7565801f30babbd4f",
   crypt_cookie_salt: "SomeSalt",
-  crypt_signed_cookie_salt: "SomeSignedSalt",
-  redis_host: 'localhost'
+  crypt_signed_cookie_salt: "SomeSignedSalt"
 
 config :kafka_ex, consumer_group: "acs_ex"
 config :kafka_ex, brokers: [{"broker1.expert.fullrate.dk", 9092},

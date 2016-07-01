@@ -37,15 +37,15 @@ defmodule ACS.Handlers.ACS do
               nil -> Logger.debug( "Cant find device_id in request nor cookie, bogus!" )
                      %{}
               didstruct -> Logger.debug( "device_id in the body - must be Inform, start session" )
-                     did=Map.from_struct(didstruct)
-                     ACS.Session.Supervisor.start_session(did,conn.body_params)
-                     did
+                     extended_deviceid=Map.merge(Map.from_struct(didstruct), %{ip: to_string(:inet_parse.ntoa(conn.remote_ip))})
+                     ACS.Session.Supervisor.start_session(extended_deviceid,conn.body_params)
+                     extended_deviceid
             end # has device_id
           _ -> # unparseable body and no cookie, bogus
                Logger.debug( "Cant find cwmp output in request nor cookie, bogus!" )
                %{}
         end # conn.body_params
-      true -> Logger.debug("cookie - dont care about request type")
+      true ->
         Logger.debug("session cookie in the request, must be decoded into did")
         case Cryptex.MessageEncryptor.decrypt_and_verify(@encryptor,cookies["session"]) do
           {:ok,json} -> case Poison.decode(json,keys: :atoms!) do

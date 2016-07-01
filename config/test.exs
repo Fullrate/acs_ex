@@ -18,5 +18,5 @@ config :acs_ex,
   logtopic: "dev.log.acs",
   eventtopic: "dev.acs.raw",
   acs_port: 65432,
-  eventfile: "test/event.log"
-
+  eventfile: "test/event.log",
+  session_script: ACS.Session.Script.Vendor

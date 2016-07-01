@@ -9,8 +9,7 @@ defmodule ACS do
     import Supervisor.Spec, warn: false
 
     children = [
-      Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [], [port: Application.fetch_env!(:acs_ex, :acs_port)]),
-      supervisor(ACS.RedixPool, []),
+      Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [], [port: Application.fetch_env!(:acs_ex, :acs_port)])
     ]
 
     opts = [strategy: :one_for_one, name: ACS.Supervisor]

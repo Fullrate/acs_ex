@@ -16,7 +16,13 @@ defmodule ACS.Session.Supervisor do
   def start_session(device_id, message) do
     # if a session for a serial allready exist, reuse it, otherwise
     # create a new child.
-    Supervisor.start_child(:session_supervisor, [device_id,message])
+
+    # Check if a function or a module is set in the environment
+    # .. if so, use it when creating the session
+    case Application.fetch_env(:acs_ex, :session_script) do
+      {:ok,module} -> Supervisor.start_child(:session_supervisor, [device_id,message,module])
+      :error -> Supervisor.start_child(:session_supervisor, [device_id,message])
+    end
   end
 
   def end_session(device_id) do

@@ -82,7 +82,7 @@ defmodule ACS.Session do
     # InformResponse into the plug queue
 
     gspid=self
-    sspid=case fun do
+    case fun do
       nil -> spawn_link(ACS.Session.Script.Vendor, :start, [gspid, device_id, hd(message.entries)]) # TODO: Should be "first inform encountered", not just hd
       f when is_function(f) -> spawn_link(fn() -> fun.(gspid, device_id, hd(message.entries)) end)
       _ -> spawn_link(fun, :start, [gspid, device_id, hd(message.entries)]) # assume some other module
@@ -91,7 +91,7 @@ defmodule ACS.Session do
     case takeover_session(device_id) do
       :ok ->
         Process.flag(:trap_exit, true)
-        {:ok,%{device_id: device_id, script_element: nil, plug_element: nil, sspid: sspid, cwmp_version: message.cwmp_version}}
+        {:ok,%{device_id: device_id, script_element: nil, plug_element: nil, cwmp_version: message.cwmp_version}}
       _ -> {:stop, "Could not take over session"}
     end
   end
@@ -101,18 +101,18 @@ defmodule ACS.Session do
   Used for :trap_exit
 
   1. signal with reply/2 that this is over
-  2. kill me
+  2. kill me?
 
   """
   def handle_info({:EXIT, _pid, :normal}, state) do
     ## Session Script is done.
     case state.plug_element do
       nil -> Logger.debug( "Session script exited, and we have no waiting plug..." )
-      %{message: _msg, from: from, state: :waiting} -> GenServer.reply(from, {200, ""})
-      m -> IO.inspect(m)
-      # Kill myself?
+      pe -> # Waiting plug, we have to tell it to stop by sending {200,""}
+           Logger.debug("Waiting plug when SS ends, just tell it to stop, which in turn will kill me (the session)")
+           GenServer.reply( pe.from, {200, ""} )
     end
-    {:noreply,%{state | plug_element: nil, script_element: nil, sspid: nil}}
+    {:noreply,%{state | plug_element: nil, script_element: nil}}
   end
 
   def handle_info(message, state) do
@@ -122,16 +122,22 @@ defmodule ACS.Session do
   def handle_call({:script_command, [command]}, from, state) do
     Logger.debug("handle_call(:script_command, [#{inspect(command)})")
 
-    # If we have a waiting plug, we send at once!
     case state.plug_element do
-      %{message: msg, from: from, state: :waiting} -> case validateArgs(command.method, command.args) do
-                                                        true -> GenServer.reply(from, {200, gen_request(command.method, command.args, "script", msg.cwmp_version)})
-                                                        false -> GenServer.reply(from, {200, ""})
-                                                      end
-                                                      {:noreply, %{state | plug_element: nil, script_element: %{command: command, from: from, state: :sent}}}
+      %{message: msg, from: from, state: :waiting} ->
+        # A plug is waiting when a scripting function has not ended, and the plug is ready for more requests
+        # meaning it received "" from a CPE indicating that the CPE has nothing more. We keep waiting
+        # because the scripting system is supposed to introduce new reqeusts, that is its purpose, and
+        # as long as it is not dead, we must expect more.
+        Logger.debug("Session Script discovered a waiting plug. Sending scripted command at once!")
+        case validateArgs(command.method, command.args) do
+          true -> GenServer.reply(state.plug_element.from, {200, gen_request(command.method, command.args, "script", msg.cwmp_version)})
+                  {:noreply, %{state | plug_element: nil, script_element: %{command: command, from: from, state: :sent}}}
+          false -> # some error should be returned to "from" who is the SS
+                   {:reply, {:error, "Message is unparsable"}, %{state | script_element: nil}}
+        end
 
       _ -> Logger.debug( "No known plug_element, meaning no plug is waiting, so store script command in state" )
-           # Just put the command in the script queue, we wont affect the plug queue until the
+           # Just put the command in the script element, we wont affect the plug queue until the
            # session reaches the "what now?" stage (empty request from device)
            {:noreply, %{state | script_element: %{command: command, from: from, state: :unhandled}}}
     end
@@ -156,19 +162,17 @@ defmodule ACS.Session do
            Logger.debug("Empty message discovered: script_element: #{inspect(state.script_element)}")
            case state.script_element do
               nil -> # nothing in the script thing, we can end the session... if the session script process has exited.
-                     case state.sspid do
-                       nil -> {{200,""},nil} # we can stop...
-                       pid -> # Here we have to wait for the Session Script to end before we can stop the session.
-                              ## so we have to anwer {:noreply to the plug.. and hope for a reply later...}
-                              {:noreply,nil}
-                     end
+                     {{200,""},nil} # we can stop...
               %{command: command, from: from, state: :unhandled} -> # And unhandled message from script?
                      # Transform the command to a plug_queue thing, and mark it :sent
                      case validateArgs(command.method, command.args) do
                        true -> {{200,gen_request(command.method, command.args, "script", state.cwmp_version)},
                                 %{command: command, from: from, state: :sent}}
                        false -> Logger.debug("Cant validate args for command: #{inspect(command)}")
-                                {:wait,nil}
+                                # must send reply to SS with error, even though this should never happen,
+                                # then we must continue to wait in the plug
+                                GenServer.reply(from, {:error, "Command does not validate"})
+                                {:noreply,nil}
                      end
               _ -> Logger.debug("Cant indentify script_element, clearing and discontinuing session: #{inspect(state.script_element)}")
                    {{200,""},nil}
@@ -223,7 +227,7 @@ defmodule ACS.Session do
     Logger.debug("gen_request: #{method}")
     case validateArgs(method,args) do
       true -> case method do
-        "GetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.GetParameterValuesStruct{name: a["name"], type: a["type"]}
+        "GetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.GetParameterValuesStruct{name: a, type: "string"}
                                 CWMP.Protocol.Generator.generate!(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.GetParameterValues{parameters: params}, cwmp_version)
         "SetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.ParameterValueStruct{name: a["name"], type: a["type"], value: a["value"]}
                                 CWMP.Protocol.Generator.generate!(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.SetParameterValues{parameters: params}, cwmp_version)
@@ -244,7 +248,7 @@ defmodule ACS.Session do
     case method do
       "GetParameterValues" -> # args must be map with name and type key in all elements
         case args do
-          l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> is_map(a) and Map.has_key?(a,:name) and Map.has_key?(a,:type) end)
+          l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> String.valid?(a) end)
           _ -> false
         end
       "SetParameterValues" -> # args must be list of maps with name,type and value keys

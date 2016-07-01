@@ -2,7 +2,6 @@ defmodule ACSGetParameterValuesTest do
   use ExUnit.Case
   import PathHelpers
   import RequestSenders
-  import Mock
 
   @gpv_sample_response ~s|<SOAP-ENV:Envelope xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cwmp="urn:dslforum-org:cwmp-1-4" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 \t<SOAP-ENV:Header>
@@ -12,73 +11,79 @@ defmodule ACSGetParameterValuesTest do
 \t\t<cwmp:GetParameterValuesResponse>
 <ParameterList xsi:type="SOAP-ENC:Array" SOAP-ENC:arrayType="cwmp:ParameterValueStruct[2]">
                                 <ParameterValueStruct>
-                                        <Name>Device.Test</Name>
+                                        <Name>Device.Test.Foo</Name>
                                         <Value xsi:type="xsd:unsignedInt">1</Value>
-                                </ParameterValueStruct>
-                                <ParameterValueStruct>
-                                        <Name>Device.Test2</Name>
-                                        <Value xsi:type="xsd:string">foo</Value>
                                 </ParameterValueStruct>
                         </ParameterList>
 \t\t</cwmp:GetParameterValuesResponse>
 \t</SOAP-ENV:Body>
 </SOAP-ENV:Envelope>|
-
+@doc """
   test "queue GetParameterValues" do
-    # Use mock to make the code pop from Mock instead of actual redis
-    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": [{\"name\": \"Device.Test\", \"type\": \"string\"}, {\"name\": \"Device.Test2\", \"type\": \"string\"}], \"dispatch\": \"GetParameterValues\", \"source\": \"TEST\"}"} end] do
-      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
-      assert resp.status_code == 200
-      {:ok,resp,cookie} = sendStr("",cookie)
-      assert resp.status_code == 200
+    # Install a Session Script that send's the GetParameterValues
+    Application.put_env(:acs_ex, :session_script, ACS.Test.Sessions.SingleGetParameterValues, persistent: false)
 
-      # resp.body should now be a GetParameterValues request with the data
-      # Mock'ed in
-      # Parse the GetParameterValues received
-      {pres,parsed}=CWMP.Protocol.Parser.parse(resp.body)
-      assert pres == :ok
+    {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
+    assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+    assert resp.status_code == 200
+    {:ok,resp,cookie} = sendStr("",cookie) # This should cause a GetParameterValue response
+    assert resp.status_code == 200
 
-      # header id is now in: parsed.header.id
+    {pres,parsed}=CWMP.Protocol.Parser.parse(resp.body)
+    assert pres == :ok
 
-      # assert values are what we expect them to be.
-      assert hd(parsed.entries).parameters == ["Device.Test", "Device.Test2"]
+    # header id is now in: parsed.header.id
 
-      # Send a Response to end it. Should return "", end session by sending "" back
-      gpv_response=to_string(:io_lib.format(@gpv_sample_response,[parsed.header.id]))
-      {:ok,resp,_} = sendStr(gpv_response,cookie)
-      assert resp.body == ""
-      assert resp.status_code == 200
-    end
+    # assert values are what we expect them to be.
+    assert hd(parsed.entries).parameters == ["Device.Test.Foo"]
+
+    assert Supervisor.count_children(:session_supervisor).active == 1
+
+    # Send a Response to end it. Should return "", end session by sending "" back
+    gpv_response=to_string(:io_lib.format(@gpv_sample_response,[parsed.header.id]))
+    {:ok,resp,_} = sendStr(gpv_response,cookie)
+    assert resp.body == ""
+    assert resp.status_code == 200
+    assert Supervisor.count_children(:session_supervisor).active == 0
   end
+  """
 
   test "queue GetParameterValues, bogus params" do
-    # Use mock to make the code pop from Mock instead of actual redis
-    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": [], \"dispatch\": \"GetParameterValues\", \"source\": \"TEST\"}"} end] do
-      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
-      assert resp.status_code == 200
-      {:ok,resp,_cookie} = sendStr("",cookie)
-      assert resp.status_code == 200
-      assert resp.body == "" # because the command is simply ignored
-    end
-    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": [\"name\": \"something\"], \"dispatch\": \"GetParameterValues\", \"source\": \"TEST\"}"} end] do
-      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
-      assert resp.status_code == 200
-      {:ok,resp,_cookie} = sendStr("",cookie)
-      assert resp.status_code == 200
-      assert resp.body == "" # because the command is simply ignored
-    end
-    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": \"foo\", \"dispatch\": \"GetParameterValues\", \"source\": \"TEST\"}"} end] do
-      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
-      assert resp.status_code == 200
-      {:ok,resp,_cookie} = sendStr("",cookie)
-      assert resp.status_code == 200
-      assert resp.body == "" # because the command is simply ignored
-    end
+    # Install a Session Script that send's the GetParameterValues
+    Application.put_env(:acs_ex, :session_script, ACS.Test.Sessions.SingleGetParameterValuesBogus, persistent: false)
+
+    {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
+    assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+    assert resp.status_code == 200
+    assert Supervisor.count_children(:session_supervisor).active == 1
+    {:ok,resp,cookie} = sendStr("",cookie) # This should cause an attempt to send the GetParameterValue response
+                                           # but it will fail and be unnoticable from the Plug. So the plug will end up waiting
+                                           # and the SS will terminate, forcing the session to end. So at the end of all
+                                           # this mumbo jumbo, we will get "" back
+    assert resp.status_code == 200
+    assert resp.body == ""
+    assert Supervisor.count_children(:session_supervisor).active == 0
   end
 
+end # of test module
+
+defmodule ACS.Test.Sessions.SingleGetParameterValues do
+
+  import ACS.Session.Script.Vendor.Helpers
+
+  def start(session, _device_id, _inform) do
+    _r=getParameterValues(session, ["Device.Test.Foo"])
+  end
 
 end
+
+defmodule ACS.Test.Sessions.SingleGetParameterValuesBogus do
+
+  import ACS.Session.Script.Vendor.Helpers
+
+  def start(session, _device_id, _inform) do
+    _r=getParameterValues(session, [])
+  end
+
+end
+

@@ -12,7 +12,7 @@ defmodule ACS.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :cowboy, :plug, :httpoison, :redix,
+    [applications: [:logger, :cowboy, :plug, :httpoison,
       :tzdata, :poolboy, :gproc],
      included_applications: [:cwmp_ex, :tools, :timex, :poison],
      mod: {ACS, []}]
@@ -25,8 +25,7 @@ defmodule ACS.Mixfile do
      {:kafka_ex, "~> 0.5.0"},
      {:httpoison, "~> 0.8.0"},
      {:poison, "~> 2.0"},
-     {:poolboy, github: "devinus/poolboy" },
-     {:redix, "~> 0.3.6"},
+     {:poolboy, "~> 1.5.1"},
      {:mock, "~> 0.1.1", only: :test},
      {:logger_file_backend, github: "onkel-dirtus/logger_file_backend"},
      {:gproc, "~> 0.5.0"},

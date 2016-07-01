@@ -1,7 +1,6 @@
 defmodule ACS.Session.Script.Vendor do
   require Logger
   import ACS.Session.Script.Vendor.Helpers
-  #alias ACS.Session.Script.Vendor.Helpers
 
   @moduledoc """
 
@@ -26,14 +25,4 @@ defmodule ACS.Session.Script.Vendor do
     #Logger.debug("Reply: #{inspect(reply)}")
   end
 
-  # PRIVATE METHODS
-  defp dequeue_external(serial) do
-    deq=ACS.Queue.dequeue(serial)
-    Logger.debug("dequeued=#{inspect(deq)}")
-    case deq do
-        {:ok,%{"dispatch" => dispatch, "source" => source, "args" => args}} -> {200,gen_request(dispatch,args,source,did)}
-        junk -> Logger.debug("cant match dequeued event: #{inspect(junk)}")
-                {200,""}
-    end
-  end
 end
