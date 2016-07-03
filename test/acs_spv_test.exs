@@ -16,67 +16,75 @@ defmodule ACSSetParameterValuesTest do
 </SOAP-ENV:Envelope>|
 
   test "queue SetParameterValues" do
-    # queue something, so that the server will dequeue it. clear queue first.
-    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": [{\"name\": \"Device.Test\", \"type\": \"xsd:string\", \"value\": \"SomeValue\"}, {\"name\": \"Device.Test2\", \"type\": \"xsd_int\", \"value\": \"1\"}], \"dispatch\": \"SetParameterValues\", \"source\": \"TEST\"}"} end] do
-      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
-      assert resp.status_code == 200
-      {:ok,resp,cookie} = sendStr("",cookie)
-      assert resp.status_code == 200
+    # Install a Session Script that send's the GetParameterValues
+    Application.put_env(:acs_ex, :session_script, ACS.Test.Sessions.SingleSetParameterValues, persistent: false)
 
-      # Parse the response received
-      {pres,parsed}=CWMP.Protocol.Parser.parse(resp.body)
-      assert pres == :ok
+    {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
+    assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+    assert resp.status_code == 200
+    {:ok,resp,cookie} = sendStr("",cookie) # This should cause a GetParameterValue response
+    assert resp.status_code == 200
 
-      # IO.inspect(parsed.header.id)
+    # Parse the response received
+    {pres,parsed}=CWMP.Protocol.Parser.parse(resp.body)
+    assert pres == :ok
 
-      # assert values are what we expect them to be.
-      params=for p <- hd(parsed.entries).parameters, do: {p.name,p.value}
-      params_map=Enum.into(params, %{})
+    # IO.inspect(parsed.header.id)
 
-      assert Map.has_key?(params_map,"Device.Test")
-      assert Map.has_key?(params_map,"Device.Test2")
-      assert params_map["Device.Test"] == "SomeValue"
-      assert params_map["Device.Test2"] == "1"
+    # assert values are what we expect them to be.
+    params=for p <- hd(parsed.entries).parameters, do: {p.name,p.value}
+    params_map=Enum.into(params, %{})
 
-      # Send a Response to end it. Should return "", end session by sending "" back
-      gpv_response=to_string(:io_lib.format(@spv_sample_response,[parsed.header.id]))
-      {:ok,resp,_} = sendStr(gpv_response,cookie)
-      # resp should no be "", send "" back
-      assert resp.body == ""
-      assert resp.status_code == 200
-    end
+    assert Map.has_key?(params_map,"Device.Test")
+    assert Map.has_key?(params_map,"Device.Test2")
+    assert params_map["Device.Test"] == "SomeValue"
+    assert params_map["Device.Test2"] == "1"
+
+    assert Supervisor.count_children(:session_supervisor).active == 1
+
+    # Send a Response to end it. Should return "", end session by sending "" back
+    spv_response=to_string(:io_lib.format(@spv_sample_response,[parsed.header.id]))
+    {:ok,resp,_} = sendStr(spv_response,cookie)
+    assert resp.body == ""
+    assert resp.status_code == 200
+    assert Supervisor.count_children(:session_supervisor).active == 0
   end
 
   test "queue SetParameterValues, bogus args" do
-    # queue something, so that the server will dequeue it. clear queue first.
-    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": [{\"name\": \"Device.Test\", \"value\": \"SomeValue\"}], \"dispatch\": \"SetParameterValues\", \"source\": \"TEST\"}"} end] do
-      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
-      assert resp.status_code == 200
-      {:ok,resp,_cookie} = sendStr("",cookie)
-      assert resp.status_code == 200
-      assert resp.body == "" # because bogus args are ignored
-    end
+    # Install a Session Script that send's the GStParameterValues
+    Application.put_env(:acs_ex, :session_script, ACS.Test.Sessions.SingleSetParameterValuesBogus, persistent: false)
 
-    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": [], \"dispatch\": \"SetParameterValues\", \"source\": \"TEST\"}"} end] do
-      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
-      assert resp.status_code == 200
-      {:ok,resp,_cookie} = sendStr("",cookie)
-      assert resp.status_code == 200
-      assert resp.body == "" # because bogus args are ignored
-    end
+    {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
+    assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+    assert resp.status_code == 200
+    assert Supervisor.count_children(:session_supervisor).active == 1
+    {:ok,resp,cookie} = sendStr("",cookie) # This should cause an attempt to send the SetParameterValue response
+                                           # but it will fail and be unnoticable from the Plug. So the plug will end up waiting
+                                           # and the SS will terminate, forcing the session to end. So at the end of all
+                                           # this mumbo jumbo, we will get "" back
+    assert resp.status_code == 200
+    assert resp.body == ""
+    assert Supervisor.count_children(:session_supervisor).active == 0
 
-    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": \"foo\", \"dispatch\": \"SetParameterValues\", \"source\": \"TEST\"}"} end] do
-      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
-      assert resp.status_code == 200
-      {:ok,resp,_cookie} = sendStr("",cookie)
-      assert resp.status_code == 200
-      assert resp.body == "" # because bogus args are ignored
-    end
+  end
+end
 
+defmodule ACS.Test.Sessions.SingleSetParameterValues do
+
+  import ACS.Session.Script.Vendor.Helpers
+
+  def start(session, _device_id, _inform) do
+    _r=setParameterValues(session, [%{name: "Device.Test", type: "xsd:string", value: "SomeValue"},
+                                    %{name: "Device.Test2", type: "xsd:int", value: "1"}])
+  end
+
+end
+defmodule ACS.Test.Sessions.SingleSetParameterValuesBogus do
+
+  import ACS.Session.Script.Vendor.Helpers
+
+  def start(session, _device_id, _inform) do
+    _r=setParameterValues(session, [])
   end
 
 end

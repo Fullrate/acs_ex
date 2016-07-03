@@ -229,7 +229,7 @@ defmodule ACS.Session do
       true -> case method do
         "GetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.GetParameterValuesStruct{name: a, type: "string"}
                                 CWMP.Protocol.Generator.generate!(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.GetParameterValues{parameters: params}, cwmp_version)
-        "SetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.ParameterValueStruct{name: a["name"], type: a["type"], value: a["value"]}
+        "SetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.ParameterValueStruct{name: a.name, type: a.type, value: a.value}
                                 CWMP.Protocol.Generator.generate!(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.SetParameterValues{parameters: params}, cwmp_version)
         "Reboot" -> CWMP.Protocol.Generator.generate!(%CWMP.Protocol.Messages.Header{id: generateID}, %CWMP.Protocol.Messages.Reboot{})
         "Download" -> argslist=for k <- Map.keys(args), do: {String.to_atom(k),Map.get(args,k)}
@@ -253,7 +253,7 @@ defmodule ACS.Session do
         end
       "SetParameterValues" -> # args must be list of maps with name,type and value keys
         case args do
-          l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> Map.has_key?(a,"name") && Map.has_key?(a,"type") && Map.has_key?(a,"value") end)
+          l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> Map.has_key?(a,:name) && Map.has_key?(a,:type) && Map.has_key?(a,:value) end)
           _ -> false
         end
       "Reboot" -> true
