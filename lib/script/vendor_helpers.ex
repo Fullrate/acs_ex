@@ -7,7 +7,6 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   """
   def getParameterValues(session, args) do
-    Logger.debug("getParameterValues(#{inspect(args)})")
     session_call(session, %{method: "GetParameterValues", args: args, source: "script"})
   end
 
@@ -17,12 +16,21 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   """
   def setParameterValues(session, args) do
-    Logger.debug("setParameterValues(#{inspect(args)})")
     session_call(session, %{method: "SetParameterValues", args: args, source: "script"})
+  end
+
+  @doc """
+
+  call the session server with the script_commmand: reboot
+
+  """
+  def reboot(session) do
+    session_call(session, %{method: "Reboot", args: [], source: "script"})
   end
 
   # do the gen_server call
   defp session_call(session, command) do
+    Logger.debug("Session Script Helper called: #{command.method} with args: #{inspect(command.args)}")
     GenServer.call(session, {:script_command, [command]})
   end
 end

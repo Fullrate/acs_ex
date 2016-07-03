@@ -20,9 +20,7 @@ defmodule ACS.Session.Script.Vendor do
     to do it.
 
   """
-  def start(session,did,inform) do
-    #reply = getParameterValues(session, ["Device.ManagementServer.URL"])
-    #Logger.debug("Reply: #{inspect(reply)}")
+  def start(_session,_did,_inform) do
   end
 
 end

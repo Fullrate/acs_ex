@@ -1,4 +1,4 @@
-defmodule ACSRebooTest do
+defmodule ACSRebootTest do
   use ExUnit.Case
   import PathHelpers
   import RequestSenders
@@ -14,26 +14,41 @@ defmodule ACSRebooTest do
 </SOAP-ENV:Envelope>|
 
   test "queue Reboot" do
-    # Use mock to make the code pop from Mock instead of actual redis
-    with_mock Redix, [command: fn(_pid,_cmd) -> {:ok,"{\"args\": [], \"dispatch\": \"Reboot\", \"source\": \"TEST\"}"} end] do
-      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
-      assert resp.status_code == 200
-      {:ok,resp,cookie} = sendStr("",cookie)
-      assert resp.status_code == 200
+    assert Supervisor.count_children(:session_supervisor).active == 0
+    # Install a Session Script that send's the Reboot
+    Application.put_env(:acs_ex, :session_script, ACS.Test.Sessions.SingleReboot, persistent: false)
 
-      # Parse the Reboot received
-      {pres,parsed}=CWMP.Protocol.Parser.parse(resp.body)
-      assert pres == :ok
+    {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
+    assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+    assert resp.status_code == 200
+    {:ok,resp,cookie} = sendStr("",cookie) # This should cause a GetParameterValue response
+    assert resp.status_code == 200
 
-      # header id is now in: parsed.header.id
+    {pres,parsed}=CWMP.Protocol.Parser.parse(resp.body)
+    assert pres == :ok
 
-      # Send a Response to end it. Should return "", end session by sending "" back
-      reboot_response=to_string(:io_lib.format(@sample_response,[parsed.header.id]))
-      {:ok,resp,_} = sendStr(reboot_response,cookie)
-      assert resp.body == ""
-      assert resp.status_code == 200
-    end
+    # header id is now in: parsed.header.id
+
+    assert hd(parsed.entries).__struct__ == CWMP.Protocol.Messages.Reboot
+
+    assert Supervisor.count_children(:session_supervisor).active == 1
+
+    # Send a Response to end it. Should return "", end session by sending "" back
+    reboot_response=to_string(:io_lib.format(@sample_response,[parsed.header.id]))
+    {:ok,resp,_} = sendStr(reboot_response,cookie)
+    assert resp.body == ""
+    assert resp.status_code == 200
+    assert Supervisor.count_children(:session_supervisor).active == 0
+  end
+
+end
+
+defmodule ACS.Test.Sessions.SingleReboot do
+
+  import ACS.Session.Script.Vendor.Helpers
+
+  def start(session, _device_id, _inform) do
+    _r=reboot(session)
   end
 
 end

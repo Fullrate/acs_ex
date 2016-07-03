@@ -5,6 +5,8 @@ defmodule ACSTest do
   doctest ACS
 
   test "plain InformResponse" do
+    Application.delete_env(:acs_ex, :session_script)
+    assert Supervisor.count_children(:session_supervisor).active == 0
     {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
     assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
     assert resp.status_code == 200
