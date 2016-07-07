@@ -25,6 +25,9 @@ defmodule ACSRebootTest do
     assert resp.status_code == 200
 
     {pres,parsed}=CWMP.Protocol.Parser.parse(resp.body)
+    if pres != :ok do
+      IO.inspect("Reboot #{pres} #{resp.body}")
+    end
     assert pres == :ok
 
     # header id is now in: parsed.header.id
@@ -39,6 +42,8 @@ defmodule ACSRebootTest do
     assert resp.body == ""
     assert resp.status_code == 200
     assert Supervisor.count_children(:session_supervisor).active == 0
+
+    Application.delete_env(:acs_ex, :session_script)
   end
 
 end

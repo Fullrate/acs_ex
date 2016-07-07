@@ -53,6 +53,9 @@ defmodule ACS.Handlers.ACS do
             {:error,_} -> Logger.debug("Error decoding cookie")
                           %{}
           end # Poison.decode(json)
+          _ -> Logger.debug("session cookie decryption failed - send Fault");
+               # TODO: Send fault back and forget
+               %{}
         end # Cryptex
     end # fetch_cookies
 

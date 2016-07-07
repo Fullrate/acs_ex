@@ -30,7 +30,7 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   # do the gen_server call
   defp session_call(session, command) do
-    Logger.debug("Session Script Helper called: #{command.method} with args: #{inspect(command.args)}")
+    Logger.debug("Session Script Helper called: command: #{command.method} with args: #{inspect(command.args)}")
     GenServer.call(session, {:script_command, [command]})
   end
 end

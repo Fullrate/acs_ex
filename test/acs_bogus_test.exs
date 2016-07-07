@@ -10,5 +10,4 @@ defmodule ACSTestBogus do
     assert resp.body == "Error handling request"
     assert resp.status_code == 400
   end
-
 end

@@ -27,6 +27,9 @@ defmodule ACSSetParameterValuesTest do
 
     # Parse the response received
     {pres,parsed}=CWMP.Protocol.Parser.parse(resp.body)
+    if ( pres != :ok ) do
+      IO.inspect("SPV #{pres} #{resp.body}")
+    end
     assert pres == :ok
 
     # IO.inspect(parsed.header.id)
@@ -48,6 +51,8 @@ defmodule ACSSetParameterValuesTest do
     assert resp.body == ""
     assert resp.status_code == 200
     assert Supervisor.count_children(:session_supervisor).active == 0
+
+    Application.delete_env(:acs_ex, :session_script)
   end
 
   test "queue SetParameterValues, bogus args" do
@@ -58,7 +63,7 @@ defmodule ACSSetParameterValuesTest do
     assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
     assert resp.status_code == 200
     assert Supervisor.count_children(:session_supervisor).active == 1
-    {:ok,resp,cookie} = sendStr("",cookie) # This should cause an attempt to send the SetParameterValue response
+    {:ok,resp,_cookie} = sendStr("",cookie) # This should cause an attempt to send the SetParameterValue response
                                            # but it will fail and be unnoticable from the Plug. So the plug will end up waiting
                                            # and the SS will terminate, forcing the session to end. So at the end of all
                                            # this mumbo jumbo, we will get "" back
@@ -66,6 +71,7 @@ defmodule ACSSetParameterValuesTest do
     assert resp.body == ""
     assert Supervisor.count_children(:session_supervisor).active == 0
 
+    Application.delete_env(:acs_ex, :session_script)
   end
 end
 
@@ -74,6 +80,7 @@ defmodule ACS.Test.Sessions.SingleSetParameterValues do
   import ACS.Session.Script.Vendor.Helpers
 
   def start(session, _device_id, _inform) do
+    #IO.puts("Normal start")
     _r=setParameterValues(session, [%{name: "Device.Test", type: "xsd:string", value: "SomeValue"},
                                     %{name: "Device.Test2", type: "xsd:int", value: "1"}])
   end
@@ -84,6 +91,7 @@ defmodule ACS.Test.Sessions.SingleSetParameterValuesBogus do
   import ACS.Session.Script.Vendor.Helpers
 
   def start(session, _device_id, _inform) do
+    #IO.puts("Bogus start")
     _r=setParameterValues(session, [])
   end
 

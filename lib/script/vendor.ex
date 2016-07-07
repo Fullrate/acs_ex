@@ -13,7 +13,7 @@ defmodule ACS.Session.Script.Vendor do
   @doc """
 
     start is call when a session is initiated, from here all logic
-    pertaining to the current CPE can be placed. 
+    pertaining to the current CPE can be placed.
 
     If you want to implement at start for each product_class,
     start(%{product_class: "something", ....}, message) is the way
@@ -21,6 +21,7 @@ defmodule ACS.Session.Script.Vendor do
 
   """
   def start(_session,_did,_inform) do
+    Logger.debug("Default Vendor start called...")
   end
 
 end

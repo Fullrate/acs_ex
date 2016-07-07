@@ -40,7 +40,7 @@ defmodule ACSTestSession do
     #assert end_res == :ok
     #end
 
-  test "Normal Session - with script" do
+  test "Normal Session - with right ID in response" do
     {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @inform, fn(session, _device_id, _message) ->
       import ACS.Session.Script.Vendor.Helpers
       # The script inserts a message in the queue.
@@ -59,12 +59,82 @@ defmodule ACSTestSession do
     assert code==200
     assert Regex.match?(@gpv_request,response)
 
-    # another process_message for the response - will make the script exit
-    r=ACS.Session.process_message(@device_id, @gpv_response)
+    {res,parsed} = CWMP.Protocol.Parser.parse(response)
+    assert res == :ok
+
+    # another process_message for the response, but with the wrong ID
+    # will make the session script exit with a timeout.
+    gpv_response = @gpv_response
+    new_header = %{gpv_response.header | id: parsed.header.id}
+    gpv_response = %{gpv_response | header: new_header}
+    r=ACS.Session.process_message(@device_id, gpv_response) # Should be processed with no timeout
     assert r=={200,""}
 
     end_res=ACS.Session.Supervisor.end_session(@device_id)
     assert end_res == :ok
     assert Supervisor.count_children(:session_supervisor).active == 0
   end
+
+  test "Normal Session - with wrong ID in response" do
+    Application.put_env(:acs_ex, :script_timeout, 1000, persistent: false)
+
+    {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @inform, fn(session, _device_id, _message) ->
+      import ACS.Session.Script.Vendor.Helpers
+      # The script inserts a message in the queue.
+      _r = getParameterValues(session, ["Device.Test."])
+      #IO.inspect("gpvResult = #{inspect(r)}")
+    end )
+    assert is_pid(pid)
+
+    assert Supervisor.count_children(:session_supervisor).active == 1
+
+    # now pretend we send the inform into the session, this is what the plug does after creating it
+    r=ACS.Session.process_message(@device_id, @inform)
+    assert {200,@inform_response} == r
+
+    {code,response}=ACS.Session.process_message(@device_id, @empty)
+    assert code==200
+    assert Regex.match?(@gpv_request,response)
+
+    # another process_message for the response, but with the wrong ID
+    # will make the session return a Fault, 8003
+    {code,response}=ACS.Session.process_message(@device_id, @gpv_response)
+    assert code == 200
+    {res,parsed} = CWMP.Protocol.Parser.parse(response)
+    assert res == :ok
+    fault=hd(parsed.entries)
+    assert fault.__struct__==CWMP.Protocol.Messages.Fault
+    assert fault.faultcode == "Server"
+    assert fault.faultstring == "CWMP fault"
+    assert fault.detail == %CWMP.Protocol.Messages.FaultStruct{code: 8003, string: "Invalid arguments"}
+
+    end_res=ACS.Session.Supervisor.end_session(@device_id)
+    assert end_res == :ok
+    assert Supervisor.count_children(:session_supervisor).active == 0
+
+    Application.delete_env(:acs_ex, :script_timeout)
+  end
+
+  # Test what happens when a sessions gets input that is not
+  # supposed to happen.
+  test "Abnormal Session - double inform" do
+    # Double process_message, so before we have a response to one message, what happens if
+    # Another arrives?
+    {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @inform)
+    assert is_pid(pid)
+
+    assert Supervisor.count_children(:session_supervisor).active == 1
+
+    r=ACS.Session.process_message(@device_id, @inform)
+    assert {200,@inform_response} == r
+
+
+    r=ACS.Session.process_message(@device_id, @inform)
+    assert {200,@inform_response} == r
+
+    end_res=ACS.Session.Supervisor.end_session(@device_id)
+    assert end_res == :ok
+    assert Supervisor.count_children(:session_supervisor).active == 0
+  end
+
 end
