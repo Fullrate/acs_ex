@@ -22,11 +22,7 @@ defmodule ACS.Handlers.ACS do
     Cryptex.KeyGenerator.generate(Application.fetch_env!(:acs_ex,:crypt_keybase), Application.fetch_env!(:acs_ex,:crypt_signed_cookie_salt)))
 
   def dispatch(conn, _params) do
-    Logger.debug("Received headers: #{inspect(conn.req_headers)}")
-    Logger.debug("Received body: #{inspect(conn.body_params)}")
-
     cookies = fetch_cookies(conn).req_cookies
-    Logger.debug("Cookies: #{inspect(cookies)}")
 
     did = case Map.has_key?(cookies,"session") do
       false -> Logger.debug("no cookie set in the request - should be an Inform then #{inspect(cookies)}")
@@ -49,12 +45,17 @@ defmodule ACS.Handlers.ACS do
         Logger.debug("session cookie in the request, must be decoded into did")
         case Cryptex.MessageEncryptor.decrypt_and_verify(@encryptor,cookies["session"]) do
           {:ok,json} -> case Poison.decode(json,keys: :atoms!) do
-            {:ok,decoded_did} -> decoded_did
+            {:ok,decoded_did} -> # check that the IP in the decoded_did is in fact the remote_ip
+                                 if decoded_did.ip == to_string(:inet_parse.ntoa(conn.remote_ip)) do
+                                   decoded_did
+                                 else
+                                   %{} # Triggering a 400 Bad Request
+                                 end
             {:error,_} -> Logger.debug("Error decoding cookie")
                           %{}
           end # Poison.decode(json)
           _ -> Logger.debug("session cookie decryption failed - send Fault");
-               # TODO: Send fault back and forget
+               # %{} triggers 400 Bad Request - TODO: maybe Fault instead?
                %{}
         end # Cryptex
     end # fetch_cookies

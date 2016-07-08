@@ -180,6 +180,22 @@ defmodule ACS.Session do
     end
   end
 
+  @doc """
+
+  Returns the list of messages received from a CPE during a session who are not the
+  result of a script requesting it. ie. TransferComplete aso
+
+  """
+  def handle_call({:unscripted, []}, from, state) do
+    {:reply, state.unmatched_incomming_list, state}
+  end
+
+  @doc """
+
+  Processes a message from the plug. "message" is the CWMP.Protocol version of 
+  the parsed request sent into the plug.
+
+  """
   def handle_call({:process_message, [device_id,message]}, from, state) do
     Logger.debug("handle_call(:process_message, #{inspect(device_id)}, #{inspect(message)})")
 
@@ -238,9 +254,12 @@ defmodule ACS.Session do
              false ->
                case state.script_element do
                  nil ->
-                   Logger.debug("Incomming non-inform message with no script element... what? - ignore that......or queue it somewhere in state if someone wants it")
+                   Logger.debug("Incomming non-inform message with no script element...")
+                   # what? - ignore that......or queue it somewhere in state if someone wants it")
                    # Stuff the message into the junk list - the list of unsolicited messages.
-                   {{200,""}, nil, []}
+                   # We should still respond...
+                   {reply,msg} = construct_reply( message )
+                   {reply, nil, msg}
                  %{command: _command, from: from, state: :sent, id: generated_header_id} ->
                    # Check if the incomming message matches the one generated
                    # by the script system - this can be done by ID comparison
@@ -265,47 +284,7 @@ defmodule ACS.Session do
                      # it in one envelope. This can be done by using CMWP.Protocol.Generate.generate(req)
                      # directly, or expanding cwmp_ex to include the capacity to take a list of
                      # entries.
-                     {reply,msg} = case message_type(hd(message.entries)) do
-                       {:cpe,_messagetype} ->
-                         # ...Response and that type
-                         # This means "Fault" - because this response is off track
-                         {{200,CWMP.Protocol.Generator.generate!(
-                            %CWMP.Protocol.Messages.Header{id: message.header.id},
-                            %CWMP.Protocol.Messages.Fault{faultcode: "Server", faultstring: "CWMP fault", detail:
-                              %CWMP.Protocol.Messages.FaultStruct{code: "8003", string: "Invalid arguments"}})},[]}
-                       {:acs,CWMP.Protocol.Messages.TransferComplete} ->
-                         {{200,CWMP.Protocol.Generator.generate!(
-                           %CWMP.Protocol.Messages.Header{id: message.header.id},
-                           %CWMP.Protocol.Messages.TransferCompleteResponse{})},[message]}
-                       {:acs,CWMP.Protocol.Messages.AutonomousTransferComplete} ->
-                         {{200,CWMP.Protocol.Generator.generate!(
-                           %CWMP.Protocol.Messages.Header{id: message.header.id},
-                           %CWMP.Protocol.Messages.AutonomousTransferCompleteResponse{})},[message]}
-                       {:acs,CWMP.Protocol.Messages.Kicked} ->
-                         {{200,CWMP.Protocol.Generator.generate!(
-                           %CWMP.Protocol.Messages.Header{id: message.header.id},
-                           %CWMP.Protocol.Messages.KickedResponse{})},[message]}
-                       {:acs,CWMP.Protocol.Messages.RequestDownload} ->
-                         {{200,CWMP.Protocol.Generator.generate!(
-                           %CWMP.Protocol.Messages.Header{id: message.header.id},
-                           %CWMP.Protocol.Messages.RequestDownloadResponse{})},[message]}
-                       {:acs,CWMP.Protocol.Messages.DUStateChangeComplete} ->
-                         {{200,CWMP.Protocol.Generator.generate!(
-                           %CWMP.Protocol.Messages.Header{id: message.header.id},
-                           %CWMP.Protocol.Messages.DUStateChangeCompleteResponse{})},[message]}
-                       {:acs,CWMP.Protocol.Messages.AutonomousDUStateChangeComplete} ->
-                         {{200,CWMP.Protocol.Generator.generate!(
-                           %CWMP.Protocol.Messages.Header{id: message.header.id},
-                           %CWMP.Protocol.Messages.AutonomousDUStateChangeCompleteResponse{})},[message]}
-
-                       _ ->
-                         # unknown message type, what to do? - Fault back?
-                         {{200,CWMP.Protocol.Generator.generate!(
-                           %CWMP.Protocol.Messages.Header{id: message.header.id},
-                             %CWMP.Protocol.Messages.Fault{faultcode: "Server", faultstring: "CWMP fault", detail:
-                             %CWMP.Protocol.Messages.FaultStruct{code: "8000", string: "Method not supported"}})},[]}
-                     end
-
+                     {reply,msg} = construct_reply( message )
                      {reply,state.script_element,msg}
                    end
                  end
@@ -331,6 +310,49 @@ defmodule ACS.Session do
   end
 
   # PRIVATE METHODS
+
+  defp construct_reply( message ) do
+    case message_type(hd(message.entries)) do
+      {:cpe,_messagetype} ->
+        # ...Response and that type
+        # This means "Fault" - because this response is off track
+        {{200,CWMP.Protocol.Generator.generate!(
+           %CWMP.Protocol.Messages.Header{id: message.header.id},
+           %CWMP.Protocol.Messages.Fault{faultcode: "Server", faultstring: "CWMP fault", detail:
+             %CWMP.Protocol.Messages.FaultStruct{code: "8003", string: "Invalid arguments"}})},[]}
+      {:acs,CWMP.Protocol.Messages.TransferComplete} ->
+        {{200,CWMP.Protocol.Generator.generate!(
+          %CWMP.Protocol.Messages.Header{id: message.header.id},
+          %CWMP.Protocol.Messages.TransferCompleteResponse{})},[message]}
+      {:acs,CWMP.Protocol.Messages.AutonomousTransferComplete} ->
+        {{200,CWMP.Protocol.Generator.generate!(
+          %CWMP.Protocol.Messages.Header{id: message.header.id},
+          %CWMP.Protocol.Messages.AutonomousTransferCompleteResponse{})},[message]}
+      {:acs,CWMP.Protocol.Messages.Kicked} ->
+        {{200,CWMP.Protocol.Generator.generate!(
+          %CWMP.Protocol.Messages.Header{id: message.header.id},
+          %CWMP.Protocol.Messages.KickedResponse{})},[message]}
+      {:acs,CWMP.Protocol.Messages.RequestDownload} ->
+        {{200,CWMP.Protocol.Generator.generate!(
+          %CWMP.Protocol.Messages.Header{id: message.header.id},
+          %CWMP.Protocol.Messages.RequestDownloadResponse{})},[message]}
+      {:acs,CWMP.Protocol.Messages.DUStateChangeComplete} ->
+        {{200,CWMP.Protocol.Generator.generate!(
+          %CWMP.Protocol.Messages.Header{id: message.header.id},
+          %CWMP.Protocol.Messages.DUStateChangeCompleteResponse{})},[message]}
+      {:acs,CWMP.Protocol.Messages.AutonomousDUStateChangeComplete} ->
+        {{200,CWMP.Protocol.Generator.generate!(
+          %CWMP.Protocol.Messages.Header{id: message.header.id},
+          %CWMP.Protocol.Messages.AutonomousDUStateChangeCompleteResponse{})},[message]}
+
+      _ ->
+        # unknown message type, what to do? - Fault back?
+        {{200,CWMP.Protocol.Generator.generate!(
+          %CWMP.Protocol.Messages.Header{id: message.header.id},
+            %CWMP.Protocol.Messages.Fault{faultcode: "Server", faultstring: "CWMP fault", detail:
+            %CWMP.Protocol.Messages.FaultStruct{code: "8000", string: "Method not supported"}})},[]}
+    end
+  end
 
   defp message_type( entry ) do
     case entry do
