@@ -30,6 +30,18 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
+  Sends a Download request info the session.
+
+  args is a map containing the keys needed to generate at CWMP.Protocol.Messages.Download
+  structure. i.e. "url", "filetype", "filesize" at least.
+
+  """
+  def download(session, args) do
+    session_call(session, %{method: "Download", args: args, source: "script"})
+  end
+
+  @doc """
+
   Get the current list of ACS messages, i.e. TransferComplete aso from the session.
 
   """

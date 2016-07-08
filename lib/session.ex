@@ -401,9 +401,9 @@ defmodule ACS.Session do
           "SetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.ParameterValueStruct{name: a.name, type: a.type, value: a.value}
                                   CWMP.Protocol.Generator.generate!(%CWMP.Protocol.Messages.Header{id: id}, %CWMP.Protocol.Messages.SetParameterValues{parameters: params}, cwmp_version)
           "Reboot" -> CWMP.Protocol.Generator.generate!(%CWMP.Protocol.Messages.Header{id: id}, %CWMP.Protocol.Messages.Reboot{})
-          "Download" -> argslist=for k <- Map.keys(args), do: {String.to_atom(k),Map.get(args,k)}
+          "Download" -> Logger.debug("Download args: #{inspect args}")
                         CWMP.Protocol.Generator.generate!(
-                          %CWMP.Protocol.Messages.Header{id: id}, struct(CWMP.Protocol.Messages.Download, argslist))
+                          %CWMP.Protocol.Messages.Header{id: id}, struct(CWMP.Protocol.Messages.Download, args))
           _ -> Logger.error("Cant match request method: #{method}")
                ""
         end
@@ -425,8 +425,8 @@ defmodule ACS.Session do
           l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> Map.has_key?(a,:name) && Map.has_key?(a,:type) && Map.has_key?(a,:value) end)
           _ -> false
         end
-      "Reboot" -> true
-      "Download" -> true
+      "Reboot" -> true # takes no params, always true
+      "Download" -> Map.has_key?(args,:url) and Map.has_key?(args,:filesize) and Map.has_key?(args,:filetype)
     end
   end
 
