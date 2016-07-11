@@ -40,6 +40,17 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
+  args will be a list of string with paramter names for which you want to retrieve attributes.
+
+  Return value will be a CWMP.Protocol.Messages.GetParameterAttributesResponse struct
+
+  """
+  def getParameterAttributes(session, args) do
+    session_call(session, %{method: "GetParameterAttributes", args: args, source: "script"})
+  end
+
+  @doc """
+
   call the session server with the script_commmand: reboot
 
   """

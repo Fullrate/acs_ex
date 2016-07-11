@@ -435,6 +435,8 @@ defmodule ACS.Session do
               accesslist: a.accesslist
             }
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.SetParameterAttributes{parameters: params}, cwmp_version)
+          "GetParameterAttributes" ->
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetParameterAttributes{parameters: args})
           "Reboot" ->
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.Reboot{})
           "Download" ->
@@ -470,8 +472,11 @@ defmodule ACS.Session do
           l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> Map.has_key?(a,:name) and Map.has_key?(a,:notification_change) and Map.has_key?(a,:notification) and Map.has_key?(a,:accesslist_change) and Map.has_key?(a,:accesslist) and is_list(a.accesslist) end)
           _ -> false
         end
+      "GetParameterAttributes" -> # args must be list of string, at least 1 element in list
+        is_list(args) and length(args) > 0 and String.valid?(hd(args))
       "Reboot" -> true # takes no params, always true
       "Download" -> Map.has_key?(args,:url) and Map.has_key?(args,:filesize) and Map.has_key?(args,:filetype)
+      _ -> false
     end
   end
 
