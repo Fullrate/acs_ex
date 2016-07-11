@@ -51,6 +51,28 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
+  args must be a map with keys: "object_name" where the object name ends with .
+
+  """
+  def addObject(session, args) do
+    session_call(session, %{method: "AddObject", args: args, source: "script"})
+  end
+
+  @doc """
+
+  args must be a map with keys: "object_name" where the object name ends with .
+
+  An optional parameter_key can be given
+
+  Returns a CWMP.Protocol.Messages.AddObjectResponse
+
+  """
+  def deleteObject(session, args) do
+    session_call(session, %{method: "DeleteObject", args: args, source: "script"})
+  end
+
+  @doc """
+
   call the session server with the script_commmand: reboot
 
   """

@@ -437,10 +437,13 @@ defmodule ACS.Session do
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.SetParameterAttributes{parameters: params}, cwmp_version)
           "GetParameterAttributes" ->
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetParameterAttributes{parameters: args})
+          "AddObject" ->
+            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.AddObject, args))
+          "DeleteObject" ->
+            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.DeleteObject, args))
           "Reboot" ->
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.Reboot{})
           "Download" ->
-            Logger.debug("Download args: #{inspect args}")
             CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.Download, args))
           _ ->
             Logger.error("Cant match request method: #{method}")
@@ -474,6 +477,10 @@ defmodule ACS.Session do
         end
       "GetParameterAttributes" -> # args must be list of string, at least 1 element in list
         is_list(args) and length(args) > 0 and String.valid?(hd(args))
+      "AddObject" -> # args must be map with at least key "object_name"
+        is_map(args) and Map.has_key?(args,:object_name)
+      "DeleteObject" -> # args must be map with at least key "object_name"
+        is_map(args) and Map.has_key?(args,:object_name)
       "Reboot" -> true # takes no params, always true
       "Download" -> Map.has_key?(args,:url) and Map.has_key?(args,:filesize) and Map.has_key?(args,:filetype)
       _ -> false
