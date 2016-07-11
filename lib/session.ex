@@ -467,7 +467,7 @@ defmodule ACS.Session do
         Map.has_key?(args,:parameter_path) and Map.has_key?(args,:next_level)
       "SetParameterAttributes" -> # args must be map with path and next_level keys
         case args do
-          l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> Map.has_key?(a,:name) and Map.has_key?(a,:notification_change) and Map.has_key?(a,:notification) and Map.has_key?(a,:accesslist_change) and Map.has_key?(a,:accesslist) and is_list(a.accesslist) and is_list(a.notification) end)
+          l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> Map.has_key?(a,:name) and Map.has_key?(a,:notification_change) and Map.has_key?(a,:notification) and Map.has_key?(a,:accesslist_change) and Map.has_key?(a,:accesslist) and is_list(a.accesslist) end)
           _ -> false
         end
       "Reboot" -> true # takes no params, always true

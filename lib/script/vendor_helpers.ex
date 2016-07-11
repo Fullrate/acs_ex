@@ -21,12 +21,21 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
-  args will be a list of maps each with keys "name", "notification_change", "notification", "accesslist_change"
-  and "accesslist".
+  args will be a maps with keys "parameter_path" and "next_level"
 
   """
   def getParameterNames(session, args) do
     session_call(session, %{method: "GetParameterNames", args: args, source: "script"})
+  end
+
+  @doc """
+
+  args will be a list of maps each with keys "name", "notification_change", "notification", "accesslist_change"
+  and "accesslist".
+
+  """
+  def setParameterAttributes(session, args) do
+    session_call(session, %{method: "SetParameterAttributes", args: args, source: "script"})
   end
 
   @doc """
