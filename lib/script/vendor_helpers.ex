@@ -3,6 +3,15 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
+  args must be a list of maps with "name", "type", "value"
+
+  """
+  def setParameterValues(session, args) do
+    session_call(session, %{method: "SetParameterValues", args: args, source: "script"})
+  end
+
+  @doc """
+
   args will be a list of names for the actual cwmp request.
 
   """
@@ -12,11 +21,12 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
-  args must be a list of maps with "name", "type", "value"
+  args will be a list of maps each with keys "name", "notification_change", "notification", "accesslist_change"
+  and "accesslist".
 
   """
-  def setParameterValues(session, args) do
-    session_call(session, %{method: "SetParameterValues", args: args, source: "script"})
+  def getParameterNames(session, args) do
+    session_call(session, %{method: "GetParameterNames", args: args, source: "script"})
   end
 
   @doc """

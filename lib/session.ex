@@ -417,12 +417,24 @@ defmodule ACS.Session do
         message=case method do
           "GetRPCMethods" ->
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetRPCMethods{})
-          "GetParameterValues" ->
-            params=for a <- args, do: %CWMP.Protocol.Messages.GetParameterValuesStruct{name: a, type: "string"}
-            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetParameterValues{parameters: params}, cwmp_version)
           "SetParameterValues" ->
             params=for a <- args, do: %CWMP.Protocol.Messages.ParameterValueStruct{name: a.name, type: a.type, value: a.value}
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.SetParameterValues{parameters: params}, cwmp_version)
+          "GetParameterValues" ->
+            params=for a <- args, do: %CWMP.Protocol.Messages.GetParameterValuesStruct{name: a, type: "string"}
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetParameterValues{parameters: params}, cwmp_version)
+          "GetParameterNames" ->
+            params=%CWMP.Protocol.Messages.GetParameterNames{parameter_path: args.parameter_path, next_level: args.next_level}
+            CWMP.Protocol.Generator.generate!(header, params)
+          "SetParameterAttributes" ->
+            params=for a <- args, do: %CWMP.Protocol.Messages.SetParameterAttributesStruct{
+              name: a.name,
+              notification_change: a.notification_change,
+              notification: a.notification,
+              accesslist_change: a.accesslist_change,
+              accesslist: a.accesslist
+            }
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.SetParameterAttributes{parameters: params}, cwmp_version)
           "Reboot" ->
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.Reboot{})
           "Download" ->
@@ -441,14 +453,21 @@ defmodule ACS.Session do
   defp validateArgs(method,args) do
     case method do
       "GetRPCMethods" -> true # No args for this one
+      "SetParameterValues" -> # args must be list of maps with name,type and value keys
+        case args do
+          l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> Map.has_key?(a,:name) && Map.has_key?(a,:type) && Map.has_key?(a,:value) end)
+          _ -> false
+        end
       "GetParameterValues" -> # args must be map with name and type key in all elements
         case args do
           l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> String.valid?(a) end)
           _ -> false
         end
-      "SetParameterValues" -> # args must be list of maps with name,type and value keys
+      "GetParameterNames" -> # args must be map with path and next_level keys
+        Map.has_key?(args,:parameter_path) and Map.has_key?(args,:next_level)
+      "SetParameterAttributes" -> # args must be map with path and next_level keys
         case args do
-          l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> Map.has_key?(a,:name) && Map.has_key?(a,:type) && Map.has_key?(a,:value) end)
+          l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> Map.has_key?(a,:name) and Map.has_key?(a,:notification_change) and Map.has_key?(a,:notification) and Map.has_key?(a,:accesslist_change) and Map.has_key?(a,:accesslist) and is_list(a.accesslist) and is_list(a.notification) end)
           _ -> false
         end
       "Reboot" -> true # takes no params, always true
