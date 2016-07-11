@@ -1,5 +1,6 @@
 defmodule ACS.Session.Supervisor do
   use Supervisor
+  require Logger
 
   def start_link do
     # Have to register the supervisor process, so we can reference it
@@ -8,17 +9,12 @@ defmodule ACS.Session.Supervisor do
   end
 
   def start_session(device_id, message, fun) do
-    # if a session for a serial allready exist, reuse it, otherwise
-    # create a new child.
+    Logger.debug("SessionSupervisor start_session with function")
     Supervisor.start_child(:session_supervisor, [device_id,message,fun])
   end
 
   def start_session(device_id, message) do
-    # if a session for a serial allready exist, reuse it, otherwise
-    # create a new child.
-
-    # Check if a function or a module is set in the environment
-    # .. if so, use it when creating the session
+    Logger.debug("SessionSupervisor start_session without function")
     case Application.fetch_env(:acs_ex, :session_script) do
       {:ok,module} -> Supervisor.start_child(:session_supervisor, [device_id,message,module])
       :error -> Supervisor.start_child(:session_supervisor, [device_id,message])
@@ -26,6 +22,7 @@ defmodule ACS.Session.Supervisor do
   end
 
   def end_session(device_id) do
+    Logger.debug("SessionSupervisor terminate_child(#{inspect device_id})")
     Supervisor.terminate_child(:session_supervisor, :gproc.where({:n, :l, {:device_id, device_id}}))
   end
 

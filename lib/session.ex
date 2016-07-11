@@ -186,13 +186,13 @@ defmodule ACS.Session do
   result of a script requesting it. ie. TransferComplete aso
 
   """
-  def handle_call({:unscripted, []}, from, state) do
+  def handle_call({:unscripted, []}, _from, state) do
     {:reply, state.unmatched_incomming_list, state}
   end
 
   @doc """
 
-  Processes a message from the plug. "message" is the CWMP.Protocol version of 
+  Processes a message from the plug. "message" is the CWMP.Protocol version of
   the parsed request sent into the plug.
 
   """
@@ -207,7 +207,7 @@ defmodule ACS.Session do
     # Anything else means that the front element in the script_element must be responsible for
     # this thing arriving, and the script is currently awaiting this reply, so we must :reply
     # now.
-    {plug,script,unmatched} = case length(Map.keys(message)) do
+    {plug,script,unmatched,sspid} = case length(Map.keys(message)) do
       0 -> # Empty message here. This means examine the script_element to see if there are
            # any new scripted message to push into the plug queue. If nothing can be found,
            # push "" into the plug_element - ending the session. The Plug should kill it...
@@ -218,26 +218,31 @@ defmodule ACS.Session do
                      case state.sspid do
                        nil -> # no session script
                               Logger.debug("No script pid")
-                              {{200,""},nil,[]} # we can stop...
-                       _sspid -> # Session script is going, but no element?? Maybee this is before it could queue
+                              {{200,""},nil,[],state.sspid} # we can stop...
+                       sspid -> # Session script is going, but no element?? Maybee this is before it could queue
                                 # or maybee its in some long operation
-                              Logger.debug("Script system is alive ....")
-                              {:noreply,nil,[]}
+                              if Process.alive?(sspid) do
+                                Logger.debug("Script system IS alive ....")
+                                {:noreply,nil,[],sspid}
+                              else
+                                Logger.debug("Script system is not actually alive, it only seems so. Missed an :exit?")
+                                {{200,""},nil,[],nil}
+                              end
                      end
               %{command: command, from: script_from, state: :unhandled} -> # And unhandled message from script?
                      Logger.debug("There is a script element")
                      # Transform the command to a plug_element thing, and mark it :sent
                      case validateArgs(command.method, command.args) do
                        true -> {id,req} = gen_request(command.method, command.args, "script", state.cwmp_version)
-                               {{200,req}, %{command: command, from: script_from, state: :sent, id: id}, []}
+                               {{200,req}, %{command: command, from: script_from, state: :sent, id: id}, [], state.sspid}
                        false -> Logger.debug("Cant validate args for command: #{inspect(command)}")
                                 # must send reply to SS with error, even though this should never happen,
                                 # then we must continue to wait in the plug
                                 GenServer.reply(script_from, {:error, "Command does not validate"})
-                                {:noreply,nil,[]}
+                                {:noreply,nil,[],state.sspid}
                      end
               _ -> Logger.debug("Cant indentify script_element, clearing and discontinuing session: #{inspect(state.script_element)}")
-                   {{200,""},nil,[]}
+                   {{200,""},nil,[],nil}
            end
 
       3 -> Logger.debug("CWMP message discovered: script_element: #{inspect(state.script_element)}")
@@ -250,7 +255,7 @@ defmodule ACS.Session do
                Logger.debug("Session server saw inform, generating response")
                {{200,CWMP.Protocol.Generator.generate!(
                  %CWMP.Protocol.Messages.Header{id: message.header.id},
-                 %CWMP.Protocol.Messages.InformResponse{max_envelopes: 1}, message.cwmp_version)},state.script_element,[]}
+                 %CWMP.Protocol.Messages.InformResponse{max_envelopes: 1}, message.cwmp_version)},state.script_element,[],state.sspid}
              false ->
                case state.script_element do
                  nil ->
@@ -259,7 +264,14 @@ defmodule ACS.Session do
                    # Stuff the message into the junk list - the list of unsolicited messages.
                    # We should still respond...
                    {reply,msg} = construct_reply( message )
-                   {reply, nil, msg}
+                   if state.sspid != nil and Process.alive?(state.sspid) do
+                     Logger.debug("Script pid found to be alive")
+                     {reply, nil, msg, state.sspid}
+                   else
+                     Logger.debug("Script pid found to be dead")
+                     {reply, nil, msg, nil}
+                   end
+
                  %{command: _command, from: from, state: :sent, id: generated_header_id} ->
                    # Check if the incomming message matches the one generated
                    # by the script system - this can be done by ID comparison
@@ -271,7 +283,7 @@ defmodule ACS.Session do
                      # We have nothing to reply with here, so we must stuff this in OutstandingPlug and
                      # wait for someting from the Script, either next message or :EXIT
                      # we have to answer :noreply here, and
-                     {:noreply, nil,[]}
+                     {:noreply, nil, [], state.sspid}
                    else
                      Logger.debug("Incomming message is unmatched to script - we should reply somehow?")
                      # If this is a Response to a CPE request, then we have to end the session at once with
@@ -285,19 +297,19 @@ defmodule ACS.Session do
                      # directly, or expanding cwmp_ex to include the capacity to take a list of
                      # entries.
                      {reply,msg} = construct_reply( message )
-                     {reply,state.script_element,msg}
+                     {reply,state.script_element,msg,state.sspid}
                    end
                  end
            end
 
       _ -> Logger.debug("Unknown message discovered - ignored")
-           {state.plug_element, state.script_element}
+           {state.plug_element, state.script_element, state.sspid}
     end
 
-    Logger.debug("process_message returning with #{inspect plug}, #{inspect script}, #{inspect unmatched}")
+    Logger.debug("process_message returning with #{inspect plug}, #{inspect script}, #{inspect unmatched} #{inspect sspid}")
     case plug do
-      :noreply -> {:noreply, %{state | plug_element: %{message: message, from: from, state: :waiting}, unmatched_incomming_list: state.unmatched_incomming_list ++ unmatched}}
-      _ -> {:reply, plug, %{state | script_element: script, unmatched_incomming_list: state.unmatched_incomming_list ++ unmatched}}
+      :noreply -> {:noreply, %{state | plug_element: %{message: message, from: from, state: :waiting}, unmatched_incomming_list: state.unmatched_incomming_list ++ unmatched, sspid: sspid}}
+      _ -> {:reply, plug, %{state | script_element: script, unmatched_incomming_list: state.unmatched_incomming_list ++ unmatched, sspid: sspid}}
     end
   end
 
@@ -312,7 +324,8 @@ defmodule ACS.Session do
   # PRIVATE METHODS
 
   defp construct_reply( message ) do
-    case message_type(hd(message.entries)) do
+    entry = hd(message.entries)
+    case message_type(entry) do
       {:cpe,_messagetype} ->
         # ...Response and that type
         # This means "Fault" - because this response is off track
@@ -320,6 +333,10 @@ defmodule ACS.Session do
            %CWMP.Protocol.Messages.Header{id: message.header.id},
            %CWMP.Protocol.Messages.Fault{faultcode: "Server", faultstring: "CWMP fault", detail:
              %CWMP.Protocol.Messages.FaultStruct{code: "8003", string: "Invalid arguments"}})},[]}
+      {:acs,CWMP.Protocol.Messages.GetRPCMethods} ->
+        {{200,CWMP.Protocol.Generator.generate!(
+          %CWMP.Protocol.Messages.Header{id: message.header.id},
+          %CWMP.Protocol.Messages.GetRPCMethodsResponse{methods: ["GetRPCMethods","Inform","TransferComplete","AutonomousTransferComplete","Kicked","RequestDownload","DUStateChangeComplete","AutonomousDUStateChangeComplete"]})},[message]}
       {:acs,CWMP.Protocol.Messages.TransferComplete} ->
         {{200,CWMP.Protocol.Generator.generate!(
           %CWMP.Protocol.Messages.Header{id: message.header.id},
@@ -331,7 +348,7 @@ defmodule ACS.Session do
       {:acs,CWMP.Protocol.Messages.Kicked} ->
         {{200,CWMP.Protocol.Generator.generate!(
           %CWMP.Protocol.Messages.Header{id: message.header.id},
-          %CWMP.Protocol.Messages.KickedResponse{})},[message]}
+          %CWMP.Protocol.Messages.KickedResponse{next_url: entry.next})},[message]}
       {:acs,CWMP.Protocol.Messages.RequestDownload} ->
         {{200,CWMP.Protocol.Generator.generate!(
           %CWMP.Protocol.Messages.Header{id: message.header.id},
@@ -356,6 +373,7 @@ defmodule ACS.Session do
 
   defp message_type( entry ) do
     case entry do
+      %CWMP.Protocol.Messages.GetRPCMethods{} -> {:acs,entry.__struct__}
       %CWMP.Protocol.Messages.Inform{} -> {:acs,entry.__struct__}
       %CWMP.Protocol.Messages.TransferComplete{} -> {:acs,entry.__struct__}
       %CWMP.Protocol.Messages.AutonomousTransferComplete{} -> {:acs,entry.__struct__}
@@ -395,17 +413,24 @@ defmodule ACS.Session do
     case validateArgs(method,args) do
       true ->
         id=generateID
+        header=%CWMP.Protocol.Messages.Header{id: id}
         message=case method do
-          "GetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.GetParameterValuesStruct{name: a, type: "string"}
-                                  CWMP.Protocol.Generator.generate!(%CWMP.Protocol.Messages.Header{id: id}, %CWMP.Protocol.Messages.GetParameterValues{parameters: params}, cwmp_version)
-          "SetParameterValues" -> params=for a <- args, do: %CWMP.Protocol.Messages.ParameterValueStruct{name: a.name, type: a.type, value: a.value}
-                                  CWMP.Protocol.Generator.generate!(%CWMP.Protocol.Messages.Header{id: id}, %CWMP.Protocol.Messages.SetParameterValues{parameters: params}, cwmp_version)
-          "Reboot" -> CWMP.Protocol.Generator.generate!(%CWMP.Protocol.Messages.Header{id: id}, %CWMP.Protocol.Messages.Reboot{})
-          "Download" -> Logger.debug("Download args: #{inspect args}")
-                        CWMP.Protocol.Generator.generate!(
-                          %CWMP.Protocol.Messages.Header{id: id}, struct(CWMP.Protocol.Messages.Download, args))
-          _ -> Logger.error("Cant match request method: #{method}")
-               ""
+          "GetRPCMethods" ->
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetRPCMethods{})
+          "GetParameterValues" ->
+            params=for a <- args, do: %CWMP.Protocol.Messages.GetParameterValuesStruct{name: a, type: "string"}
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetParameterValues{parameters: params}, cwmp_version)
+          "SetParameterValues" ->
+            params=for a <- args, do: %CWMP.Protocol.Messages.ParameterValueStruct{name: a.name, type: a.type, value: a.value}
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.SetParameterValues{parameters: params}, cwmp_version)
+          "Reboot" ->
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.Reboot{})
+          "Download" ->
+            Logger.debug("Download args: #{inspect args}")
+            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.Download, args))
+          _ ->
+            Logger.error("Cant match request method: #{method}")
+            ""
         end
         {id,message}
       false -> Logger.error("arguments for request #{method} do not validate")
@@ -415,6 +440,7 @@ defmodule ACS.Session do
 
   defp validateArgs(method,args) do
     case method do
+      "GetRPCMethods" -> true # No args for this one
       "GetParameterValues" -> # args must be map with name and type key in all elements
         case args do
           l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> String.valid?(a) end)
