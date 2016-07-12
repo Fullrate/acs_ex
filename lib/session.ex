@@ -165,18 +165,20 @@ defmodule ACS.Session do
         # because the scripting system is supposed to introduce new reqeusts, that is its purpose, and
         # as long as it is not dead, we must expect more.
         Logger.debug("Session Script discovered a waiting plug. Sending scripted command at once!")
-        case validateArgs(command.method, command.args) do
-          true -> {id,req} = gen_request(command.method, command.args, "script", state.cwmp_version)
-                  GenServer.reply(plug_from, {200, req})
-                  {:noreply, %{state | plug_element: nil, script_element: %{command: command, from: from, state: :sent, id: id}}}
-          false -> # some error should be returned to "from" who is the SS
-                   {:reply, {:error, "Message is unparsable"}, %{state | script_element: nil}}
+        case gen_request(command.method, command.args, "script", state.cwmp_version) do
+          {:ok,{id,req}} ->
+            GenServer.reply(plug_from, {200, req})
+            {:noreply, %{state | plug_element: nil, script_element: %{command: command, from: from, state: :sent, id: id}}}
+          {:error,msg} ->
+            # some error should be returned to "from" who is the SS
+            {:reply, {:error, msg}, %{state | script_element: nil}}
         end
 
-      _ -> Logger.debug( "No known plug_element, meaning no plug is waiting, so store script command in state" )
-           # Just put the command in the script element, we wont affect the plug queue until the
-           # session reaches the "what now?" stage (empty request from device)
-           {:noreply, %{state | script_element: %{command: command, from: from, state: :unhandled}}}
+      _ ->
+        Logger.debug( "No known plug_element, meaning no plug is waiting, so store script command in state" )
+        # Just put the command in the script element, we wont affect the plug queue until the
+        # session reaches the "what now?" stage (empty request from device)
+        {:noreply, %{state | script_element: %{command: command, from: from, state: :unhandled}}}
     end
   end
 
@@ -208,102 +210,111 @@ defmodule ACS.Session do
     # this thing arriving, and the script is currently awaiting this reply, so we must :reply
     # now.
     {plug,script,unmatched,sspid} = case length(Map.keys(message)) do
-      0 -> # Empty message here. This means examine the script_element to see if there are
-           # any new scripted message to push into the plug queue. If nothing can be found,
-           # push "" into the plug_element - ending the session. The Plug should kill it...
-           Logger.debug("Empty message discovered: sspid: #{inspect state.sspid}, script_element: #{inspect(state.script_element)}")
-           case state.script_element do
-              nil -> # nothing in the script thing, we can end the session... if the session script process has exited.
-                     Logger.debug("No script_element")
-                     case state.sspid do
-                       nil -> # no session script
-                              Logger.debug("No script pid")
-                              {{200,""},nil,[],state.sspid} # we can stop...
-                       sspid -> # Session script is going, but no element?? Maybee this is before it could queue
-                                # or maybee its in some long operation
-                              if Process.alive?(sspid) do
-                                Logger.debug("Script system IS alive ....")
-                                {:noreply,nil,[],sspid}
-                              else
-                                Logger.debug("Script system is not actually alive, it only seems so. Missed an :exit?")
-                                {{200,""},nil,[],nil}
-                              end
-                     end
-              %{command: command, from: script_from, state: :unhandled} -> # And unhandled message from script?
-                     Logger.debug("There is a script element")
-                     # Transform the command to a plug_element thing, and mark it :sent
-                     case validateArgs(command.method, command.args) do
-                       true -> {id,req} = gen_request(command.method, command.args, "script", state.cwmp_version)
-                               {{200,req}, %{command: command, from: script_from, state: :sent, id: id}, [], state.sspid}
-                       false -> Logger.debug("Cant validate args for command: #{inspect(command)}")
-                                # must send reply to SS with error, even though this should never happen,
-                                # then we must continue to wait in the plug
-                                GenServer.reply(script_from, {:error, "Command does not validate"})
-                                {:noreply,nil,[],state.sspid}
-                     end
-              _ -> Logger.debug("Cant indentify script_element, clearing and discontinuing session: #{inspect(state.script_element)}")
-                   {{200,""},nil,[],nil}
-           end
+      0 ->
+        # Empty message here. This means examine the script_element to see if there are
+        # any new scripted message to push into the plug queue. If nothing can be found,
+        # push "" into the plug_element - ending the session. The Plug should kill it...
+        Logger.debug("Empty message discovered: sspid: #{inspect state.sspid}, script_element: #{inspect(state.script_element)}")
+        case state.script_element do
+          nil ->
+            # nothing in the script thing, we can end the session... if the session script process has exited.
+            Logger.debug("No script_element")
+            case state.sspid do
+              nil ->
+                # no session script
+                Logger.debug("No script pid")
+                {{200,""},nil,[],state.sspid} # we can stop...
+              sspid ->
+                # Session script is going, but no element?? Maybee this is before it could queue
+                # or maybee its in some long operation
+                if Process.alive?(sspid) do
+                  Logger.debug("Script system IS alive ....")
+                  {:noreply,nil,[],sspid}
+                else
+                  Logger.debug("Script system is not actually alive, it only seems so. Missed an :exit?")
+                  {{200,""},nil,[],nil}
+                end
+            end
+          %{command: command, from: script_from, state: :unhandled} ->
+            # And unhandled message from script?
+            Logger.debug("There is a script element")
+            # Transform the command to a plug_element thing, and mark it :sent
+            case gen_request(command.method, command.args, "script", state.cwmp_version) do
+              {:ok,{id,req}} ->
+                {{200,req}, %{command: command, from: script_from, state: :sent, id: id}, [], state.sspid}
+              {:error,msg} ->
+                Logger.debug("gen_request error: #{msg}")
+                # must send reply to SS with error, even though this should never happen,
+                # then we must continue to wait in the plug
+                GenServer.reply(script_from, {:error, msg})
+                {:noreply,nil,[],state.sspid}
+            end
+          _ ->
+            Logger.debug("Cant indentify script_element, clearing and discontinuing session: #{inspect(state.script_element)}")
+            {{200,""},nil,[],nil}
+        end
 
-      3 -> Logger.debug("CWMP message discovered: script_element: #{inspect(state.script_element)}")
-           # This could be a response that has to go to script land. In fact if the script_element
-           # is empty this is weird and should be ignored and logged.
+      3 ->
+        Logger.debug("CWMP message discovered: script_element: #{inspect(state.script_element)}")
+        # This could be a response that has to go to script land. In fact if the script_element
+        # is empty this is weird and should be ignored and logged.
 
-           # Could be that message is an Inform, in which case we just generate an InformResponse and dont stack anything in the plug element.
-           case has_inform?(message.entries) do
-             true ->
-               Logger.debug("Session server saw inform, generating response")
-               {{200,CWMP.Protocol.Generator.generate!(
-                 %CWMP.Protocol.Messages.Header{id: message.header.id},
-                 %CWMP.Protocol.Messages.InformResponse{max_envelopes: 1}, message.cwmp_version)},state.script_element,[],state.sspid}
-             false ->
-               case state.script_element do
-                 nil ->
-                   Logger.debug("Incomming non-inform message with no script element...")
-                   # what? - ignore that......or queue it somewhere in state if someone wants it")
-                   # Stuff the message into the junk list - the list of unsolicited messages.
-                   # We should still respond...
-                   {reply,msg} = construct_reply( message )
-                   if state.sspid != nil and Process.alive?(state.sspid) do
-                     Logger.debug("Script pid found to be alive")
-                     {reply, nil, msg, state.sspid}
-                   else
-                     Logger.debug("Script pid found to be dead")
-                     {reply, nil, msg, nil}
-                   end
+        # Could be that message is an Inform, in which case we just generate an InformResponse and dont stack anything in the plug element.
+        case has_inform?(message.entries) do
+          true ->
+            Logger.debug("Session server saw inform, generating response")
+            {{200,CWMP.Protocol.Generator.generate!(
+               %CWMP.Protocol.Messages.Header{id: message.header.id},
+               %CWMP.Protocol.Messages.InformResponse{max_envelopes: 1}, message.cwmp_version)},state.script_element,[],state.sspid}
+          false ->
+            case state.script_element do
+              nil ->
+                Logger.debug("Incomming non-inform message with no script element...")
+                # what? - ignore that......or queue it somewhere in state if someone wants it")
+                # Stuff the message into the junk list - the list of unsolicited messages.
+                # We should still respond...
+                {reply,msg} = construct_reply( message )
+                if state.sspid != nil and Process.alive?(state.sspid) do
+                  Logger.debug("Script pid found to be alive")
+                  {reply, nil, msg, state.sspid}
+                else
+                  Logger.debug("Script pid found to be dead")
+                  {reply, nil, msg, nil}
+                end
 
-                 %{command: _command, from: from, state: :sent, id: generated_header_id} ->
-                   # Check if the incomming message matches the one generated
-                   # by the script system - this can be done by ID comparison
+              %{command: _command, from: from, state: :sent, id: generated_header_id} ->
+                # Check if the incomming message matches the one generated
+                # by the script system - this can be done by ID comparison
 
-                   # Compare ID of incomming to ID of scripted message
-                   if ( message.header.id == generated_header_id ) do
-                     Logger.debug("Incomming message is meant for script")
-                     GenServer.reply(from, message)
-                     # We have nothing to reply with here, so we must stuff this in OutstandingPlug and
-                     # wait for someting from the Script, either next message or :EXIT
-                     # we have to answer :noreply here, and
-                     {:noreply, nil, [], state.sspid}
-                   else
-                     Logger.debug("Incomming message is unmatched to script - we should reply somehow?")
-                     # If this is a Response to a CPE request, then we have to end the session at once with
-                     # a Fault.
-                     # If on the other hand this is an arbitrary request from a CPE, stack it in the unmatched
-                     # list and :reply with an appropriate response from here.
+                # Compare ID of incomming to ID of scripted message
+                if ( message.header.id == generated_header_id ) do
+                  Logger.debug("Incomming message is meant for script")
+                  GenServer.reply(from, message)
+                  # We have nothing to reply with here, so we must stuff this in OutstandingPlug and
+                  # wait for someting from the Script, either next message or :EXIT
+                  # we have to answer :noreply here, and
+                  {:noreply, nil, [], state.sspid}
+                else
+                  Logger.debug("Incomming message is unmatched to script - we should reply somehow?")
+                  # If this is a Response to a CPE request, then we have to end the session at once with
+                  # a Fault.
+                  # If on the other hand this is an arbitrary request from a CPE, stack it in the unmatched
+                  # list and :reply with an appropriate response from here.
 
-                     # Generate a response for every message in the envelope.
-                     # TODO: Generate response for every message in entries and wrap
-                     # it in one envelope. This can be done by using CMWP.Protocol.Generate.generate(req)
-                     # directly, or expanding cwmp_ex to include the capacity to take a list of
-                     # entries.
-                     {reply,msg} = construct_reply( message )
-                     {reply,state.script_element,msg,state.sspid}
-                   end
-                 end
-           end
+                  # Generate a response for every message in the envelope.
+                  # TODO: Generate response for every message in entries and wrap
+                  # it in one envelope. This can be done by using CMWP.Protocol.Generate.generate(req)
+                  # directly, or expanding cwmp_ex to include the capacity to take a list of
+                  # entries.
+                  {reply,msg} = construct_reply( message )
+                  {reply,state.script_element,msg,state.sspid}
+                end
+            end
+          end
 
-      _ -> Logger.debug("Unknown message discovered - ignored")
-           {state.plug_element, state.script_element, state.sspid}
+      _ ->
+        Logger.debug("Unknown message discovered - ignored")
+        {state.plug_element, state.script_element, state.sspid}
     end
 
     Logger.debug("process_message returning with #{inspect plug}, #{inspect script}, #{inspect unmatched} #{inspect sspid}")
@@ -445,45 +456,64 @@ defmodule ACS.Session do
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.Reboot{})
           "Download" ->
             CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.Download, args))
+          "GetQueuedTransfers" ->
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetQueuedTransfers{})
           _ ->
-            Logger.error("Cant match request method: #{method}")
-            ""
+            {:error,"Cant match request method: #{method}"}
         end
-        {id,message}
-      false -> Logger.error("arguments for request #{method} do not validate")
-               {0,""}
+        {:ok,{id,message}}
+      false -> {:error,"arguments for request #{method} do not validate"}
     end
   end
 
   defp validateArgs(method,args) do
     case method do
-      "GetRPCMethods" -> true # No args for this one
-      "SetParameterValues" -> # args must be list of maps with name,type and value keys
+      "GetRPCMethods" ->
+        true # No args for this one
+      "SetParameterValues" ->
+        # args must be list of maps with name,type and value keys
         case args do
-          l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> Map.has_key?(a,:name) && Map.has_key?(a,:type) && Map.has_key?(a,:value) end)
-          _ -> false
+          l when is_list(l) and length(l) > 0 ->
+            Enum.all?(args, fn(a) -> Map.has_key?(a,:name) && Map.has_key?(a,:type) && Map.has_key?(a,:value) end)
+          _ ->
+            false
         end
-      "GetParameterValues" -> # args must be map with name and type key in all elements
+      "GetParameterValues" ->
+        # args must be map with name and type key in all elements
         case args do
-          l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> String.valid?(a) end)
-          _ -> false
+          l when is_list(l) and length(l) > 0 ->
+            Enum.all?(args, fn(a) -> String.valid?(a) end)
+          _ ->
+            false
         end
-      "GetParameterNames" -> # args must be map with path and next_level keys
+      "GetParameterNames" ->
+        # args must be map with path and next_level keys
         Map.has_key?(args,:parameter_path) and Map.has_key?(args,:next_level)
-      "SetParameterAttributes" -> # args must be map with path and next_level keys
+      "SetParameterAttributes" ->
+        # args must be map with path and next_level keys
         case args do
-          l when is_list(l) and length(l) > 0 -> Enum.all?(args, fn(a) -> Map.has_key?(a,:name) and Map.has_key?(a,:notification_change) and Map.has_key?(a,:notification) and Map.has_key?(a,:accesslist_change) and Map.has_key?(a,:accesslist) and is_list(a.accesslist) end)
-          _ -> false
+          l when is_list(l) and length(l) > 0 ->
+            Enum.all?(args, fn(a) -> Map.has_key?(a,:name) and Map.has_key?(a,:notification_change) and Map.has_key?(a,:notification) and Map.has_key?(a,:accesslist_change) and Map.has_key?(a,:accesslist) and is_list(a.accesslist) end)
+          _ ->
+            false
         end
-      "GetParameterAttributes" -> # args must be list of string, at least 1 element in list
+      "GetParameterAttributes" ->
+        # args must be list of string, at least 1 element in list
         is_list(args) and length(args) > 0 and String.valid?(hd(args))
-      "AddObject" -> # args must be map with at least key "object_name"
+      "AddObject" ->
+        # args must be map with at least key "object_name"
         is_map(args) and Map.has_key?(args,:object_name)
-      "DeleteObject" -> # args must be map with at least key "object_name"
+      "DeleteObject" ->
+        # args must be map with at least key "object_name"
         is_map(args) and Map.has_key?(args,:object_name)
-      "Reboot" -> true # takes no params, always true
-      "Download" -> Map.has_key?(args,:url) and Map.has_key?(args,:filesize) and Map.has_key?(args,:filetype)
-      _ -> false
+      "Reboot" ->
+        true # takes no params, always true
+      "Download" ->
+        Map.has_key?(args,:url) and Map.has_key?(args,:filesize) and Map.has_key?(args,:filetype)
+      "GetQueuedTransfers" ->
+        true # takes no params, always true
+      _ ->
+        false
     end
   end
 
