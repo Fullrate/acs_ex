@@ -103,6 +103,15 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
+  Sends a ScheduleInform request info the session.
+
+  """
+  def scheduleInform(session, args) do
+    session_call(session, %{method: "ScheduleInform", args: args, source: "script"})
+  end
+
+  @doc """
+
   Get the current list of ACS messages, i.e. TransferComplete aso from the session.
 
   """

@@ -458,6 +458,8 @@ defmodule ACS.Session do
             CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.Download, args))
           "GetQueuedTransfers" ->
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetQueuedTransfers{})
+          "ScheduleInform" ->
+            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.ScheduleInform, args))
           _ ->
             {:error,"Cant match request method: #{method}"}
         end
@@ -512,6 +514,9 @@ defmodule ACS.Session do
         Map.has_key?(args,:url) and Map.has_key?(args,:filesize) and Map.has_key?(args,:filetype)
       "GetQueuedTransfers" ->
         true # takes no params, always true
+      "ScheduleInform" ->
+        # args is a map with "commandkey" and "delay_seconds"
+        Map.has_key?(args,:commandkey) and Map.has_key?(args,:delay_seconds)
       _ ->
         false
     end
