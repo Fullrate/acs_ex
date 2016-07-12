@@ -121,6 +121,17 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
+  Sends a GetOptions request info the session.
+
+  Args is the option name, just a string
+
+  """
+  def getOptions(session, args) do
+    session_call(session, %{method: "GetOptions", args: args, source: "script"})
+  end
+
+  @doc """
+
   Get the current list of ACS messages, i.e. TransferComplete aso from the session.
 
   """

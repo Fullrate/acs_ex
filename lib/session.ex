@@ -463,6 +463,8 @@ defmodule ACS.Session do
           "SetVouchers" ->
             voucherlist=for xmlsig <- args, do: struct(CWMP.Protocol.Messages.XMLSignatureStruct, xmlsig)
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.SetVouchers{voucherlist: voucherlist})
+          "GetOptions" ->
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetOptions{option_name: args})
           _ ->
             {:error,"Cant match request method: #{method}"}
         end
@@ -560,9 +562,7 @@ defmodule ACS.Session do
                   if Map.has_key?(a.key_info.x509_data,:issuer_serial) and Map.has_key?(a.key_info.x509_data,:subject_name) and Map.has_key?(a.key_info.x509_data,:certificates) and is_list(a.key_info.x509_data.certificates) and Map.has_key?(a.key_info.x509_data.issuer_serial,:issuer_name) and Map.has_key?(a.key_info.x509_data.issuer_serial,:serial_number) do
                     Logger.debug("step4")
                     # check all the options
-                    matching=Enum.all?(a.options, fn(o) -> 
-                      Logger.debug(inspect(o))
-                    Map.has_key?(o,:v_serial_num) and Map.has_key?(o,:deviceid) and Map.has_key?(o,:option_ident) and Map.has_key?(o,:option_desc) and Map.has_key?(o,:start_date) and Map.has_key?(o,:duration) and Map.has_key?(o,:duration_units) and Map.has_key?(o,:mode) and Map.has_key?(o,:sha1_digest) and Map.has_key?(o.deviceid,:manufacturer) and Map.has_key?(o.deviceid,:oui) and Map.has_key?(o.deviceid,:product_class) and Map.has_key?(o.deviceid,:serial_number) end)
+                    matching=Enum.all?(a.options, fn(o) -> Map.has_key?(o,:v_serial_num) and Map.has_key?(o,:deviceid) and Map.has_key?(o,:option_ident) and Map.has_key?(o,:option_desc) and Map.has_key?(o,:start_date) and Map.has_key?(o,:duration) and Map.has_key?(o,:duration_units) and Map.has_key?(o,:mode) and Map.has_key?(o,:sha1_digest) and Map.has_key?(o.deviceid,:manufacturer) and Map.has_key?(o.deviceid,:oui) and Map.has_key?(o.deviceid,:product_class) and Map.has_key?(o.deviceid,:serial_number) end)
                     matching
                   else
                     false
@@ -580,6 +580,10 @@ defmodule ACS.Session do
         else
           false
         end
+      "GetOptions" ->
+        # args is just a string with the option name
+        String.valid?(args)
+
       _ ->
         false
     end
