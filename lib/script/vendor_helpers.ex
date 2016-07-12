@@ -112,6 +112,15 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
+  Sends a SetVouchers request info the session.
+
+  """
+  def setVouchers(session, args) do
+    session_call(session, %{method: "SetVouchers", args: args, source: "script"})
+  end
+
+  @doc """
+
   Get the current list of ACS messages, i.e. TransferComplete aso from the session.
 
   """

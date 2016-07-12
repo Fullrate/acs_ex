@@ -460,6 +460,9 @@ defmodule ACS.Session do
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetQueuedTransfers{})
           "ScheduleInform" ->
             CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.ScheduleInform, args))
+          "SetVouchers" ->
+            voucherlist=for xmlsig <- args, do: struct(CWMP.Protocol.Messages.XMLSignatureStruct, xmlsig)
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.SetVouchers{voucherlist: voucherlist})
           _ ->
             {:error,"Cant match request method: #{method}"}
         end
@@ -517,6 +520,66 @@ defmodule ACS.Session do
       "ScheduleInform" ->
         # args is a map with "commandkey" and "delay_seconds"
         Map.has_key?(args,:commandkey) and Map.has_key?(args,:delay_seconds)
+      "SetVouchers" ->
+        # args is a list of maps with keys
+        #  signature_value:
+        #  key_info
+        #    key_value
+        #      dsa_p
+        #      dsa_q
+        #      dsa_g
+        #      dsa_y
+        #    x509_data
+        #      issuer_serial
+        #        issuer_name
+        #        serial_number
+        #     subject_name
+        #     certificates []
+        #  options, list of maps with
+        #    v_serial_num
+        #    deviceid
+        #      manufacturer
+        #      oui
+        #      product_class
+        #      serial_number
+        #    option_ident
+        #    option_desc
+        #    start_date (Timex.DateTime)
+        #    duration
+        #    duration_units
+        #    mode
+        #    sha1_digest
+        if is_list(args) do
+          Enum.all?(args,fn(a) ->
+            if Map.has_key?(a,:signature_value) and Map.has_key?(a,:key_info) and Map.has_key?(a,:options) do
+              Logger.debug("step1")
+              if is_list(a.options) and length(a.options)>0 and Map.has_key?(a.key_info,:key_value) and Map.has_key?(a.key_info,:x509_data) do
+                Logger.debug("step2")
+                if Map.has_key?(a.key_info.key_value,:dsa_p) and Map.has_key?(a.key_info.key_value,:dsa_q) and Map.has_key?(a.key_info.key_value,:dsa_g) and Map.has_key?(a.key_info.key_value,:dsa_y) do
+                  Logger.debug("step3")
+                  if Map.has_key?(a.key_info.x509_data,:issuer_serial) and Map.has_key?(a.key_info.x509_data,:subject_name) and Map.has_key?(a.key_info.x509_data,:certificates) and is_list(a.key_info.x509_data.certificates) and Map.has_key?(a.key_info.x509_data.issuer_serial,:issuer_name) and Map.has_key?(a.key_info.x509_data.issuer_serial,:serial_number) do
+                    Logger.debug("step4")
+                    # check all the options
+                    matching=Enum.all?(a.options, fn(o) -> 
+                      Logger.debug(inspect(o))
+                    Map.has_key?(o,:v_serial_num) and Map.has_key?(o,:deviceid) and Map.has_key?(o,:option_ident) and Map.has_key?(o,:option_desc) and Map.has_key?(o,:start_date) and Map.has_key?(o,:duration) and Map.has_key?(o,:duration_units) and Map.has_key?(o,:mode) and Map.has_key?(o,:sha1_digest) and Map.has_key?(o.deviceid,:manufacturer) and Map.has_key?(o.deviceid,:oui) and Map.has_key?(o.deviceid,:product_class) and Map.has_key?(o.deviceid,:serial_number) end)
+                    matching
+                  else
+                    false
+                  end
+                else
+                  false
+                end
+              else
+                false
+              end
+            else
+              false
+            end
+          end)
+        else
+          false
+        end
       _ ->
         false
     end
