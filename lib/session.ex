@@ -465,6 +465,8 @@ defmodule ACS.Session do
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.SetVouchers{voucherlist: voucherlist})
           "GetOptions" ->
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetOptions{option_name: args})
+          "Upload" ->
+            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.Upload, args))
           _ ->
             {:error,"Cant match request method: #{method}"}
         end
@@ -495,7 +497,7 @@ defmodule ACS.Session do
         end
       "GetParameterNames" ->
         # args must be map with path and next_level keys
-        Map.has_key?(args,:parameter_path) and Map.has_key?(args,:next_level)
+        is_map(args) and Map.has_key?(args,:parameter_path) and Map.has_key?(args,:next_level)
       "SetParameterAttributes" ->
         # args must be map with path and next_level keys
         case args do
@@ -516,12 +518,12 @@ defmodule ACS.Session do
       "Reboot" ->
         true # takes no params, always true
       "Download" ->
-        Map.has_key?(args,:url) and Map.has_key?(args,:filesize) and Map.has_key?(args,:filetype)
+        is_map(args) and Map.has_key?(args,:url) and Map.has_key?(args,:filesize) and Map.has_key?(args,:filetype)
       "GetQueuedTransfers" ->
         true # takes no params, always true
       "ScheduleInform" ->
         # args is a map with "commandkey" and "delay_seconds"
-        Map.has_key?(args,:commandkey) and Map.has_key?(args,:delay_seconds)
+        is_map(args) and Map.has_key?(args,:commandkey) and Map.has_key?(args,:delay_seconds)
       "SetVouchers" ->
         # args is a list of maps with keys
         #  signature_value:
@@ -583,6 +585,10 @@ defmodule ACS.Session do
       "GetOptions" ->
         # args is just a string with the option name
         String.valid?(args)
+
+      "Upload" ->
+        # args must at least contain commandkey, url and filetype
+        is_map(args) and Map.has_key?(args,:commandkey) and Map.has_key?(args,:url) and Map.has_key?(args,:filetype)
 
       _ ->
         false

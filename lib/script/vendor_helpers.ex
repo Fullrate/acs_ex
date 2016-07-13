@@ -132,6 +132,24 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
+  Sends an Upload request info the session.
+
+  Args is a map containing at least commandkey, filetype and url out of the following
+  possible keys, here listed with defaults:
+            commandkey: "",
+            filetype: nil,
+            url: nil,
+            username: "",
+            password: "",
+            delay_seconds: 0
+
+  """
+  def upload(session, args) do
+    session_call(session, %{method: "Upload", args: args, source: "script"})
+  end
+
+  @doc """
+
   Get the current list of ACS messages, i.e. TransferComplete aso from the session.
 
   """
