@@ -190,6 +190,18 @@ defmodule ACS.Session.Script.Vendor.Helpers do
   def scheduleDownload(session, args) do
     session_call(session, %{method: "ScheduleDownload", args: args, source: "script"})
   end
+
+  @doc """
+
+  Sends a GetOptions request info the session.
+
+  Args is a commandkey, just a string
+
+  """
+  def cancelTransfer(session, args) do
+    session_call(session, %{method: "CancelTransfer", args: args, source: "script"})
+  end
+
   @doc """
 
   Get the current list of ACS messages, i.e. TransferComplete aso from the session.

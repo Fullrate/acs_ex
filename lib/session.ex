@@ -473,6 +473,8 @@ defmodule ACS.Session do
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetAllQueuedTransfers{})
           "ScheduleDownload" ->
             CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.ScheduleDownload, args))
+          "CancelTransfer" ->
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.CancelTransfer{commandkey: args})
           _ ->
             {:error,"Cant match request method: #{method}"}
         end
@@ -607,6 +609,9 @@ defmodule ACS.Session do
         else
           false
         end
+      "CancelTransfer" ->
+        # args is just a string with the option name
+        String.valid?(args)
 
       _ ->
         false

@@ -1,4 +1,4 @@
-defmodule ACSDownloadTest do
+defmodule ACSScheduleDownloadTest do
   use ExUnit.Case
   import PathHelpers
   import RequestSenders
