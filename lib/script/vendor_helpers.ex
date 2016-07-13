@@ -231,12 +231,31 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
+  Determines if an EventStruct of an Inform contains a specific event.
+
+  """
+  def has_event?(inform, eventname) do
+    Enum.any?(inform.events, fn(e) -> e.code == eventname end)
+  end
+
+  @doc """
+
+  Extracts the Parameters from an inform. Returns a map with parameters and values.
+
+  """
+  def extract_params(inform) do
+    plist=for p <- inform.parameters, do: {p.name,p.value}
+    Enum.into(plist, %{})
+  end
+
+  @doc """
+
   Get the current list of ACS messages, i.e. TransferComplete aso from the session.
 
   """
   def session_messages(session) do
     Logger.debug("Vendor.Helpers session_call :unscripted called")
-    GenServer.call(session, {:unscripted, []})
+    GenServer.call(session, {:script_command, [:unscripted]})
   end
 
   # do the gen_server call

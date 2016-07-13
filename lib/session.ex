@@ -156,7 +156,7 @@ defmodule ACS.Session do
   end
 
   def handle_call({:script_command, [command]}, from, state) do
-    Logger.debug("handle_call(:script_command, [#{inspect(command)})")
+    Logger.debug("handle_call(:script_command, [#{inspect(command)}])")
 
     case state.plug_element do
       %{message: _msg, from: plug_from, state: :waiting} ->
@@ -180,16 +180,6 @@ defmodule ACS.Session do
         # session reaches the "what now?" stage (empty request from device)
         {:noreply, %{state | script_element: %{command: command, from: from, state: :unhandled}}}
     end
-  end
-
-  @doc """
-
-  Returns the list of messages received from a CPE during a session who are not the
-  result of a script requesting it. ie. TransferComplete aso
-
-  """
-  def handle_call({:unscripted, []}, _from, state) do
-    {:reply, state.unmatched_incomming_list, state}
   end
 
   @doc """
@@ -229,12 +219,19 @@ defmodule ACS.Session do
                 # or maybee its in some long operation
                 if Process.alive?(sspid) do
                   Logger.debug("Script system IS alive ....")
+                  # If we have an :unscripted waiting, reply now
                   {:noreply,nil,[],sspid}
                 else
                   Logger.debug("Script system is not actually alive, it only seems so. Missed an :exit?")
                   {{200,""},nil,[],nil}
                 end
             end
+
+          %{command: :unscripted, from: script_from, state: :unhandled} ->
+            Logger.debug("Replying to :unscripted command")
+            GenServer.reply(script_from, state.unmatched_incomming_list)
+            {:noreply,nil,[],state.sspid}
+
           %{command: command, from: script_from, state: :unhandled} ->
             # And unhandled message from script?
             Logger.debug("There is a script element")
@@ -281,6 +278,11 @@ defmodule ACS.Session do
                   Logger.debug("Script pid found to be dead")
                   {reply, nil, msg, nil}
                 end
+
+              %{command: :unscripted, from: from, state: :unhandled} ->
+                Logger.debug("We have a script wanting the unmatched list - we should still reply to this though")
+                {reply,msg} = construct_reply( message )
+                {reply,state.script_element,msg,state.sspid}
 
               %{command: _command, from: from, state: :sent, id: generated_header_id} ->
                 # Check if the incomming message matches the one generated
@@ -343,42 +345,42 @@ defmodule ACS.Session do
         {{200,CWMP.Protocol.Generator.generate!(
            %CWMP.Protocol.Messages.Header{id: message.header.id},
            %CWMP.Protocol.Messages.Fault{faultcode: "Server", faultstring: "CWMP fault", detail:
-             %CWMP.Protocol.Messages.FaultStruct{code: "8003", string: "Invalid arguments"}})},[]}
+             %CWMP.Protocol.Messages.FaultStruct{code: "8003", string: "Invalid arguments"}},message.cwmp_version)},[]}
       {:acs,CWMP.Protocol.Messages.GetRPCMethods} ->
         {{200,CWMP.Protocol.Generator.generate!(
           %CWMP.Protocol.Messages.Header{id: message.header.id},
-          %CWMP.Protocol.Messages.GetRPCMethodsResponse{methods: ["GetRPCMethods","Inform","TransferComplete","AutonomousTransferComplete","Kicked","RequestDownload","DUStateChangeComplete","AutonomousDUStateChangeComplete"]})},[message]}
+          %CWMP.Protocol.Messages.GetRPCMethodsResponse{methods: ["GetRPCMethods","Inform","TransferComplete","AutonomousTransferComplete","Kicked","RequestDownload","DUStateChangeComplete","AutonomousDUStateChangeComplete"]},message.cwmp_version)},[message]}
       {:acs,CWMP.Protocol.Messages.TransferComplete} ->
         {{200,CWMP.Protocol.Generator.generate!(
           %CWMP.Protocol.Messages.Header{id: message.header.id},
-          %CWMP.Protocol.Messages.TransferCompleteResponse{})},[message]}
+          %CWMP.Protocol.Messages.TransferCompleteResponse{},message.cwmp_version)},[message]}
       {:acs,CWMP.Protocol.Messages.AutonomousTransferComplete} ->
         {{200,CWMP.Protocol.Generator.generate!(
           %CWMP.Protocol.Messages.Header{id: message.header.id},
-          %CWMP.Protocol.Messages.AutonomousTransferCompleteResponse{})},[message]}
+          %CWMP.Protocol.Messages.AutonomousTransferCompleteResponse{},message.cwmp_version)},[message]}
       {:acs,CWMP.Protocol.Messages.Kicked} ->
         {{200,CWMP.Protocol.Generator.generate!(
           %CWMP.Protocol.Messages.Header{id: message.header.id},
-          %CWMP.Protocol.Messages.KickedResponse{next_url: entry.next})},[message]}
+          %CWMP.Protocol.Messages.KickedResponse{next_url: entry.next},message.cwmp_version)},[message]}
       {:acs,CWMP.Protocol.Messages.RequestDownload} ->
         {{200,CWMP.Protocol.Generator.generate!(
           %CWMP.Protocol.Messages.Header{id: message.header.id},
-          %CWMP.Protocol.Messages.RequestDownloadResponse{})},[message]}
+          %CWMP.Protocol.Messages.RequestDownloadResponse{},message.cwmp_version)},[message]}
       {:acs,CWMP.Protocol.Messages.DUStateChangeComplete} ->
         {{200,CWMP.Protocol.Generator.generate!(
           %CWMP.Protocol.Messages.Header{id: message.header.id},
-          %CWMP.Protocol.Messages.DUStateChangeCompleteResponse{})},[message]}
+          %CWMP.Protocol.Messages.DUStateChangeCompleteResponse{},message.cwmp_version)},[message]}
       {:acs,CWMP.Protocol.Messages.AutonomousDUStateChangeComplete} ->
         {{200,CWMP.Protocol.Generator.generate!(
           %CWMP.Protocol.Messages.Header{id: message.header.id},
-          %CWMP.Protocol.Messages.AutonomousDUStateChangeCompleteResponse{})},[message]}
+          %CWMP.Protocol.Messages.AutonomousDUStateChangeCompleteResponse{},message.cwmp_version)},[message]}
 
       _ ->
         # unknown message type, what to do? - Fault back?
         {{200,CWMP.Protocol.Generator.generate!(
           %CWMP.Protocol.Messages.Header{id: message.header.id},
             %CWMP.Protocol.Messages.Fault{faultcode: "Server", faultstring: "CWMP fault", detail:
-            %CWMP.Protocol.Messages.FaultStruct{code: "8000", string: "Method not supported"}})},[]}
+            %CWMP.Protocol.Messages.FaultStruct{code: "8000", string: "Method not supported"}},message.cwmp_version)},[]}
     end
   end
 
@@ -436,7 +438,7 @@ defmodule ACS.Session do
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetParameterValues{parameters: params}, cwmp_version)
           "GetParameterNames" ->
             params=%CWMP.Protocol.Messages.GetParameterNames{parameter_path: args.parameter_path, next_level: args.next_level}
-            CWMP.Protocol.Generator.generate!(header, params)
+            CWMP.Protocol.Generator.generate!(header, params, cwmp_version)
           "SetParameterAttributes" ->
             params=for a <- args, do: %CWMP.Protocol.Messages.SetParameterAttributesStruct{
               name: a.name,
@@ -447,36 +449,36 @@ defmodule ACS.Session do
             }
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.SetParameterAttributes{parameters: params}, cwmp_version)
           "GetParameterAttributes" ->
-            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetParameterAttributes{parameters: args})
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetParameterAttributes{parameters: args}, cwmp_version)
           "AddObject" ->
-            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.AddObject, args))
+            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.AddObject, args), cwmp_version)
           "DeleteObject" ->
-            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.DeleteObject, args))
+            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.DeleteObject, args), cwmp_version)
           "Reboot" ->
-            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.Reboot{})
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.Reboot{}, cwmp_version)
           "Download" ->
-            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.Download, args))
+            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.Download, args), cwmp_version)
           "GetQueuedTransfers" ->
-            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetQueuedTransfers{})
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetQueuedTransfers{}, cwmp_version)
           "ScheduleInform" ->
-            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.ScheduleInform, args))
+            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.ScheduleInform, args), cwmp_version)
           "SetVouchers" ->
             voucherlist=for xmlsig <- args, do: struct(CWMP.Protocol.Messages.XMLSignatureStruct, xmlsig)
-            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.SetVouchers{voucherlist: voucherlist})
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.SetVouchers{voucherlist: voucherlist}, cwmp_version)
           "GetOptions" ->
-            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetOptions{option_name: args})
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetOptions{option_name: args}, cwmp_version)
           "Upload" ->
-            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.Upload, args))
+            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.Upload, args), cwmp_version)
           "FactoryReset" ->
-            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.FactoryReset{})
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.FactoryReset{}, cwmp_version)
           "GetAllQueuedTransfers" ->
-            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetAllQueuedTransfers{})
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetAllQueuedTransfers{}, cwmp_version)
           "ScheduleDownload" ->
-            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.ScheduleDownload, args))
+            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.ScheduleDownload, args), cwmp_version)
           "CancelTransfer" ->
-            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.CancelTransfer{commandkey: args})
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.CancelTransfer{commandkey: args}, cwmp_version)
           "ChangeDUState" ->
-            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.ChangeDUState, args))
+            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.ChangeDUState, args), cwmp_version)
           _ ->
             {:error,"Cant match request method: #{method}"}
         end

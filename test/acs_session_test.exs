@@ -10,6 +10,8 @@ defmodule ACSTestSession do
   """
 
   @device_id %{manufacturer: "ZyXEL", oui: "4C9EFF", product_class: "Product1", serial_number: "SerialNo1"}
+  @transfer_complete %{cwmp_version: "1-0", entries: [%CWMP.Protocol.Messages.TransferComplete{command_key: "", complete_time: Timex.datetime({{2016,5,18},{8,6,3}}), fault_struct: %CWMP.Protocol.Messages.FaultStruct{code: 0, string: "Download successful"}, start_time: Timex.datetime({{2016,5,18},{8,6,3}})}], header: %CWMP.Protocol.Messages.Header{hold_requests: false, id: "12345678", no_more_requests: false, session_timeout: 30}}
+  @tc_inform %{cwmp_version: "1-0", entries: [%CWMP.Protocol.Messages.Inform{current_time: Timex.datetime({{2016,5,18},{8,6,3}}), device_id: %CWMP.Protocol.Messages.DeviceIdStruct{manufacturer: "ZyXEL", oui: "4C9EFF", product_class: "Product1", serial_number: "SerialNo1"}, events: [%CWMP.Protocol.Messages.EventStruct{code: "7 TRANSFER COMPLETE", command_key: ""}], max_envelopes: 1, parameters: [%CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceSummary", type: "xsd:string", value: "InternetGatewayDevice:1.4[](Baseline:1, EthernetLAN:1, Time:1, IPPing:1, DeviceAssociation:1, EthernetWAN:1, VDSL2WAN:1, ADSLWAN:1, ATMLoopback:1, WiFiLAN:1, X_5067F0_TrustDomain:1), VoiceService:1.0[1](Endpoint:1, SIPEndpoint:1)"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.SpecVersion", type: "xsd:string", value: "1.0"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.HardwareVersion", type: "xsd:string", value: "HW_1.0"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.SoftwareVersion", type: "xsd:string", value: "1.00"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.ProvisioningCode", type: "xsd:string", value: ""}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.ManagementServer.ConnectionRequestURL", type: "xsd:string", value: "http://666.666.666.666:1234/foobar"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.ManagementServer.ParameterKey", type: "xsd:string", value: ""}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.WANDevice.2.WANConnectionDevice.1.WANIPConnection.2.ExternalIPAddress", type: "xsd:string", value: "666.666.666.666"}], retry_count: 0}], header:  %CWMP.Protocol.Messages.Header{hold_requests: false, id: "1189711373", no_more_requests: false, session_timeout: 30}}
   @inform %{cwmp_version: "1-0", entries: [%CWMP.Protocol.Messages.Inform{current_time: Timex.datetime({{2016,5,18},{8,6,3}}), device_id: %CWMP.Protocol.Messages.DeviceIdStruct{manufacturer: "ZyXEL", oui: "4C9EFF", product_class: "Product1", serial_number: "SerialNo1"}, events: [%CWMP.Protocol.Messages.EventStruct{code: "2 PERIODIC", command_key: ""}], max_envelopes: 1, parameters: [%CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceSummary", type: "xsd:string", value: "InternetGatewayDevice:1.4[](Baseline:1, EthernetLAN:1, Time:1, IPPing:1, DeviceAssociation:1, EthernetWAN:1, VDSL2WAN:1, ADSLWAN:1, ATMLoopback:1, WiFiLAN:1, X_5067F0_TrustDomain:1), VoiceService:1.0[1](Endpoint:1, SIPEndpoint:1)"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.SpecVersion", type: "xsd:string", value: "1.0"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.HardwareVersion", type: "xsd:string", value: "HW_1.0"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.SoftwareVersion", type: "xsd:string", value: "1.00"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.ProvisioningCode", type: "xsd:string", value: ""}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.ManagementServer.ConnectionRequestURL", type: "xsd:string", value: "http://666.666.666.666:1234/foobar"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.ManagementServer.ParameterKey", type: "xsd:string", value: ""}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.WANDevice.2.WANConnectionDevice.1.WANIPConnection.2.ExternalIPAddress", type: "xsd:string", value: "666.666.666.666"}], retry_count: 0}], header:  %CWMP.Protocol.Messages.Header{hold_requests: false, id: "1189711373", no_more_requests: false, session_timeout: 30}}
   @inform_response "<SOAP-ENV:Envelope xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cwmp=\"urn:dslforum-org:cwmp-1-0\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n\t<SOAP-ENV:Header>\n\t\t<cwmp:ID SOAP-ENV:mustUnderstand=\"1\">1189711373</cwmp:ID>\n\t</SOAP-ENV:Header>\n\t<SOAP-ENV:Body>\n\t\t<cwmp:InformResponse>\n\t\t\t<MaxEnvelopes>1</MaxEnvelopes>\n\t\t</cwmp:InformResponse>\n\t</SOAP-ENV:Body>\n</SOAP-ENV:Envelope>"
   @empty %{}
@@ -45,7 +47,6 @@ defmodule ACSTestSession do
       import ACS.Session.Script.Vendor.Helpers
       # The script inserts a message in the queue.
       _r = getParameterValues(session, ["Device.Test."])
-      #IO.inspect("gpvResult = #{inspect(r)}")
     end )
     assert is_pid(pid)
 
@@ -82,7 +83,6 @@ defmodule ACSTestSession do
       import ACS.Session.Script.Vendor.Helpers
       # The script inserts a message in the queue.
       _r = getParameterValues(session, ["Device.Test."])
-      #IO.inspect("gpvResult = #{inspect(r)}")
     end )
     assert is_pid(pid)
 
@@ -137,4 +137,37 @@ defmodule ACSTestSession do
     assert Supervisor.count_children(:session_supervisor).active == 0
   end
 
+  # Tests if we can wait for the messages list to be filled in the session
+  test "TransferComplete session" do
+    {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @tc_inform, fn(_session,_did,_inform) -> 
+      Process.sleep(2000)
+    end)
+    assert is_pid(pid)
+    assert Supervisor.count_children(:session_supervisor).active == 1
+
+    r=ACS.Session.process_message(@device_id, @tc_inform)
+    assert {200,@inform_response} == r
+
+    # Start a process that sends a TransferComplete in 1 second
+
+    # Now send a script message in, to retrieve the messagelist, that will get a noreply, and should get a reply when
+    # the TransferComplete process has completed and sent "" into the session
+    # send in a TransferComplete
+    # Send in %{} - triggering a reply to the script message
+    Task.start_link fn ->
+      Process.sleep(1000)
+      _response=ACS.Session.process_message(@device_id,@transfer_complete)
+      ACS.Session.process_message(@device_id,%{})
+    end
+
+    messages=GenServer.call(pid, {:script_command, [:unscripted]})
+
+    message=List.first(messages)
+    entry=List.first(message.entries)
+    assert entry.__struct__ == CWMP.Protocol.Messages.TransferComplete
+
+    end_res=ACS.Session.Supervisor.end_session(@device_id)
+    assert end_res == :ok
+    assert Supervisor.count_children(:session_supervisor).active == 0
+  end
 end
