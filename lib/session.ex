@@ -471,6 +471,8 @@ defmodule ACS.Session do
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.FactoryReset{})
           "GetAllQueuedTransfers" ->
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetAllQueuedTransfers{})
+          "ScheduleDownload" ->
+            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.ScheduleDownload, args))
           _ ->
             {:error,"Cant match request method: #{method}"}
         end
@@ -596,6 +598,15 @@ defmodule ACS.Session do
         true # takes no params, always true
       "GetAllQueuedTransfers" ->
         true # takes no params, always true
+      "ScheduleDownload" ->
+        if is_map(args) and Map.has_key?(args,:url) and Map.has_key?(args,:filesize) and Map.has_key?(args,:filetype) and Map.has_key?(args,:timewindowlist) and is_list(args.timewindowlist) and length(args.timewindowlist)>0 do
+          # Check that all elements of the timelist list conform
+          Enum.all?(args.timewindowlist, fn(tw) ->
+            is_map(tw) and Map.has_key?(tw,:window_start) and Map.has_key?(tw,:window_end) and Map.has_key?(tw,:window_mode) and Map.has_key?(tw,:max_retries)
+          end)
+        else
+          false
+        end
 
       _ ->
         false

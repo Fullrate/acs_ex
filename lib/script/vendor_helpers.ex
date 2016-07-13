@@ -168,6 +168,30 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
+  Sends a ScheduleDownload request info the session.
+
+  args is a map containing the keys needed to generate at CWMP.Protocol.Messages.ScheduleDownload
+  structure. i.e.
+        commandkey (May be empty)
+        filetype
+        url
+        username (Optional)
+        password (Optional)
+        filesize
+        target_filename (Optional)
+        timewindowlist [%{
+          window_start
+          window_end
+          window_mode
+          user_message (May be "")
+          max_retries}]
+
+  """
+  def scheduleDownload(session, args) do
+    session_call(session, %{method: "ScheduleDownload", args: args, source: "script"})
+  end
+  @doc """
+
   Get the current list of ACS messages, i.e. TransferComplete aso from the session.
 
   """
