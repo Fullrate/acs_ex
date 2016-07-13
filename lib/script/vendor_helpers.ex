@@ -159,6 +159,15 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
+  Sends an GetAllQueuedTransfers request info the session.
+
+  """
+  def getAllQueuedTransfers(session) do
+    session_call(session, %{method: "GetAllQueuedTransfers", args: nil, source: "script"})
+  end
+
+  @doc """
+
   Get the current list of ACS messages, i.e. TransferComplete aso from the session.
 
   """
