@@ -467,6 +467,8 @@ defmodule ACS.Session do
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetOptions{option_name: args})
           "Upload" ->
             CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.Upload, args))
+          "FactoryReset" ->
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.FactoryReset{})
           _ ->
             {:error,"Cant match request method: #{method}"}
         end
@@ -585,10 +587,11 @@ defmodule ACS.Session do
       "GetOptions" ->
         # args is just a string with the option name
         String.valid?(args)
-
       "Upload" ->
         # args must at least contain commandkey, url and filetype
         is_map(args) and Map.has_key?(args,:commandkey) and Map.has_key?(args,:url) and Map.has_key?(args,:filetype)
+      "FactoryReset" ->
+        true # takes no params, always true
 
       _ ->
         false

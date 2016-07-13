@@ -150,6 +150,15 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
+  Sends a FactoryReset request info the session.
+
+  """
+  def factoryReset(session) do
+    session_call(session, %{method: "FactoryReset", args: nil, source: "script"})
+  end
+
+  @doc """
+
   Get the current list of ACS messages, i.e. TransferComplete aso from the session.
 
   """
