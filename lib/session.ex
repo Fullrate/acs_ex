@@ -475,6 +475,8 @@ defmodule ACS.Session do
             CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.ScheduleDownload, args))
           "CancelTransfer" ->
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.CancelTransfer{commandkey: args})
+          "ChangeDUState" ->
+            CWMP.Protocol.Generator.generate!(header, struct(CWMP.Protocol.Messages.ChangeDUState, args))
           _ ->
             {:error,"Cant match request method: #{method}"}
         end
@@ -612,6 +614,26 @@ defmodule ACS.Session do
       "CancelTransfer" ->
         # args is just a string with the option name
         String.valid?(args)
+      "ChangeDUState" ->
+        if is_map(args) and Map.has_key?(args,:commandkey) and Map.has_key?(args,:operations) and is_list(args.operations) and length(args.operations)>0 do
+          # Check that all elements of the operations list conform
+          Enum.all?(args.operations, fn(o) ->
+            if is_map(o) do
+              case o do
+                %CWMP.Protocol.Messages.InstallOpStruct{} ->
+                  Map.has_key?(o,:url) and Map.has_key?(o,:uuid) and Map.has_key?(o,:username) and Map.has_key?(o,:password) and Map.has_key?(o,:execution_env_ref)
+                %CWMP.Protocol.Messages.UpdateOpStruct{} ->
+                  Map.has_key?(o,:url) and Map.has_key?(o,:uuid) and Map.has_key?(o,:username) and Map.has_key?(o,:password) and Map.has_key?(o,:version)
+                %CWMP.Protocol.Messages.UninstallOpStruct{} ->
+                  Map.has_key?(o,:url) and Map.has_key?(o,:uuid) and Map.has_key?(o,:execution_env_ref)
+              end
+            else
+              false
+            end
+          end)
+        else
+          false
+        end
 
       _ ->
         false

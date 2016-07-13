@@ -204,6 +204,33 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
+  Sends a ChangeDUState request info the session.
+
+  args is a map containing the keys needed to generate at CWMP.Protocol.Messages.ChangeDUState
+  structure. This means that the elements in the operations list need to be one (or more) of the
+  struct types:
+     %CWMP.Protocol.Messages.InstallOpStruct{url: url, uuid: uuid, username: user, password: pass, execution_env_ref: eer}
+     %CWMP.Protocol.Messages.UpdateOpStruct{url: url, uuid: uuid, username: user, password: pass, version: ver}
+     %CWMP.Protocol.Messages.UninstallOpStruct{url: url, uuid: uuid, execution_env_ref: eer}
+
+  For example:
+        commandkey (May be "")
+        operations: [
+          %CWMP.Protocol.Messages.InstallOpStruct{
+            url
+            uuid
+            username (May be "")
+            password (May be "")
+            execution_env_ref
+          }]
+
+  """
+  def changeDUState(session, args) do
+    session_call(session, %{method: "ChangeDUState", args: args, source: "script"})
+  end
+
+  @doc """
+
   Get the current list of ACS messages, i.e. TransferComplete aso from the session.
 
   """
