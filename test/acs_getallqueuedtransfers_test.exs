@@ -1,4 +1,4 @@
-defmodule ACSFactoryReset do
+defmodule ACSGetAllQueuedTransfersTest do
   use ExUnit.Case
   import PathHelpers
   import RequestSenders
