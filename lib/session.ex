@@ -22,8 +22,9 @@ defmodule ACS.Session do
     For the supervisor.
 
   """
-  def start_link(device_id,message,fun \\ nil) do
-    GenServer.start_link(__MODULE__, [device_id,message,fun])
+  def start_link([spec_module],device_id,message,fun \\ nil) do
+    Logger.debug("ACS.Session start_link(#{inspect spec_module},#{inspect device_id}, #{inspect message}, #{inspect fun})")
+    GenServer.start_link(__MODULE__, [spec_module,device_id,message,fun])
   end
 
   # API
@@ -105,7 +106,7 @@ defmodule ACS.Session do
 
   # SERVER
 
-  def init([device_id,message,fun]) do
+  def init([script_module,device_id,message,fun]) do
     Logger.debug("Session gen_server init(#{inspect(device_id)}, #{inspect(message)})")
 
     # This should only be called when the Plug gets an Inform, it this up
@@ -117,7 +118,10 @@ defmodule ACS.Session do
 
     gspid=self
     sspid=case fun do
-      nil -> spawn_link(ACS.Session.Script.Vendor, :start, [gspid, device_id, hd(message.entries)]) # TODO: Should be "first inform encountered", not just hd
+      nil -> case script_module do
+        nil -> spawn_link(ACS.Session.Script.Vendor, :session_start, [gspid, device_id, hd(message.entries)]) # TODO: Should be "first inform encountered", not just hd
+        spec_mod -> spawn_link(spec_mod, :session_start, [gspid, device_id, hd(message.entries)]) # TODO: Should be "first inform encountered", not just hd
+      end
       f when is_function(f) -> spawn_link(fn() -> fun.(gspid, device_id, hd(message.entries)) end)
       _ -> spawn_link(fun, :start, [gspid, device_id, hd(message.entries)]) # assume some other module
     end

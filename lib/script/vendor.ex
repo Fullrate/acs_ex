@@ -6,22 +6,20 @@ defmodule ACS.Session.Script.Vendor do
 
   This is the main vendor specific logic module, and the one
   you want to write if you have stuff that needs to happen in
-  you specific environment.
+  your specific environment.
+
+  In the real world you would write a new module that starts acs_ex
+  using the child_spec, giving it the name of your handler module.
+
+  That would make acs_ex use your module when initiating the script
+  session.
+
+  An example of this is available right next to this module.
 
   """
 
-  @doc """
-
-    start is call when a session is initiated, from here all logic
-    pertaining to the current CPE can be placed.
-
-    If you want to implement at start for each product_class,
-    start(%{product_class: "something", ....}, message) is the way
-    to do it.
-
-  """
-  def start(_session,_did,_inform) do
-    Logger.debug("Default Vendor start called...")
+  def session_start(_session,did,_inform) do
+    Logger.debug("Default Vendor start called...#{inspect did}")
   end
 
 end

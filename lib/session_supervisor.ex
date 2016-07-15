@@ -2,10 +2,11 @@ defmodule ACS.Session.Supervisor do
   use Supervisor
   require Logger
 
-  def start_link do
+  def start_link(session_module \\ nil) do
     # Have to register the supervisor process, so we can reference it
     # in the start_session/1 function
-    Supervisor.start_link(__MODULE__, [], name: :session_supervisor)
+    # The session_module parameter is a module containing a session_start/3 method
+    Supervisor.start_link(__MODULE__, [session_module], name: :session_supervisor)
   end
 
   def start_session(device_id, message, fun) do
@@ -26,9 +27,9 @@ defmodule ACS.Session.Supervisor do
     Supervisor.terminate_child(:session_supervisor, :gproc.where({:n, :l, {:device_id, device_id}}))
   end
 
-  def init(_) do
+  def init(session_module) do
     children = [
-      worker(ACS.Session, [], restart: :temporary)
+      worker(ACS.Session, [session_module], restart: :temporary)
     ]
 
     supervise(children, strategy: :simple_one_for_one)
