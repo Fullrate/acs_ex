@@ -27,7 +27,6 @@ defmodule ACS.Mixfile do
      {:poison, "~> 2.0"},
      {:poolboy, "~> 1.5.1"},
      {:mock, "~> 0.1.1", only: :test},
-     {:logger_file_backend, github: "onkel-dirtus/logger_file_backend"},
      {:gproc, "~> 0.5.0"},
      {:cryptex, "~> 0.0.1"}]
   end
