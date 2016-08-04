@@ -22,8 +22,7 @@ Our config.exs would have an entry similar to this:
 
 ```elixir
 config :acs_ex, :acs_port, 7547
-# crypt stuff is only needed of you are using the cwmp_ex
-# methods that use encryption...
+# crypt stuff is needed beacuse the CPE<>ACS cookie is an encrypted one.
 config :acs_ex,
   crypt_keybase: "31de9f7d766287c7565801f30babbd4f",
   crypt_cookie_salt: "SomeSalt",
