@@ -1,5 +1,15 @@
 ExUnit.start
 
+defmodule TestHelpers do
+  defmacro acsex(module, do: body) do
+    quote do
+      {:ok,acs_ex_pid} = ACS.start_link(unquote(module), Application.fetch_env!(:acs_ex, :acs_port))
+      unquote(body)
+      Supervisor.stop(acs_ex_pid)
+    end
+  end
+end
+
 defmodule PathHelpers do
   def fixture_path do
     Path.expand("fixtures", __DIR__)

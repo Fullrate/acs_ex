@@ -1,5 +1,6 @@
 defmodule ACSTestSession do
   use ExUnit.Case
+  import TestHelpers
 
   @moduledoc """
 
@@ -43,131 +44,138 @@ defmodule ACSTestSession do
     #end
 
   test "Normal Session - with right ID in response" do
-    {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @inform, fn(session, _device_id, _message) ->
-      import ACS.Session.Script.Vendor.Helpers
-      # The script inserts a message in the queue.
-      _r = getParameterValues(session, ["Device.Test."])
-    end )
-    assert is_pid(pid)
+    acsex(ACS.Session.Script.Vendor) do
+      {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @inform, fn(session, _device_id, _message) ->
+        import ACS.Session.Script.Vendor.Helpers
+        # The script inserts a message in the queue.
+        _r = getParameterValues(session, ["Device.Test."])
+      end )
+      assert is_pid(pid)
 
-    assert Supervisor.count_children(:session_supervisor).active == 1
+      assert Supervisor.count_children(:session_supervisor).active == 1
 
-    # now pretend we send the inform into the session, this is what the plug does after creating it
-    r=ACS.Session.process_message(@device_id, @inform)
-    assert {200,@inform_response} == r
+      # now pretend we send the inform into the session, this is what the plug does after creating it
+      r=ACS.Session.process_message(@device_id, @inform)
+      assert {200,@inform_response} == r
 
-    {code,response}=ACS.Session.process_message(@device_id, @empty)
-    assert code==200
-    assert Regex.match?(@gpv_request,response)
+      {code,response}=ACS.Session.process_message(@device_id, @empty)
+      assert code==200
+      assert Regex.match?(@gpv_request,response)
 
-    {res,parsed} = CWMP.Protocol.Parser.parse(response)
-    assert res == :ok
+      {res,parsed} = CWMP.Protocol.Parser.parse(response)
+      assert res == :ok
 
-    # another process_message for the response, but with the wrong ID
-    # will make the session script exit with a timeout.
-    gpv_response = @gpv_response
-    new_header = %{gpv_response.header | id: parsed.header.id}
-    gpv_response = %{gpv_response | header: new_header}
-    r=ACS.Session.process_message(@device_id, gpv_response) # Should be processed with no timeout
-    assert r=={200,""}
+      # another process_message for the response, but with the wrong ID
+      # will make the session script exit with a timeout.
+      gpv_response = @gpv_response
+      new_header = %{gpv_response.header | id: parsed.header.id}
+      gpv_response = %{gpv_response | header: new_header}
+      r=ACS.Session.process_message(@device_id, gpv_response) # Should be processed with no timeout
+      assert r=={200,""}
 
-    end_res=ACS.Session.Supervisor.end_session(@device_id)
-    assert end_res == :ok
-    assert Supervisor.count_children(:session_supervisor).active == 0
+      end_res=ACS.Session.Supervisor.end_session(@device_id)
+      assert end_res == :ok
+      assert Supervisor.count_children(:session_supervisor).active == 0
+    end
   end
 
   test "Normal Session - with wrong ID in response" do
-    Application.put_env(:acs_ex, :script_timeout, 1000, persistent: false)
+    acsex(ACS.Session.Script.Vendor) do
+      Application.put_env(:acs_ex, :script_timeout, 1000, persistent: false)
 
-    {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @inform, fn(session, _device_id, _message) ->
-      import ACS.Session.Script.Vendor.Helpers
-      # The script inserts a message in the queue.
-      _r = getParameterValues(session, ["Device.Test."])
-    end )
-    assert is_pid(pid)
+      {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @inform, fn(session, _device_id, _message) ->
+        import ACS.Session.Script.Vendor.Helpers
+        # The script inserts a message in the queue.
+        _r = getParameterValues(session, ["Device.Test."])
+      end )
+      assert is_pid(pid)
 
-    assert Supervisor.count_children(:session_supervisor).active == 1
+      assert Supervisor.count_children(:session_supervisor).active == 1
 
-    # now pretend we send the inform into the session, this is what the plug does after creating it
-    r=ACS.Session.process_message(@device_id, @inform)
-    assert {200,@inform_response} == r
+      # now pretend we send the inform into the session, this is what the plug does after creating it
+      r=ACS.Session.process_message(@device_id, @inform)
+      assert {200,@inform_response} == r
 
-    {code,response}=ACS.Session.process_message(@device_id, @empty)
-    assert code==200
-    assert Regex.match?(@gpv_request,response)
+      {code,response}=ACS.Session.process_message(@device_id, @empty)
+      assert code==200
+      assert Regex.match?(@gpv_request,response)
 
-    # another process_message for the response, but with the wrong ID
-    # will make the session return a Fault, 8003
-    {code,response}=ACS.Session.process_message(@device_id, @gpv_response)
-    assert code == 200
-    {res,parsed} = CWMP.Protocol.Parser.parse(response)
-    assert res == :ok
-    fault=hd(parsed.entries)
-    assert fault.__struct__==CWMP.Protocol.Messages.Fault
-    assert fault.faultcode == "Server"
-    assert fault.faultstring == "CWMP fault"
-    assert fault.detail == %CWMP.Protocol.Messages.FaultStruct{code: 8003, string: "Invalid arguments"}
+      # another process_message for the response, but with the wrong ID
+      # will make the session return a Fault, 8003
+      {code,response}=ACS.Session.process_message(@device_id, @gpv_response)
+      assert code == 200
+      {res,parsed} = CWMP.Protocol.Parser.parse(response)
+      assert res == :ok
+      fault=hd(parsed.entries)
+      assert fault.__struct__==CWMP.Protocol.Messages.Fault
+      assert fault.faultcode == "Server"
+      assert fault.faultstring == "CWMP fault"
+      assert fault.detail == %CWMP.Protocol.Messages.FaultStruct{code: 8003, string: "Invalid arguments"}
 
-    end_res=ACS.Session.Supervisor.end_session(@device_id)
-    assert end_res == :ok
-    assert Supervisor.count_children(:session_supervisor).active == 0
-
-    Application.delete_env(:acs_ex, :script_timeout)
+      end_res=ACS.Session.Supervisor.end_session(@device_id)
+      assert end_res == :ok
+      assert Supervisor.count_children(:session_supervisor).active == 0
+      Application.delete_env(:acs_ex, :script_timeout)
+    end
   end
 
   # Test what happens when a sessions gets input that is not
   # supposed to happen.
   test "Abnormal Session - double inform" do
-    # Double process_message, so before we have a response to one message, what happens if
-    # Another arrives?
-    {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @inform)
-    assert is_pid(pid)
+    acsex(ACS.Session.Script.Vendor) do
+      # Double process_message, so before we have a response to one message, what happens if
+      # Another arrives?
+      {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @inform)
+      assert is_pid(pid)
 
-    assert Supervisor.count_children(:session_supervisor).active == 1
+      assert Supervisor.count_children(:session_supervisor).active == 1
 
-    r=ACS.Session.process_message(@device_id, @inform)
-    assert {200,@inform_response} == r
+      r=ACS.Session.process_message(@device_id, @inform)
+      assert {200,@inform_response} == r
 
 
-    r=ACS.Session.process_message(@device_id, @inform)
-    assert {200,@inform_response} == r
+      r=ACS.Session.process_message(@device_id, @inform)
+      assert {200,@inform_response} == r
 
-    end_res=ACS.Session.Supervisor.end_session(@device_id)
-    assert end_res == :ok
-    assert Supervisor.count_children(:session_supervisor).active == 0
+      end_res=ACS.Session.Supervisor.end_session(@device_id)
+      assert end_res == :ok
+      assert Supervisor.count_children(:session_supervisor).active == 0
+    end
   end
 
   # Tests if we can wait for the messages list to be filled in the session
   test "TransferComplete session" do
-    {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @tc_inform, fn(_session,_did,_inform) -> 
-      Process.sleep(2000)
-    end)
-    assert is_pid(pid)
-    assert Supervisor.count_children(:session_supervisor).active == 1
+    acsex(ACS.Session.Script.Vendor) do
+      {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @tc_inform, fn(_session,_did,_inform) ->
+        Process.sleep(2000)
+      end)
+      assert is_pid(pid)
+      assert Supervisor.count_children(:session_supervisor).active == 1
 
-    r=ACS.Session.process_message(@device_id, @tc_inform)
-    assert {200,@inform_response} == r
+      r=ACS.Session.process_message(@device_id, @tc_inform)
+      assert {200,@inform_response} == r
 
-    # Start a process that sends a TransferComplete in 1 second
+      # Start a process that sends a TransferComplete in 1 second
 
-    # Now send a script message in, to retrieve the messagelist, that will get a noreply, and should get a reply when
-    # the TransferComplete process has completed and sent "" into the session
-    # send in a TransferComplete
-    # Send in %{} - triggering a reply to the script message
-    Task.start_link fn ->
-      Process.sleep(1000)
-      _response=ACS.Session.process_message(@device_id,@transfer_complete)
-      ACS.Session.process_message(@device_id,%{})
+      # Now send a script message in, to retrieve the messagelist, that will get a noreply, and should get a reply when
+      # the TransferComplete process has completed and sent "" into the session
+      # send in a TransferComplete
+      # Send in %{} - triggering a reply to the script message
+      Task.start_link fn ->
+        Process.sleep(1000)
+        _response=ACS.Session.process_message(@device_id,@transfer_complete)
+        ACS.Session.process_message(@device_id,%{})
+      end
+
+      messages=GenServer.call(pid, {:script_command, [:unscripted]})
+
+      message=List.first(messages)
+      entry=List.first(message.entries)
+      assert entry.__struct__ == CWMP.Protocol.Messages.TransferComplete
+
+      end_res=ACS.Session.Supervisor.end_session(@device_id)
+      assert end_res == :ok
+      assert Supervisor.count_children(:session_supervisor).active == 0
     end
-
-    messages=GenServer.call(pid, {:script_command, [:unscripted]})
-
-    message=List.first(messages)
-    entry=List.first(message.entries)
-    assert entry.__struct__ == CWMP.Protocol.Messages.TransferComplete
-
-    end_res=ACS.Session.Supervisor.end_session(@device_id)
-    assert end_res == :ok
-    assert Supervisor.count_children(:session_supervisor).active == 0
   end
 end
