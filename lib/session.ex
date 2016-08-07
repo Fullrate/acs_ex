@@ -107,7 +107,7 @@ defmodule ACS.Session do
   # SERVER
 
   def init([script_module,device_id,message,fun]) do
-    Logger.debug("Session gen_server init(#{inspect(device_id)}, #{inspect(message)})")
+    Logger.debug("Session gen_server init(#{inspect script_module} #{inspect(device_id)}, #{inspect(message)})")
 
     # This should only be called when the Plug gets an Inform, it this up
     # to me to check, or the caller? I will assume caller.
@@ -119,11 +119,11 @@ defmodule ACS.Session do
     gspid=self
     sspid=case fun do
       nil -> case script_module do
-        nil -> spawn_link(ACS.Session.Script.Vendor, :session_start, [gspid, device_id, hd(message.entries)]) # TODO: Should be "first inform encountered", not just hd
+        nil -> Logger.error("Impossible to start a session with no script module or function")
         spec_mod -> spawn_link(spec_mod, :session_start, [gspid, device_id, hd(message.entries)]) # TODO: Should be "first inform encountered", not just hd
       end
       f when is_function(f) -> spawn_link(fn() -> fun.(gspid, device_id, hd(message.entries)) end)
-      _ -> spawn_link(fun, :start, [gspid, device_id, hd(message.entries)]) # assume some other module
+      _ -> spawn_link(fun, :session_start, [gspid, device_id, hd(message.entries)]) # assume some other module
     end
 
     # Start session script process, save pid to state
