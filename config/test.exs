@@ -7,5 +7,4 @@ config :kafka_ex,
   disable_default_worker: true
 
 config :acs_ex,
-  acs_port: 65432,
-  session_script: ACS.Session.Script.Vendor
+  acs_port: 65432
