@@ -3,18 +3,21 @@ defmodule ACS do
   Request router for CPE->ACS
 
   """
-  use Application
+  use Supervisor
 
-  def start(_type, _args) do
-    import Supervisor.Spec, warn: false
+  def start_link(session_handler, port, opts \\ []) do
+    Supervisor.start_link(__MODULE__, {port, session_handler, opts})
+  end
+
+  def init({port, session_handler, opts}) do
 
     children = [
-      Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [], [port: Application.fetch_env!(:acs_ex, :acs_port)])
+      Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [], [port: port]),
+      supervisor(ACS.Session.Supervisor, [session_handler])
     ]
 
     opts = [strategy: :one_for_one, name: ACS.Supervisor]
-    Supervisor.start_link(children, opts)
-    ACS.Session.Supervisor.start_link
+    supervise(children, opts)
   end
 
 end
