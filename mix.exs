@@ -13,7 +13,7 @@ defmodule ACS.Mixfile do
 
   def application do
     [applications: [:logger, :cowboy, :plug, :httpoison,
-      :tzdata, :poolboy, :gproc],
+      :tzdata, :poolboy, :gproc, :crypto],
      included_applications: [:cwmp_ex, :tools, :timex, :poison]]
   end
 
