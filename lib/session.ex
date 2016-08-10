@@ -116,16 +116,10 @@ defmodule ACS.Session do
     # Queue the response in the plug_element, so that it can be popped with next response
     # InformResponse into the plug queue
 
-    Logger.metadata(serial: device_id.serial_number, sessionid: UUID.uuid4(:hex))
+    session_id=UUID.uuid4(:hex)
+    Logger.metadata(serial: device_id.serial_number, sessionid: session_id)
     gspid=self
-    sspid=case fun do
-      nil -> case script_module do
-        nil -> Logger.error("Impossible to start a session with no script module or function")
-        spec_mod -> spawn_link(spec_mod, :session_start, [gspid, device_id, hd(message.entries)]) # TODO: Should be "first inform encountered", not just hd
-      end
-      f when is_function(f) -> spawn_link(fn() -> fun.(gspid, device_id, hd(message.entries)) end)
-      _ -> spawn_link(fun, :session_start, [gspid, device_id, hd(message.entries)]) # assume some other module
-    end
+    sspid=spawn_link(__MODULE__, :session_prestart, [gspid, script_module, device_id, hd(message.entries), session_id, fun]) # TODO: Should be "first inform encountered", not just hd
 
     # Start session script process, save pid to state
     case takeover_session(device_id) do
@@ -335,11 +329,31 @@ defmodule ACS.Session do
     super(request,from,state)
   end
 
-  defp via_tuple(device_id) do
-    {:via, :gproc, {:n, :l, {:device_id, device_id}}}
+  def has_inform?([]), do: false
+  def has_inform?([%CWMP.Protocol.Messages.Inform{} | _]), do: true
+  def has_inform?([_ | es]), do: has_inform?(es)
+
+  @doc """
+  this is spawn_linked and should `apply` the call to the module
+  """
+  def session_prestart(gspid,script_module,device_id,message,sessionid,fun) do
+    # Set the metadata for the scripting process
+    Logger.metadata(sessionid: sessionid, serial: device_id.serial_number)
+    case fun do
+      nil -> case script_module do
+        nil -> Logger.error("Impossible to start a session with no script module or function")
+        spec_mod -> apply(spec_mod, :session_start, [gspid, device_id, message])
+      end
+      f when is_function(f) -> apply(fun, [gspid, device_id, message])
+      _ -> Logger.error("Can not figure out how to call the session_start function")
+    end
   end
 
   # PRIVATE METHODS
+
+  defp via_tuple(device_id) do
+    {:via, :gproc, {:n, :l, {:device_id, device_id}}}
+  end
 
   defp construct_reply( message ) do
     entry = hd(message.entries)
@@ -651,8 +665,5 @@ defmodule ACS.Session do
     Base.encode16(:erlang.md5(:crypto.strong_rand_bytes(32)), case: :lower)
   end
 
-  def has_inform?([]), do: false
-  def has_inform?([%CWMP.Protocol.Messages.Inform{} | _]), do: true
-  def has_inform?([_ | es]), do: has_inform?(es)
 
 end
