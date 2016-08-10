@@ -16,10 +16,7 @@ defmodule ACS.Session.Supervisor do
 
   def start_session(device_id, message) do
     Logger.debug("SessionSupervisor start_session without function")
-    case Application.fetch_env(:acs_ex, :session_script) do
-      {:ok,module} -> Supervisor.start_child(:session_supervisor, [device_id,message,module])
-      :error -> Supervisor.start_child(:session_supervisor, [device_id,message])
-    end
+    Supervisor.start_child(:session_supervisor, [device_id,message])
   end
 
   def end_session(device_id) do
