@@ -3,7 +3,7 @@ defmodule ACS.Mixfile do
 
   def project do
     [app: :acs_ex,
-     version: "0.1.1",
+     version: "0.1.2",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -19,6 +19,7 @@ defmodule ACS.Mixfile do
 
   defp deps do
     [{:cowboy, "~> 1.0"},
+     {:uuid, "~> 1.1"},
      {:plug, "~> 1.1"},
      {:cwmp_ex, github: "Fullrate/cwmp_ex"},
      {:kafka_ex, "~> 0.5.0"},
