@@ -116,6 +116,7 @@ defmodule ACS.Session do
     # Queue the response in the plug_element, so that it can be popped with next response
     # InformResponse into the plug queue
 
+    Logger.metadata(serial: device_id.serial_number, sessionid: UUID.uuid4(:hex))
     gspid=self
     sspid=case fun do
       nil -> case script_module do
@@ -251,7 +252,7 @@ defmodule ACS.Session do
                 {:noreply,nil,[],state.sspid}
             end
           _ ->
-            Logger.debug("Cant indentify script_element, clearing and discontinuing session: #{inspect(state.script_element)}")
+            Logger.debug("Cant identify script_element, clearing and discontinuing session: #{inspect(state.script_element)}")
             {{200,""},nil,[],nil}
         end
 
@@ -283,7 +284,7 @@ defmodule ACS.Session do
                   {reply, nil, msg, nil}
                 end
 
-              %{command: :unscripted, from: from, state: :unhandled} ->
+              %{command: :unscripted, from: _from, state: :unhandled} ->
                 Logger.debug("We have a script wanting the unmatched list - we should still reply to this though")
                 {reply,msg} = construct_reply( message )
                 {reply,state.script_element,msg,state.sspid}
