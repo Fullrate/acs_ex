@@ -27,7 +27,7 @@ defmodule ACS.Mixfile do
      {:poison, "~> 2.0"},
      {:poolboy, "~> 1.5.1"},
      {:mock, "~> 0.1.1", only: :test},
-     {:gproc, "~> 0.5.0"},
+     {:gproc, git: "https://github.com/uwiger/gproc.git", tag: "0.6"},
      {:cryptex, "~> 0.0.1"}]
   end
 end
