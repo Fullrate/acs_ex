@@ -51,6 +51,15 @@ defmodule ACS.Session.Script.Vendor.Helpers do
 
   @doc """
 
+  GetRPCMethods, no args
+
+  """
+  def getRPCMethods(session) do
+    session_call(session, %{method: "GetRPCMethods", args: [], source: "script"})
+  end
+
+  @doc """
+
   args must be a map with keys: "object_name" where the object name ends with .
 
   """

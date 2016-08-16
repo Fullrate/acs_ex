@@ -448,7 +448,7 @@ defmodule ACS.Session do
         header=%CWMP.Protocol.Messages.Header{id: id}
         message=case method do
           "GetRPCMethods" ->
-            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetRPCMethods{})
+            CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.GetRPCMethods{}, cwmp_version)
           "SetParameterValues" ->
             params=for a <- args, do: %CWMP.Protocol.Messages.ParameterValueStruct{name: a.name, type: a.type, value: a.value}
             CWMP.Protocol.Generator.generate!(header, %CWMP.Protocol.Messages.SetParameterValues{parameters: params}, cwmp_version)
