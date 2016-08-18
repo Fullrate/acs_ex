@@ -562,7 +562,15 @@ defmodule ACS.Session do
         true # takes no params, always true
       "ScheduleInform" ->
         # args is a map with "commandkey" and "delay_seconds"
-        is_map(args) and Map.has_key?(args,:commandkey) and Map.has_key?(args,:delay_seconds)
+        if is_map(args) and Map.has_key?(args,:commandkey) and Map.has_key?(args,:delay_seconds) do
+          if is_integer(args.delay_seconds) do
+            true
+          else
+            Integer.parse(args.delay_seconds) != :error
+          end
+        else
+          false
+        end
       "SetVouchers" ->
         # args is a list of maps with keys
         #  signature_value:
