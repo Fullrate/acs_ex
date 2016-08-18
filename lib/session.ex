@@ -541,11 +541,19 @@ defmodule ACS.Session do
         # args must be list of string, at least 1 element in list
         is_list(args) and length(args) > 0 and String.valid?(hd(args))
       "AddObject" ->
-        # args must be map with at least key "object_name"
-        is_map(args) and Map.has_key?(args,:object_name)
+        # args must be map with at least key "object_name" and value must end in .
+        if is_map(args) and Map.has_key?(args,:object_name) do
+          String.last(args.object_name) == "."
+        else
+          false
+        end
       "DeleteObject" ->
-        # args must be map with at least key "object_name"
-        is_map(args) and Map.has_key?(args,:object_name)
+        # args must be map with at least key "object_name" and value must end in .
+        if is_map(args) and Map.has_key?(args,:object_name) do
+          String.last(args.object_name) == "."
+        else
+          false
+        end
       "Reboot" ->
         true # takes no params, always true
       "Download" ->
