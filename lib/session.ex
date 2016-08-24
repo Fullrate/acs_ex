@@ -2,10 +2,6 @@ defmodule ACS.Session do
   use GenServer
   require Logger
 
-  @encryptor Cryptex.MessageEncryptor.new(
-    Cryptex.KeyGenerator.generate(Application.fetch_env!(:acs_ex,:crypt_keybase), Application.fetch_env!(:acs_ex,:crypt_cookie_salt)),
-    Cryptex.KeyGenerator.generate(Application.fetch_env!(:acs_ex,:crypt_keybase), Application.fetch_env!(:acs_ex,:crypt_signed_cookie_salt)))
-
   @moduledoc """
 
     The actual ACS-CPE session is handled here. A session is initiated
@@ -22,9 +18,9 @@ defmodule ACS.Session do
     For the supervisor.
 
   """
-  def start_link([spec_module],device_id,message,fun \\ nil) do
-    Logger.debug("ACS.Session start_link(#{inspect spec_module},#{inspect device_id}, #{inspect message}, #{inspect fun})")
-    GenServer.start_link(__MODULE__, [spec_module,device_id,message,fun])
+  def start_link([spec_module],session_id,device_id,message,fun \\ nil) do
+    Logger.debug("ACS.Session start_link(#{inspect session_id},#{inspect device_id}")
+    GenServer.start_link(__MODULE__, [spec_module,session_id,device_id,message,fun])
   end
 
   # API
@@ -35,13 +31,13 @@ defmodule ACS.Session do
     or other stuff.
 
   """
-  def process_message(device_id, message) do
+  def process_message(session_id, message) do
     try do
       timeout=case Application.fetch_env(:acs_ex, :session_timeout) do
         {:ok, to} -> to
         :error -> 30000
       end
-      GenServer.call(via_tuple(device_id), {:process_message, [device_id,message]}, timeout)
+      GenServer.call(via_tuple(session_id), {:process_message, [session_id,message]}, timeout)
     catch
       # timeout comes as :exit, reason.
       :exit, reason -> case reason do
@@ -52,6 +48,28 @@ defmodule ACS.Session do
                           %CWMP.Protocol.Messages.Header{id: msg.header.id},
                           %CWMP.Protocol.Messages.Fault{faultcode: "Server", faultstring: "CWMP fault", detail:
                             %CWMP.Protocol.Messages.FaultStruct{code: "8002", string: "Internal error"}})
+        {what,ever} -> {what,ever}
+      end
+    end
+  end
+
+  @doc """
+
+  When something non-Inform'ish is sent into the session we need to find and verify the
+  session.
+
+  """
+  def verify_session(session_id, remote_host) do
+    try do
+      timeout=case Application.fetch_env(:acs_ex, :session_timeout) do
+        {:ok, to} -> to
+        :error -> 30000
+      end
+      GenServer.call(via_tuple(session_id), {:verify_remotehost, [remote_host]}, timeout)
+    catch
+      # timeout comes as :exit, reason.
+      :exit, reason -> case reason do
+        {:timeout,_} -> {:error, "timeout"}
         {what,ever} -> {what,ever}
       end
     end
@@ -84,31 +102,29 @@ defmodule ACS.Session do
     end
   end
 
-  defp takeover_session(device_id, tries \\ 5)
+  defp takeover_session(session_id, tries \\ 5)
 
-  defp takeover_session(_device_id, 0), do: {:error, "Could not take over session"}
-  defp takeover_session(device_id, tries) do
-    case :gproc.reg_or_locate({:n, :l, {:device_id, device_id}}) do
+  defp takeover_session(_session_id, 0), do: {:error, "Could not take over session"}
+  defp takeover_session(session_id, tries) do
+    case :gproc.reg_or_locate({:n, :l, {:session_id, session_id}}) do
       {other, _} when other == self() ->
         :ok
       {other, _} ->
         ref = Process.monitor(other)
         Process.exit(other, :kill) # TODO: Maybe send a poison pill?
         receive do
-          {:DOWN, _ref, :process, _other, _} -> takeover_session(device_id, tries-1)
+          {:DOWN, _ref, :process, _other, _} -> takeover_session(session_id, tries-1)
         after
           1000 ->
             Process.demonitor(ref, :flush)
-            takeover_session(device_id, tries-1)
+            takeover_session(session_id, tries-1)
         end
     end
   end
 
   # SERVER
 
-  def init([script_module,device_id,message,fun]) do
-    Logger.debug("Session gen_server init(#{inspect script_module} #{inspect(device_id)}, #{inspect(message)})")
-
+  def init([script_module,session_id,device_id,message,fun]) do
     # This should only be called when the Plug gets an Inform, it this up
     # to me to check, or the caller? I will assume caller.
 
@@ -116,16 +132,15 @@ defmodule ACS.Session do
     # Queue the response in the plug_element, so that it can be popped with next response
     # InformResponse into the plug queue
 
-    session_id=UUID.uuid4(:hex)
     Logger.metadata(serial: device_id.serial_number, sessionid: session_id)
     gspid=self
     sspid=spawn_link(__MODULE__, :session_prestart, [gspid, script_module, device_id, hd(message.entries), session_id, fun]) # TODO: Should be "first inform encountered", not just hd
 
     # Start session script process, save pid to state
-    case takeover_session(device_id) do
+    case takeover_session(session_id) do
       :ok ->
         Process.flag(:trap_exit, true)
-        {:ok,%{device_id: device_id, script_element: nil, plug_element: nil, unmatched_incomming_list: [], sspid: sspid, cwmp_version: message.cwmp_version}}
+        {:ok,%{device_id: device_id, session_id: session_id, script_element: nil, plug_element: nil, unmatched_incomming_list: [], sspid: sspid, cwmp_version: message.cwmp_version}}
       _ -> {:stop, "Could not take over session"}
     end
   end
@@ -183,12 +198,21 @@ defmodule ACS.Session do
 
   @doc """
 
+  verifies the remote_host by comparing it to the one in the state.device_id
+
+  """
+  def handle_call({:verify_remotehost, [remote_host]}, from, state) do
+    {:reply, state.device_id.ip == remote_host, state}
+  end
+
+  @doc """
+
   Processes a message from the plug. "message" is the CWMP.Protocol version of
   the parsed request sent into the plug.
 
   """
-  def handle_call({:process_message, [device_id,message]}, from, state) do
-    Logger.debug("handle_call(:process_message, #{inspect(device_id)}, #{inspect(message)})")
+  def handle_call({:process_message, [session_id,message]}, from, state) do
+    Logger.debug("handle_call(:process_message, #{session_id}, #{inspect(message)})")
 
     # If this message is an Inform, it can be ignored, because the response to that
     # has already been queue in the plug_element by init.
@@ -351,8 +375,8 @@ defmodule ACS.Session do
 
   # PRIVATE METHODS
 
-  defp via_tuple(device_id) do
-    {:via, :gproc, {:n, :l, {:device_id, device_id}}}
+  defp via_tuple(session_id) do
+    {:via, :gproc, {:n, :l, {:session_id, session_id}}}
   end
 
   defp construct_reply( message ) do

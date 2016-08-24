@@ -10,7 +10,8 @@ defmodule ACSTestSession do
 
   """
 
-  @device_id %{manufacturer: "ZyXEL", oui: "4C9EFF", product_class: "Product1", serial_number: "SerialNo1"}
+  @session_id "1234567901234567890123456789012"
+  @device_id %{manufacturer: "ZyXEL", oui: "4C9EFF", product_class: "Product1", serial_number: "SerialNo1", ip: "127.0.0.1"}
   @transfer_complete %{cwmp_version: "1-0", entries: [%CWMP.Protocol.Messages.TransferComplete{command_key: "", complete_time: Timex.datetime({{2016,5,18},{8,6,3}}), fault_struct: %CWMP.Protocol.Messages.FaultStruct{code: 0, string: "Download successful"}, start_time: Timex.datetime({{2016,5,18},{8,6,3}})}], header: %CWMP.Protocol.Messages.Header{hold_requests: false, id: "12345678", no_more_requests: false, session_timeout: 30}}
   @tc_inform %{cwmp_version: "1-0", entries: [%CWMP.Protocol.Messages.Inform{current_time: Timex.datetime({{2016,5,18},{8,6,3}}), device_id: %CWMP.Protocol.Messages.DeviceIdStruct{manufacturer: "ZyXEL", oui: "4C9EFF", product_class: "Product1", serial_number: "SerialNo1"}, events: [%CWMP.Protocol.Messages.EventStruct{code: "7 TRANSFER COMPLETE", command_key: ""}], max_envelopes: 1, parameters: [%CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceSummary", type: "xsd:string", value: "InternetGatewayDevice:1.4[](Baseline:1, EthernetLAN:1, Time:1, IPPing:1, DeviceAssociation:1, EthernetWAN:1, VDSL2WAN:1, ADSLWAN:1, ATMLoopback:1, WiFiLAN:1, X_5067F0_TrustDomain:1), VoiceService:1.0[1](Endpoint:1, SIPEndpoint:1)"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.SpecVersion", type: "xsd:string", value: "1.0"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.HardwareVersion", type: "xsd:string", value: "HW_1.0"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.SoftwareVersion", type: "xsd:string", value: "1.00"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.ProvisioningCode", type: "xsd:string", value: ""}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.ManagementServer.ConnectionRequestURL", type: "xsd:string", value: "http://666.666.666.666:1234/foobar"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.ManagementServer.ParameterKey", type: "xsd:string", value: ""}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.WANDevice.2.WANConnectionDevice.1.WANIPConnection.2.ExternalIPAddress", type: "xsd:string", value: "666.666.666.666"}], retry_count: 0}], header:  %CWMP.Protocol.Messages.Header{hold_requests: false, id: "1189711373", no_more_requests: false, session_timeout: 30}}
   @inform %{cwmp_version: "1-0", entries: [%CWMP.Protocol.Messages.Inform{current_time: Timex.datetime({{2016,5,18},{8,6,3}}), device_id: %CWMP.Protocol.Messages.DeviceIdStruct{manufacturer: "ZyXEL", oui: "4C9EFF", product_class: "Product1", serial_number: "SerialNo1"}, events: [%CWMP.Protocol.Messages.EventStruct{code: "2 PERIODIC", command_key: ""}], max_envelopes: 1, parameters: [%CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceSummary", type: "xsd:string", value: "InternetGatewayDevice:1.4[](Baseline:1, EthernetLAN:1, Time:1, IPPing:1, DeviceAssociation:1, EthernetWAN:1, VDSL2WAN:1, ADSLWAN:1, ATMLoopback:1, WiFiLAN:1, X_5067F0_TrustDomain:1), VoiceService:1.0[1](Endpoint:1, SIPEndpoint:1)"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.SpecVersion", type: "xsd:string", value: "1.0"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.HardwareVersion", type: "xsd:string", value: "HW_1.0"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.SoftwareVersion", type: "xsd:string", value: "1.00"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.DeviceInfo.ProvisioningCode", type: "xsd:string", value: ""}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.ManagementServer.ConnectionRequestURL", type: "xsd:string", value: "http://666.666.666.666:1234/foobar"}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.ManagementServer.ParameterKey", type: "xsd:string", value: ""}, %CWMP.Protocol.Messages.ParameterValueStruct{name: "InternetGatewayDevice.WANDevice.2.WANConnectionDevice.1.WANIPConnection.2.ExternalIPAddress", type: "xsd:string", value: "666.666.666.666"}], retry_count: 0}], header:  %CWMP.Protocol.Messages.Header{hold_requests: false, id: "1189711373", no_more_requests: false, session_timeout: 30}}
@@ -45,7 +46,7 @@ defmodule ACSTestSession do
 
   test "Normal Session - with right ID in response" do
     acsex(ACS.Session.Script.Vendor) do
-      {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @inform, fn(session, _device_id, _message) ->
+      {:ok,pid} = ACS.Session.Supervisor.start_session(@session_id, @device_id, @inform, fn(session, _device_id, _message) ->
         import ACS.Session.Script.Vendor.Helpers
         # The script inserts a message in the queue.
         _r = getParameterValues(session, ["Device.Test."])
@@ -54,11 +55,15 @@ defmodule ACSTestSession do
 
       assert Supervisor.count_children(:session_supervisor).active == 1
 
+
+      assert ACS.Session.verify_session(@session_id, "127.0.0.1")
+      assert ACS.Session.verify_session(@session_id, "127.0.0.2") == false
+
       # now pretend we send the inform into the session, this is what the plug does after creating it
-      r=ACS.Session.process_message(@device_id, @inform)
+      r=ACS.Session.process_message(@session_id, @inform)
       assert {200,@inform_response} == r
 
-      {code,response}=ACS.Session.process_message(@device_id, @empty)
+      {code,response}=ACS.Session.process_message(@session_id, @empty)
       assert code==200
       assert Regex.match?(@gpv_request,response)
 
@@ -70,10 +75,10 @@ defmodule ACSTestSession do
       gpv_response = @gpv_response
       new_header = %{gpv_response.header | id: parsed.header.id}
       gpv_response = %{gpv_response | header: new_header}
-      r=ACS.Session.process_message(@device_id, gpv_response) # Should be processed with no timeout
+      r=ACS.Session.process_message(@session_id, gpv_response) # Should be processed with no timeout
       assert r=={200,""}
 
-      end_res=ACS.Session.Supervisor.end_session(@device_id)
+      end_res=ACS.Session.Supervisor.end_session(@session_id)
       assert end_res == :ok
       assert Supervisor.count_children(:session_supervisor).active == 0
     end
@@ -83,7 +88,7 @@ defmodule ACSTestSession do
     acsex(ACS.Session.Script.Vendor) do
       Application.put_env(:acs_ex, :script_timeout, 1000, persistent: false)
 
-      {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @inform, fn(session, _device_id, _message) ->
+      {:ok,pid} = ACS.Session.Supervisor.start_session(@session_id, @device_id, @inform, fn(session, _device_id, _message) ->
         import ACS.Session.Script.Vendor.Helpers
         # The script inserts a message in the queue.
         _r = getParameterValues(session, ["Device.Test."])
@@ -93,16 +98,16 @@ defmodule ACSTestSession do
       assert Supervisor.count_children(:session_supervisor).active == 1
 
       # now pretend we send the inform into the session, this is what the plug does after creating it
-      r=ACS.Session.process_message(@device_id, @inform)
+      r=ACS.Session.process_message(@session_id, @inform)
       assert {200,@inform_response} == r
 
-      {code,response}=ACS.Session.process_message(@device_id, @empty)
+      {code,response}=ACS.Session.process_message(@session_id, @empty)
       assert code==200
       assert Regex.match?(@gpv_request,response)
 
       # another process_message for the response, but with the wrong ID
       # will make the session return a Fault, 8003
-      {code,response}=ACS.Session.process_message(@device_id, @gpv_response)
+      {code,response}=ACS.Session.process_message(@session_id, @gpv_response)
       assert code == 200
       {res,parsed} = CWMP.Protocol.Parser.parse(response)
       assert res == :ok
@@ -112,7 +117,7 @@ defmodule ACSTestSession do
       assert fault.faultstring == "CWMP fault"
       assert fault.detail == %CWMP.Protocol.Messages.FaultStruct{code: 8003, string: "Invalid arguments"}
 
-      end_res=ACS.Session.Supervisor.end_session(@device_id)
+      end_res=ACS.Session.Supervisor.end_session(@session_id)
       assert end_res == :ok
       assert Supervisor.count_children(:session_supervisor).active == 0
       Application.delete_env(:acs_ex, :script_timeout)
@@ -125,19 +130,19 @@ defmodule ACSTestSession do
     acsex(ACS.Session.Script.Vendor) do
       # Double process_message, so before we have a response to one message, what happens if
       # Another arrives?
-      {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @inform)
+      {:ok,pid} = ACS.Session.Supervisor.start_session(@session_id, @device_id, @inform)
       assert is_pid(pid)
 
       assert Supervisor.count_children(:session_supervisor).active == 1
 
-      r=ACS.Session.process_message(@device_id, @inform)
+      r=ACS.Session.process_message(@session_id, @inform)
       assert {200,@inform_response} == r
 
 
-      r=ACS.Session.process_message(@device_id, @inform)
+      r=ACS.Session.process_message(@session_id, @inform)
       assert {200,@inform_response} == r
 
-      end_res=ACS.Session.Supervisor.end_session(@device_id)
+      end_res=ACS.Session.Supervisor.end_session(@session_id)
       assert end_res == :ok
       assert Supervisor.count_children(:session_supervisor).active == 0
     end
@@ -146,13 +151,13 @@ defmodule ACSTestSession do
   # Tests if we can wait for the messages list to be filled in the session
   test "TransferComplete session" do
     acsex(ACS.Session.Script.Vendor) do
-      {:ok,pid} = ACS.Session.Supervisor.start_session(@device_id, @tc_inform, fn(_session,_did,_inform) ->
+      {:ok,pid} = ACS.Session.Supervisor.start_session(@session_id, @device_id, @tc_inform, fn(_session,_did,_inform) ->
         Process.sleep(2000)
       end)
       assert is_pid(pid)
       assert Supervisor.count_children(:session_supervisor).active == 1
 
-      r=ACS.Session.process_message(@device_id, @tc_inform)
+      r=ACS.Session.process_message(@session_id, @tc_inform)
       assert {200,@inform_response} == r
 
       # Start a process that sends a TransferComplete in 1 second
@@ -163,8 +168,8 @@ defmodule ACSTestSession do
       # Send in %{} - triggering a reply to the script message
       Task.start_link fn ->
         Process.sleep(1000)
-        _response=ACS.Session.process_message(@device_id,@transfer_complete)
-        ACS.Session.process_message(@device_id,%{})
+        _response=ACS.Session.process_message(@session_id,@transfer_complete)
+        ACS.Session.process_message(@session_id,%{})
       end
 
       messages=GenServer.call(pid, {:script_command, [:unscripted]})
@@ -173,7 +178,7 @@ defmodule ACSTestSession do
       entry=List.first(message.entries)
       assert entry.__struct__ == CWMP.Protocol.Messages.TransferComplete
 
-      end_res=ACS.Session.Supervisor.end_session(@device_id)
+      end_res=ACS.Session.Supervisor.end_session(@session_id)
       assert end_res == :ok
       assert Supervisor.count_children(:session_supervisor).active == 0
     end

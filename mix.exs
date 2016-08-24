@@ -3,7 +3,7 @@ defmodule ACS.Mixfile do
 
   def project do
     [app: :acs_ex,
-     version: "0.1.7",
+     version: "0.1.8",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -27,7 +27,6 @@ defmodule ACS.Mixfile do
      {:poison, "~> 2.0"},
      {:poolboy, "~> 1.5.1"},
      {:mock, "~> 0.1.1", only: :test},
-     {:gproc, git: "https://github.com/uwiger/gproc.git", tag: "0.6"},
-     {:cryptex, "~> 0.0.1"}]
+     {:gproc, git: "https://github.com/uwiger/gproc.git", tag: "0.6"}]
   end
 end
