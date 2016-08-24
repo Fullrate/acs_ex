@@ -201,7 +201,7 @@ defmodule ACS.Session do
   verifies the remote_host by comparing it to the one in the state.device_id
 
   """
-  def handle_call({:verify_remotehost, [remote_host]}, from, state) do
+  def handle_call({:verify_remotehost, [remote_host]}, _from, state) do
     {:reply, state.device_id.ip == remote_host, state}
   end
 

@@ -17,10 +17,6 @@ defmodule ACS.Handlers.ACS do
   plug Plug.Parsers, parsers: [ACS.CWMP.Parser]
   plug :dispatch
 
-  @encryptor Cryptex.MessageEncryptor.new(
-    Cryptex.KeyGenerator.generate(Application.fetch_env!(:acs_ex,:crypt_keybase), Application.fetch_env!(:acs_ex,:crypt_cookie_salt)),
-    Cryptex.KeyGenerator.generate(Application.fetch_env!(:acs_ex,:crypt_keybase), Application.fetch_env!(:acs_ex,:crypt_signed_cookie_salt)))
-
   def dispatch(conn, _params) do
     cookies = fetch_cookies(conn).req_cookies
 
