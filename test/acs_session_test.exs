@@ -109,14 +109,7 @@ defmodule ACSTestSession do
       # will make the session return a Fault, 8003
       {code,response}=ACS.Session.process_message(@session_id, @gpv_response)
       assert code == 200
-      {res,parsed} = CWMP.Protocol.Parser.parse(response)
-      assert res == :ok
-      fault=hd(parsed.entries)
-      assert fault.__struct__==CWMP.Protocol.Messages.Fault
-      assert fault.faultcode == "Server"
-      assert fault.faultstring == "CWMP fault"
-      assert fault.detail == %CWMP.Protocol.Messages.FaultStruct{code: 8003, string: "Invalid arguments"}
-
+      assert response == "" # because things we dont understand just means "END SESSION"
       end_res=ACS.Session.Supervisor.end_session(@session_id)
       assert end_res == :ok
       assert Supervisor.count_children(:session_supervisor).active == 0

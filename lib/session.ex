@@ -384,11 +384,9 @@ defmodule ACS.Session do
     case message_type(entry) do
       {:cpe,_messagetype} ->
         # ...Response and that type
-        # This means "Fault" - because this response is off track
-        {{200,CWMP.Protocol.Generator.generate!(
-           %CWMP.Protocol.Messages.Header{id: message.header.id},
-           %CWMP.Protocol.Messages.Fault{faultcode: "Server", faultstring: "CWMP fault", detail:
-             %CWMP.Protocol.Messages.FaultStruct{code: "8003", string: "Invalid arguments"}},message.cwmp_version)},[]}
+        # just respond with {} since responses should
+        # be always "handled" here..
+        {{200,""},[message]}
       {:acs,CWMP.Protocol.Messages.GetRPCMethods} ->
         {{200,CWMP.Protocol.Generator.generate!(
           %CWMP.Protocol.Messages.Header{id: message.header.id},
@@ -420,10 +418,7 @@ defmodule ACS.Session do
 
       _ ->
         # unknown message type, what to do? - Fault back?
-        {{200,CWMP.Protocol.Generator.generate!(
-          %CWMP.Protocol.Messages.Header{id: message.header.id},
-            %CWMP.Protocol.Messages.Fault{faultcode: "Server", faultstring: "CWMP fault", detail:
-            %CWMP.Protocol.Messages.FaultStruct{code: "8000", string: "Method not supported"}},message.cwmp_version)},[]}
+        {{200,""},[message]}
     end
   end
 
@@ -457,6 +452,7 @@ defmodule ACS.Session do
       %CWMP.Protocol.Messages.ScheduleDownloadResponse{} -> {:cpe,entry.__struct__}
       %CWMP.Protocol.Messages.CancelTransferResponse{} -> {:cpe,entry.__struct__}
       %CWMP.Protocol.Messages.ChangeDUStateResponse{} -> {:cpe,entry.__struct__}
+      %CWMP.Protocol.Messages.Fault{} -> {:cpe,entry.__struct__}
 
       _ -> {:unknown,entry.__struct__}
     end
