@@ -27,6 +27,21 @@ defmodule ACSTestSession do
       }],
     header:  %CWMP.Protocol.Messages.Header{hold_requests: false, id: "df53368c23d71f15b339cf4b9c1ca2ed", no_more_requests: false, session_timeout: 30}
   }
+  @download_response %{
+    cwmp_version: "1-0",
+    entries: [
+      %CWMP.Protocol.Messages.DownloadResponse{
+        status: 0,
+        complete_time: %Timex.DateTime{calendar: :gregorian,
+          day: 19, hour: 23, minute: 9, month: 1, millisecond: 0, second: 24,
+          timezone: %Timex.TimezoneInfo{abbreviation: "UTC", from: :min,
+            full_name: "UTC", offset_std: 0, offset_utc: 0, until: :max}, year: 2015},
+        start_time: %Timex.DateTime{calendar: :gregorian,
+          day: 19, hour: 23, minute: 8, month: 1, millisecond: 0, second: 24,
+          timezone: %Timex.TimezoneInfo{abbreviation: "UTC", from: :min,
+            full_name: "UTC", offset_std: 0, offset_utc: 0, until: :max}, year: 2015}}],
+    header: %CWMP.Protocol.Messages.Header{hold_requests: false, id: "1234567901234567890123456789012",
+      session_timeout: 30, no_more_requests: false}}
 
 
   #  test "Normal Session" do
@@ -174,6 +189,107 @@ defmodule ACSTestSession do
       end_res=ACS.Session.Supervisor.end_session(@session_id)
       assert end_res == :ok
       assert Supervisor.count_children(:session_supervisor).active == 0
+    end
+  end
+
+  # Testcase for handling sequence
+  # 1. Inform
+  # 2. TransferComplete
+  # 3. scripted Download (before response to TransferComplete was sent)
+  # (gave an exception cause the session state was off)
+  test "TransferComplete #2" do
+    acsex(ACS.Session.Script.Vendor) do
+      {:ok,pid} = ACS.Session.Supervisor.start_session(@session_id, @device_id, @tc_inform, fn(session,_did,_inform) ->
+        Process.sleep(1000)
+        import ACS.Session.Script.Vendor.Helpers
+        _r=download(session,%{commandkey: "FirmwareUpgrade", url: "http://exampl.com", filetype: "1 Firmware Upgrade Image", filesizei: 12345})
+      end)
+      assert is_pid(pid)
+      assert Supervisor.count_children(:session_supervisor).active == 1
+
+      r=ACS.Session.process_message(@session_id, @tc_inform)
+      assert {200,@inform_response} == r
+
+      # Send in the TransferComplete
+      {code,_response}=ACS.Session.process_message(@session_id,@transfer_complete)
+      # response to TransferComplere
+      assert code == 200
+
+      Process.sleep(2000)
+
+      # How to assert that the Download was fired and handled correcyly?
+
+      end_res=ACS.Session.Supervisor.end_session(@session_id)
+      assert end_res == :ok
+      assert Supervisor.count_children(:session_supervisor).active == 0
+    end
+  end
+
+  # Testcase for at race condition occuring
+  # when
+  # 1. Inform
+  # 2. scripted Download (before response to TransferComplete was sent)
+  # 3. TransferComplete
+  # (gave an exception cause the session state was off)
+  test "TransferComplete #3" do
+    acsex(ACS.Session.Script.Vendor) do
+      {:ok,pid} = ACS.Session.Supervisor.start_session(@session_id, @device_id, @tc_inform, fn(session,_did,_inform) ->
+        import ACS.Session.Script.Vendor.Helpers
+        _r=download(session,%{commandkey: "FirmwareUpgrade", url: "http://example.com", filetype: "1 Firmware Upgrade Image", filesize: 12345})
+      end)
+      assert is_pid(pid)
+      assert Supervisor.count_children(:session_supervisor).active == 1
+
+      r=ACS.Session.process_message(@session_id, @tc_inform)
+      assert {200,@inform_response} == r
+
+      # Now wait for the scripted Download
+      Process.sleep(1000)
+      # Send in the TransferComplete
+      {code,_response}=ACS.Session.process_message(@session_id,@transfer_complete)
+      # response to TransferComplete
+      assert code == 200
+
+      parent = self
+      # spawn this with delay
+      child = spawn fn ->
+        Process.sleep(1000)
+        {code,response}=ACS.Session.process_message(@session_id, @empty)
+        assert code==200
+        {res,parsed} = CWMP.Protocol.Parser.parse(response)
+        assert res == :ok
+        assert is_list(parsed.entries)
+        assert hd(parsed.entries).__struct__ == CWMP.Protocol.Messages.Download
+        send parent, {self, parsed.header.id}
+      end
+
+      messages=GenServer.call(pid, {:script_command, [:unscripted]})
+      assert messages == :error # an error here, because we already have one script element queued (Download)
+
+      receive do
+        {^child, download_header_id} ->
+          # Send a download response into session
+          downresp = @download_response
+          downresp = %{downresp | header: %{downresp.header | id: download_header_id}}
+
+          {code,response}=ACS.Session.process_message(@session_id,downresp)
+          assert code == 200
+
+          Task.start_link fn ->
+            Process.sleep(1000)
+            ACS.Session.process_message(@session_id,%{})
+          end
+
+          messages=GenServer.call(pid, {:script_command, [:unscripted]})
+          assert is_list(messages)
+          message=List.first(messages)
+          entry=List.first(message.entries)
+          assert entry.__struct__ == CWMP.Protocol.Messages.TransferComplete
+
+          end_res=ACS.Session.Supervisor.end_session(@session_id)
+          assert end_res == :ok
+          assert Supervisor.count_children(:session_supervisor).active == 0
+      end
     end
   end
 end

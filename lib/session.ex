@@ -166,7 +166,7 @@ defmodule ACS.Session do
   end
 
   def handle_info(message, state) do
-    IO.puts("Default handle_info(#{inspect message}, #{inspect state})")
+    Logger.error("Unhandled handle_info(#{inspect message}, #{inspect state})")
   end
 
   def handle_call({:script_command, [command]}, from, state) do
@@ -192,7 +192,14 @@ defmodule ACS.Session do
         Logger.debug( "No known plug_element, meaning no plug is waiting, so store script command in state" )
         # Just put the command in the script element, we wont affect the plug queue until the
         # session reaches the "what now?" stage (empty request from device)
-        {:noreply, %{state | script_element: %{command: command, from: from, state: :unhandled}}}
+        case state.script_element do
+          nil ->
+            {:noreply, %{state | script_element: %{command: command, from: from, state: :unhandled}}}
+          _ ->
+            Logger.error("Unable to handle multiple scripting commands at the time.")
+            {:reply, :error, state}
+        end
+
     end
   end
 
@@ -243,7 +250,7 @@ defmodule ACS.Session do
                 if Process.alive?(sspid) do
                   Logger.debug("Script system IS alive ....")
                   # If we have an :unscripted waiting, reply now
-                  {:noreply,nil,[],sspid}
+                  {:noreply,nil,state.unmatched_incomming_list,sspid}
                 else
                   Logger.debug("Script system is not actually alive, it only seems so. Missed an :exit?")
                   {{200,""},nil,[],nil}
@@ -261,14 +268,15 @@ defmodule ACS.Session do
             # Transform the command to a plug_element thing, and mark it :sent
             case gen_request(command.method, command.args, "script", state.cwmp_version) do
               {:ok,{id,req}} ->
-                {{200,req}, %{command: command, from: script_from, state: :sent, id: id}, [], state.sspid}
+                {{200,req}, %{command: command, from: script_from, state: :sent, id: id}, state.unmatched_incomming_list, state.sspid}
               {:error,msg} ->
                 Logger.debug("gen_request error: #{msg}")
                 # must send reply to SS with error, even though this should never happen,
                 # then we must continue to wait in the plug
                 GenServer.reply(script_from, {:error, msg})
-                {:noreply,nil,[],state.sspid}
+                {:noreply,nil,state.unmatched_incomming_list,state.sspid}
             end
+
           _ ->
             Logger.debug("Cant identify script_element, clearing and discontinuing session: #{inspect(state.script_element)}")
             {{200,""},nil,[],nil}
@@ -307,6 +315,10 @@ defmodule ACS.Session do
                 {reply,msg} = construct_reply( message )
                 {reply,state.script_element,msg,state.sspid}
 
+              # This only matches script elements that have acutally been sent to the CPE
+              # If we have a script element waiting for the session to enter into a state
+              # where we can send it, we will no come here on any autonomous
+              # CPE message lige TransferComplete...
               %{command: _command, from: from, state: :sent, id: generated_header_id} ->
                 # Check if the incomming message matches the one generated
                 # by the script system - this can be done by ID comparison
@@ -318,7 +330,7 @@ defmodule ACS.Session do
                   # We have nothing to reply with here, so we must stuff this in OutstandingPlug and
                   # wait for someting from the Script, either next message or :EXIT
                   # we have to answer :noreply here, and
-                  {:noreply, nil, [], state.sspid}
+                  {:noreply, nil, state.unmatched_incomming_list, state.sspid}
                 else
                   Logger.debug("Incomming message is unmatched to script - we should reply somehow?")
                   # If this is a Response to a CPE request, then we have to end the session at once with
@@ -333,6 +345,17 @@ defmodule ACS.Session do
                   # entries.
                   {reply,msg} = construct_reply( message )
                   {reply,state.script_element,msg,state.sspid}
+                end
+              # In this case, then the incomming request can not be a response, and must
+              # be stored into the junk list
+              %{command: _command, from: _from, state: :unhandled} ->
+                {reply,msg} = construct_reply( message )
+                if state.sspid != nil and Process.alive?(state.sspid) do
+                  Logger.debug("Script pid found to be alive")
+                  {reply, state.script_element, msg, state.sspid}
+                else
+                  Logger.debug("Script pid found to be dead")
+                  {reply, nil, msg, nil}
                 end
             end
           end
