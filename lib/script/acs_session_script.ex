@@ -1,6 +1,7 @@
 defmodule ACS.SessionScript do
+  @type filter_response :: atom | tuple
   @callback session_start(pid, map, String.t) :: any
-  @callback session_filter(Plug.Conn.t) :: Plug.Conn.t
+  @callback session_filter(Plug.Conn.t) :: filter_response
 
   defmacro __using__(_) do
     quote location: :keep do
