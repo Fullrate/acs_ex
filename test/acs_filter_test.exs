@@ -11,6 +11,7 @@ defmodule ACSFilterTest do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
       assert resp.status_code == 404
       assert resp.body == "Not found"
+      assert cookie == ["session=; path=/; HttpOnly"]
     end
   end
 
@@ -19,7 +20,7 @@ end
 defmodule ACS.Test.Session.Filtered do
   use ACS.SessionScript
 
-  def session_filter(conn) do
+  def session_filter(_device_id) do
     {:reject, "Not found"}
   end
 

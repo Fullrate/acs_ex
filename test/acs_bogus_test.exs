@@ -1,6 +1,5 @@
 defmodule ACSTestBogus do
   use ExUnit.Case
-  import PathHelpers
   import RequestSenders
   import TestHelpers
   doctest ACS

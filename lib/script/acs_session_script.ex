@@ -1,7 +1,7 @@
 defmodule ACS.SessionScript do
   @type filter_response :: atom | tuple
   @callback session_start(pid, map, String.t) :: any
-  @callback session_filter(Plug.Conn.t) :: filter_response
+  @callback session_filter(map) :: filter_response
 
   defmacro __using__(_) do
     quote location: :keep do
@@ -10,7 +10,7 @@ defmodule ACS.SessionScript do
       def session_start(_session, _device_id, _inform) do
       end
 
-      def session_filter(conn) do
+      def session_filter(_device_id) do
         :ok
       end
 
