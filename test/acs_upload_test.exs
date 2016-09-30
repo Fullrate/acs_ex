@@ -66,7 +66,7 @@ defmodule ACSUploadTest do
 end # of test module
 
 defmodule ACS.Test.Sessions.Upload do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do
@@ -79,7 +79,7 @@ defmodule ACS.Test.Sessions.Upload do
 end
 
 defmodule ACS.Test.Sessions.UploadBogusParams do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do

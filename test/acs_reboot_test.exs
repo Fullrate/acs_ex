@@ -47,7 +47,7 @@ defmodule ACSRebootTest do
 end
 
 defmodule ACS.Test.Sessions.SingleReboot do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _device_id, _inform) do

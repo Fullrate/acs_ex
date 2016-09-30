@@ -59,7 +59,7 @@ defmodule ACSSetVouchersTest do
 end # of test module
 
 defmodule ACS.Test.Sessions.SetVouchers do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do
@@ -185,7 +185,7 @@ axfzzIKiXsXwkA=="]
 end
 
 defmodule ACS.Test.Sessions.SetVouchersBogusParams do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do

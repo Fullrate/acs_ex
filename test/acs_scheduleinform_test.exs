@@ -61,7 +61,7 @@ defmodule ACSScheduleInformTest do
 end # of test module
 
 defmodule ACS.Test.Sessions.ScheduleInform do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do
@@ -73,7 +73,7 @@ defmodule ACS.Test.Sessions.ScheduleInform do
 end
 
 defmodule ACS.Test.Sessions.ScheduleInformBogus do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do

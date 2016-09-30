@@ -53,7 +53,7 @@ defmodule ACSLongSessionScriptTest do
 end
 
 defmodule ACS.Test.LongGetParameterValues do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do

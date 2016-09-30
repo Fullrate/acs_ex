@@ -72,7 +72,7 @@ defmodule ACSGetParameterNamesTest do
 end # of test module
 
 defmodule ACS.Test.Sessions.SingleGetParameterNames do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do
@@ -82,7 +82,7 @@ defmodule ACS.Test.Sessions.SingleGetParameterNames do
 end
 
 defmodule ACS.Test.Sessions.SingleGetParameterNamesBogus do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do

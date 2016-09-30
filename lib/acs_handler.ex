@@ -13,6 +13,15 @@ defmodule ACS.ACSHandler do
   plug :match
   plug :dispatch
 
+  @doc """
+
+  override af Plug.Router's call
+
+  """
+  def call(conn, [session_handler] = opts) do
+    super(Plug.Conn.put_private(conn, :session_handler, session_handler), opts)
+  end
+
   defp handle_errors(conn, %{kind: kind, reason: reason, stack: stack}) do
     conn = ACS.RealIPSetter.call(conn, nil)
     entry = %{
@@ -33,6 +42,10 @@ defmodule ACS.ACSHandler do
   post _ do
     alias ACS.Handlers.ACS
     ACS.call(conn, ACS.init([]))
+  end
+
+  def init(opts) do
+    opts
   end
 end
 

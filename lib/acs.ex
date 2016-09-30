@@ -12,7 +12,7 @@ defmodule ACS do
   def init({port, session_handler, _opts}) do
 
     children = [
-      Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [], [port: port]),
+      Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [port: port]),
       supervisor(ACS.Session.Supervisor, [session_handler])
     ]
 

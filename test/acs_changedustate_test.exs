@@ -68,7 +68,7 @@ defmodule ACSChangeDUStateTest do
 end # of test module
 
 defmodule ACS.Test.Sessions.ChangeDUState do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do
@@ -89,7 +89,7 @@ defmodule ACS.Test.Sessions.ChangeDUState do
 end
 
 defmodule ACS.Test.Sessions.ChangeDUStateBogusParams do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do

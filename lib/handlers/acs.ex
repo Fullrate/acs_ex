@@ -15,7 +15,33 @@ defmodule ACS.Handlers.ACS do
   use Plug.Builder
 
   plug Plug.Parsers, parsers: [ACS.CWMP.Parser]
+  plug :preauth
   plug :dispatch
+
+  @doc """
+
+  This method is meant as a way to reject requests early.
+
+  In case of early reject, a response must be sent, and the plug
+  chain must be stopped with conn |> halt
+
+  """
+  def preauth(conn, _params) do
+    case conn.private[:session_handler] do
+      nil ->
+        conn
+      handler ->
+        case apply(handler, :session_filter, [conn]) do
+          :ok ->
+            conn
+          {:reject, reason} ->
+            Logger.error("Request rejected: #{reason}")
+            conn
+            |> send_resp(404, "Not found")
+            |> halt
+        end
+    end
+  end
 
   def dispatch(conn, _params) do
     cookies = fetch_cookies(conn).req_cookies

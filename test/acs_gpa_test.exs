@@ -81,7 +81,7 @@ defmodule ACSGetParameterAttributesTest do
 end # of test module
 
 defmodule ACS.Test.Sessions.SingleGetParameterAttributes do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do
@@ -91,7 +91,7 @@ defmodule ACS.Test.Sessions.SingleGetParameterAttributes do
 end
 
 defmodule ACS.Test.Sessions.SingleGetParameterAttributesBogus do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do

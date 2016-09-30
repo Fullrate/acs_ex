@@ -1,6 +1,7 @@
 defmodule ACS.Session.Script.Vendor do
   require Logger
-  import ACS.Session.Script.Vendor.Helpers
+  use ACS.SessionScript
+
 
   @moduledoc """
 

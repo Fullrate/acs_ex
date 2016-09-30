@@ -62,7 +62,7 @@ defmodule ACSAddObjectTest do
 end # of test module
 
 defmodule ACS.Test.Sessions.AddObject do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do
@@ -72,7 +72,7 @@ defmodule ACS.Test.Sessions.AddObject do
 end
 
 defmodule ACS.Test.Sessions.AddObjectParams do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do

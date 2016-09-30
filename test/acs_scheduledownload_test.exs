@@ -65,7 +65,7 @@ defmodule ACSScheduleDownloadTest do
 end # of test module
 
 defmodule ACS.Test.Sessions.ScheduleDownload do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do
@@ -84,7 +84,7 @@ defmodule ACS.Test.Sessions.ScheduleDownload do
 end
 
 defmodule ACS.Test.Sessions.ScheduleDownloadBogusParams do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _deviceid, _inform) do

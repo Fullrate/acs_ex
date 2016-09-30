@@ -70,7 +70,7 @@ defmodule ACSSetParameterValuesTest do
 end
 
 defmodule ACS.Test.Sessions.SingleSetParameterValues do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _device_id, _inform) do
@@ -80,7 +80,7 @@ defmodule ACS.Test.Sessions.SingleSetParameterValues do
 
 end
 defmodule ACS.Test.Sessions.SingleSetParameterValuesBogus do
-
+  use ACS.SessionScript
   import ACS.Session.Script.Vendor.Helpers
 
   def session_start(session, _device_id, _inform) do
