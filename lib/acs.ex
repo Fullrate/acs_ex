@@ -5,14 +5,13 @@ defmodule ACS do
   """
   use Supervisor
 
-  def start_link(session_handler, port, opts \\ []) do
-    Supervisor.start_link(__MODULE__, {port, session_handler, opts})
+  def start_link(session_handler, port, ip, opts \\ []) do
+    Supervisor.start_link(__MODULE__, {port, ip, session_handler, opts})
   end
 
-  def init({port, session_handler, _opts}) do
-
+  def init({port, ip, session_handler, _opts}) do
     children = [
-      Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [port: port]),
+      Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [port: port, ip: ip]),
       supervisor(ACS.Session.Supervisor, [session_handler])
     ]
 
