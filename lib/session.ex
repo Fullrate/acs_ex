@@ -1,5 +1,6 @@
 defmodule ACS.Session do
   use GenServer
+  use Prometheus.Metric
   require Logger
 
   @moduledoc """
@@ -20,6 +21,7 @@ defmodule ACS.Session do
   """
   def start_link([spec_module],session_id,device_id,message,fun \\ nil) do
     Logger.debug("ACS.Session start_link(#{inspect session_id},#{inspect device_id}")
+    Gauge.inc([name: :acs_ex_nof_sessions, labels: [device_id.product_class, device_id.serial_number]])
     GenServer.start_link(__MODULE__, [spec_module,session_id,device_id,message,fun])
   end
 
@@ -122,6 +124,10 @@ defmodule ACS.Session do
     end
   end
 
+  def terminate_session(session_id) do
+    GenServer.call(via_tuple(session_id), :terminate_session)
+  end
+
   # SERVER
 
   def init([script_module,session_id,device_id,message,fun]) do
@@ -162,11 +168,25 @@ defmodule ACS.Session do
            Logger.debug("Waiting plug when SS ends, just tell it to stop, which in turn will kill me (the session)")
            GenServer.reply( pe.from, {200, ""} )
     end
-    {:noreply,%{state | plug_element: nil, script_element: nil, sspid: nil}}
+    {:noreply,%{state | plug_element: nil, script_element: nil, sspid: nil}, 5000}
+  end
+
+  def handle_info(:timeout, state) do
+    # Kill self...
+    Logger.warn("Session died due to timeout")
+    # Update the Prometheus metrics
+    Gauge.dec([name: :acs_ex_nof_sessions, labels: [state.device_id.product_class, state.device_id.serial_number]])
+    Counter.inc([name: :acs_ex_dead_sessions, labels: [state.device_id.product_class, state.device_id.serial_number]])
+    {:stop, :timeout, state}
   end
 
   def handle_info(message, state) do
     Logger.error("Unhandled handle_info(#{inspect message}, #{inspect state})")
+  end
+
+  def terminate(reason, state) do
+    Logger.debug("Session terminate called: #{reason}, #{inspect state}")
+    :normal
   end
 
   def handle_call({:script_command, [command]}, from, state) do
@@ -210,6 +230,16 @@ defmodule ACS.Session do
   """
   def handle_call({:verify_remotehost, [remote_host]}, _from, state) do
     {:reply, state.device_id.ip == remote_host, state}
+  end
+
+  @doc """
+
+  this can be used by the session supervisor to terminate a session.
+
+  """
+  def handle_call(:terminate_session, _from, state) do
+    Gauge.dec([name: :acs_ex_nof_sessions, labels: [state.device_id.product_class, state.device_id.serial_number]])
+    {:stop,:normal,state}
   end
 
   @doc """
