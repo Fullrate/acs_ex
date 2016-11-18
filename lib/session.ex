@@ -163,10 +163,12 @@ defmodule ACS.Session do
     ## Session Script is done.
     Logger.debug("Script system exited.")
     case state.plug_element do
-      nil -> Logger.debug( "Session script exited, and we have no waiting plug..." )
-      pe -> # Waiting plug, we have to tell it to stop by sending {200,""}
-           Logger.debug("Waiting plug when SS ends, just tell it to stop, which in turn will kill me (the session)")
-           GenServer.reply( pe.from, {200, ""} )
+      nil ->
+        Logger.debug( "Session script exited, and we have no waiting plug, leave the plug some time to end session" )
+      pe ->
+        # Waiting plug, we have to tell it to stop by sending {200,""}
+        Logger.debug("Waiting plug when SS ends, just tell it to stop, which in turn will kill me (the session)")
+        GenServer.reply( pe.from, {200, ""} )
     end
     {:noreply,%{state | plug_element: nil, script_element: nil, sspid: nil}, 5000}
   end
@@ -175,8 +177,8 @@ defmodule ACS.Session do
     # Kill self...
     Logger.warn("Session died due to timeout")
     # Update the Prometheus metrics
-    Gauge.dec([name: :acs_ex_nof_sessions, labels: [state.device_id.product_class, state.device_id.serial_number]])
-    Counter.inc([name: :acs_ex_dead_sessions, labels: [state.device_id.product_class, state.device_id.serial_number]])
+    Gauge.dec([name: :acs_ex_nof_sessions, labels: [state.device_id.product_class]])
+    Counter.inc([name: :acs_ex_dead_sessions, labels: [state.device_id.product_class]])
     {:stop, :timeout, state}
   end
 
