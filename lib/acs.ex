@@ -6,13 +6,16 @@ defmodule ACS do
   use Prometheus.Metric
   use Supervisor
 
-  def start_link(session_handler, port, ip, opts \\ []) do
-    Supervisor.start_link(__MODULE__, {port, ip, session_handler, opts})
+  def start_link(session_handler, port, ip, ip6, opts \\ []) do
+    Supervisor.start_link(__MODULE__, {port, ip, ip6, session_handler, opts})
   end
 
-  def init({port, ip, session_handler, _opts}) do
+  def init({port, ip, ip6, session_handler, _opts}) do
     children = [
-      Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [port: port, ip: ip]),
+      # ipv4 listener
+      Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet, port: port, ip: ip, ref: :ipv4_listener]),
+      # ipv6 listener
+      Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet6, port: port, ip: ip6, ipv6_v6only: true, ref: :ipv6_listener]),
       supervisor(ACS.Session.Supervisor, [session_handler])
     ]
 
