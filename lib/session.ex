@@ -21,7 +21,7 @@ defmodule ACS.Session do
   """
   def start_link([spec_module],session_id,device_id,message,fun \\ nil) do
     Logger.debug("ACS.Session start_link(#{inspect session_id},#{inspect device_id}")
-    Gauge.inc([name: :acs_ex_nof_sessions, labels: [device_id.product_class, device_id.serial_number]])
+    Gauge.inc([name: :acs_ex_nof_sessions, labels: [device_id.product_class]])
     GenServer.start_link(__MODULE__, [spec_module,session_id,device_id,message,fun])
   end
 
@@ -240,7 +240,7 @@ defmodule ACS.Session do
 
   """
   def handle_call(:terminate_session, _from, state) do
-    Gauge.dec([name: :acs_ex_nof_sessions, labels: [state.device_id.product_class, state.device_id.serial_number]])
+    Gauge.dec([name: :acs_ex_nof_sessions, labels: [state.device_id.product_class]])
     {:stop,:normal,state}
   end
 
