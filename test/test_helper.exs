@@ -3,7 +3,7 @@ ExUnit.start
 defmodule TestHelpers do
   defmacro acsex(module, do: body) do
     quote do
-      {:ok,acs_ex_pid} = ACS.start_link(unquote(module), Application.fetch_env!(:acs_ex, :acs_port), Application.fetch_env!(:acs_ex, :acs_ip))
+      {:ok,acs_ex_pid} = ACS.start_link(unquote(module), Application.fetch_env!(:acs_ex, :acs_port), Application.fetch_env!(:acs_ex, :acs_ip), Application.fetch_env!(:acs_ex, :acs_ip6))
       unquote(body)
       Supervisor.stop(acs_ex_pid)
     end
