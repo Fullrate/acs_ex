@@ -15,7 +15,7 @@ defmodule ACS do
       # ipv4 listener
       Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet, port: port, ip: ip, ref: :ipv4_listener]),
       # ipv6 listener
-      Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet6, port: port, ip: ip6, ipv6_v6only: true, ref: :ipv6_listener]),
+      #Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet6, port: port, ip: ip6, ipv6_v6only: true, ref: :ipv6_listener]),
       supervisor(ACS.Session.Supervisor, [session_handler])
     ]
 
