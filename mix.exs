@@ -3,7 +3,7 @@ defmodule ACS.Mixfile do
 
   def project do
     [app: :acs_ex,
-     version: "0.2.12",
+     version: "0.2.13",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,

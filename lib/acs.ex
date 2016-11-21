@@ -25,7 +25,7 @@ defmodule ACS do
   end
 
   defp setup_prometheus() do
-    Counter.declare([name: :acs_ex_dead_session,
+    Counter.declare([name: :acs_ex_dead_sessions,
                     labels: [:product_class],
                     help: "Number of times a session has been stopped due to timeout in the acs-cpe sequence"])
     Gauge.declare([name: :acs_ex_nof_sessions,
