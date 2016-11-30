@@ -162,9 +162,9 @@ defmodule ACS.Session do
       nil ->
         Logger.debug( "Session script exited, and we have no waiting plug, leave the plug some time to end session" )
       pe ->
-        # Waiting plug, we have to tell it to stop by sending {200,""}
+        # Waiting plug, we have to tell it to stop by sending {204,""}
         Logger.debug("Waiting plug when SS ends, just tell it to stop, which in turn will kill me (the session)")
-        GenServer.reply( pe.from, {200, ""} )
+        GenServer.reply( pe.from, {204, ""} )
     end
     {:noreply,%{state | plug_element: nil, script_element: nil, sspid: nil}, 5000}
   end
@@ -261,7 +261,7 @@ defmodule ACS.Session do
               nil ->
                 # no session script
                 Logger.debug("No script pid")
-                {{200,""},nil,[],state.sspid} # we can stop...
+                {{204,""},nil,[],state.sspid} # we can stop...
               sspid ->
                 # Session script is going, but no element?? Maybee this is before it could queue
                 # or maybee its in some long operation
@@ -271,7 +271,7 @@ defmodule ACS.Session do
                   {:noreply,nil,state.unmatched_incomming_list,sspid}
                 else
                   Logger.debug("Script system is not actually alive, it only seems so. Missed an :exit?")
-                  {{200,""},nil,[],nil}
+                  {{204,""},nil,[],nil}
                 end
             end
 
@@ -297,7 +297,7 @@ defmodule ACS.Session do
 
           _ ->
             Logger.debug("Cant identify script_element, clearing and discontinuing session: #{inspect(state.script_element)}")
-            {{200,""},nil,[],nil}
+            {{204,""},nil,[],nil}
         end
 
       3 ->
@@ -427,7 +427,7 @@ defmodule ACS.Session do
         # ...Response and that type
         # just respond with {} since responses should
         # be always "handled" here..
-        {{200,""},[message]}
+        {{204,""},[message]}
       {:acs,CWMP.Protocol.Messages.GetRPCMethods} ->
         {{200,CWMP.Protocol.Generator.generate!(
           %CWMP.Protocol.Messages.Header{id: message.header.id},
@@ -459,7 +459,7 @@ defmodule ACS.Session do
 
       _ ->
         # unknown message type, what to do? - Fault back?
-        {{200,""},[message]}
+        {{204,""},[message]}
     end
   end
 
