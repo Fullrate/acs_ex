@@ -17,7 +17,7 @@ defmodule ACS do
       supervisor(ACS.Session.Supervisor, [session_handler])
     ]
 
-    children = children ++ if ( is_list( ip6 ) && length( ip6 ) == 6 ) do
+    children = children ++ if ( is_tuple( ip6 ) && length( Tuple.to_list(ip6) ) == 8 ) do
       # ipv6 listener
       [Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet6, port: port, ip: ip6, ipv6_v6only: true, ref: :ipv6_listener])]
     else

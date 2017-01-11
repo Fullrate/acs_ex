@@ -1,3 +1,5 @@
+0.2.16  Minor bug in the ipv6 thingy, an ipv6 is a tuple of 8 integers.
+
 0.2.15  Fixed the 204 header (end session) header in testcases.
         Introduced a configurable ipv6 listener.
 
