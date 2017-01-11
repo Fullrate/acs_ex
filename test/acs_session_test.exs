@@ -91,7 +91,7 @@ defmodule ACSTestSession do
       new_header = %{gpv_response.header | id: parsed.header.id}
       gpv_response = %{gpv_response | header: new_header}
       r=ACS.Session.process_message(@session_id, gpv_response) # Should be processed with no timeout
-      assert r=={200,""}
+      assert r=={204,""}
 
       end_res=ACS.Session.Supervisor.end_session(@session_id)
       assert end_res == :ok
@@ -123,7 +123,7 @@ defmodule ACSTestSession do
       # another process_message for the response, but with the wrong ID
       # will make the session return a Fault, 8003
       {code,response}=ACS.Session.process_message(@session_id, @gpv_response)
-      assert code == 200
+      assert code == 204
       assert response == "" # because things we dont understand just means "END SESSION"
       end_res=ACS.Session.Supervisor.end_session(@session_id)
       assert end_res == :ok
@@ -272,8 +272,8 @@ defmodule ACSTestSession do
           downresp = @download_response
           downresp = %{downresp | header: %{downresp.header | id: download_header_id}}
 
-          {code,response}=ACS.Session.process_message(@session_id,downresp)
-          assert code == 200
+          {code,_response}=ACS.Session.process_message(@session_id,downresp)
+          assert code == 204
 
           Task.start_link fn ->
             Process.sleep(1000)

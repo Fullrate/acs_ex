@@ -14,10 +14,15 @@ defmodule ACS do
     children = [
       # ipv4 listener
       Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet, port: port, ip: ip, ref: :ipv4_listener]),
-      # ipv6 listener
-      #Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet6, port: port, ip: ip6, ipv6_v6only: true, ref: :ipv6_listener]),
       supervisor(ACS.Session.Supervisor, [session_handler])
     ]
+
+    children = children ++ if ( is_list( ip6 ) && length( ip6 ) == 6 ) do
+      # ipv6 listener
+      [Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet6, port: port, ip: ip6, ipv6_v6only: true, ref: :ipv6_listener])]
+    else
+      []
+    end
 
     setup_prometheus()
     opts = [strategy: :one_for_one, name: ACS.Supervisor]

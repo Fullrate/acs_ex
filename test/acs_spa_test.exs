@@ -45,7 +45,7 @@ defmodule ACSSetParameterAttributesTest do
       spa_response=to_string(:io_lib.format(@spa_sample_response,[parsed.header.id]))
       {:ok,resp,_} = sendStr(spa_response,cookie)
       assert resp.body == ""
-      assert resp.status_code == 200
+      assert resp.status_code == 204
       assert Supervisor.count_children(:session_supervisor).active == 0
     end
   end
@@ -60,7 +60,7 @@ defmodule ACSSetParameterAttributesTest do
                                            # but it will fail and be unnoticable from the Plug. So the plug will end up waiting
                                            # and the SS will terminate, forcing the session to end. So at the end of all
                                            # this mumbo jumbo, we will get "" back
-      assert resp.status_code == 200
+      assert resp.status_code == 204
       assert resp.body == ""
       assert Supervisor.count_children(:session_supervisor).active == 0
     end

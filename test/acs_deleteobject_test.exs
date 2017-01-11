@@ -41,7 +41,7 @@ defmodule ACSDeleteObjectTest do
       do_response=to_string(:io_lib.format(@do_response,[parsed.header.id]))
       {:ok,resp,_} = sendStr(do_response,cookie)
       assert resp.body == ""
-      assert resp.status_code == 200
+      assert resp.status_code == 204
       assert Supervisor.count_children(:session_supervisor).active == 0
     end
   end
@@ -53,7 +53,7 @@ defmodule ACSDeleteObjectTest do
       assert resp.status_code == 200
 
       {:ok,resp,_cookie} = sendStr("",cookie) # This should cause the Bogus AddObject request
-      assert resp.status_code == 200
+      assert resp.status_code == 204
       assert resp.body == "" # since the AddObject was bogus, we expect the session to just end.
       assert Supervisor.count_children(:session_supervisor).active == 0
     end

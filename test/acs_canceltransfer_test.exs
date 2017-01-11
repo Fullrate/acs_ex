@@ -39,7 +39,7 @@ defmodule ACSCancelTransferTest do
       response=to_string(:io_lib.format(@response,[parsed.header.id]))
       {:ok,resp,_} = sendStr(response,cookie)
       assert resp.body == ""
-      assert resp.status_code == 200
+      assert resp.status_code == 204
       assert Supervisor.count_children(:session_supervisor).active == 0
     end
   end

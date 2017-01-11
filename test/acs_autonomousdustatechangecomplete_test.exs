@@ -16,7 +16,7 @@ defmodule ACSAutonomousDUStateChangeCompleteTest do
       assert resp.status_code == 200
       {:ok,resp,_} = sendStr("",cookie)
       assert resp.body == ""
-      assert resp.status_code == 200
+      assert resp.status_code == 204
     end
   end
 
