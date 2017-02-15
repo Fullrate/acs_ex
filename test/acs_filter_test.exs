@@ -20,7 +20,7 @@ end
 defmodule ACS.Test.Session.Filtered do
   use ACS.SessionScript
 
-  def session_filter(_device_id) do
+  def session_filter(_device_id, _inform) do
     {:reject, "Not found"}
   end
 

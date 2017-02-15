@@ -3,11 +3,11 @@ defmodule ACS.Mixfile do
 
   def project do
     [app: :acs_ex,
-     version: "0.2.16",
+     version: "0.2.17",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps,
+     deps: deps(),
      dialyzer: [plt_apps: [:cwmp_ex, :plug, :poison, :timex]]]
   end
 

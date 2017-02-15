@@ -20,12 +20,12 @@ defmodule ACS.Handlers.ACS do
   #
   # This method is meant as a way to reject requests early.
   #
-  defp auth_request(conn,device_id) do
+  defp auth_request(conn,device_id,inform) do
     case conn.private[:session_handler] do
       nil ->
         :ok
       handler ->
-        apply(handler, :session_filter, [device_id])
+        apply(handler, :session_filter, [device_id,inform])
     end
   end
 
@@ -58,7 +58,7 @@ defmodule ACS.Handlers.ACS do
                 Logger.debug( "device_id in the body - must be Inform, start session" )
                 session_id=UUID.uuid4(:hex)
                 extended_deviceid=Map.merge(Map.from_struct(didstruct), %{ip: to_string(:inet_parse.ntoa(conn.remote_ip))})
-                case auth_request(conn, extended_deviceid) do
+                case auth_request(conn, extended_deviceid,conn.body_params) do
                   :ok ->
                     ACS.Session.Supervisor.start_session(session_id,extended_deviceid,conn.body_params)
                     session_id

@@ -250,7 +250,7 @@ defmodule ACSTestSession do
       # response to TransferComplete
       assert code == 200
 
-      parent = self
+      parent = self()
       # spawn this with delay
       child = spawn fn ->
         Process.sleep(1000)
@@ -260,7 +260,7 @@ defmodule ACSTestSession do
         assert res == :ok
         assert is_list(parsed.entries)
         assert hd(parsed.entries).__struct__ == CWMP.Protocol.Messages.Download
-        send parent, {self, parsed.header.id}
+        send parent, {self(), parsed.header.id}
       end
 
       messages=GenServer.call(pid, {:script_command, [:unscripted]})

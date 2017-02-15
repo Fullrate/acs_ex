@@ -135,7 +135,7 @@ defmodule ACS.Session do
     # InformResponse into the plug queue
 
     Logger.metadata(serial: device_id.serial_number, sessionid: session_id)
-    gspid=self
+    gspid=self()
     sspid=spawn_link(__MODULE__, :session_prestart, [gspid, script_module, device_id, hd(message.entries), session_id, fun]) # TODO: Should be "first inform encountered", not just hd
 
     # Start session script process, save pid to state
@@ -505,7 +505,7 @@ defmodule ACS.Session do
     Logger.debug("gen_request: #{method}")
     case validateArgs(method,args) do
       true ->
-        id=generateID
+        id=generateID()
         header=%CWMP.Protocol.Messages.Header{id: id}
         message=case method do
           "GetRPCMethods" ->

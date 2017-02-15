@@ -13,7 +13,7 @@ defmodule ACS do
   def init({port, ip, ip6, session_handler, _opts}) do
     children = [
       # ipv4 listener
-      Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet, port: port, ip: ip, ref: :ipv4_listener]),
+      Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [port: port, ip: ip, ref: :ipv4_listener]),
       supervisor(ACS.Session.Supervisor, [session_handler])
     ]
 
