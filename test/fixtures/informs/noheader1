@@ -1,0 +1,71 @@
+<soap:Envelope   xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"   xmlns:enc="http://schemas.xmlsoap.org/soap/encoding/"   xmlns:xsd="http://www.w3.org/2001/XMLSchema"   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   xmlns:cwmp="urn:dslforum-org:cwmp-1-0">
+ <soap:Body>
+   <cwmp:Inform>
+    <DeviceId>
+       <Manufacturer>Weirdo Manufacturer</Manufacturer>
+       <OUI>12345</OUI>
+       <ProductClass>Crap</ProductClass>
+       <SerialNumber>S123456789WEIRD</SerialNumber>
+    </DeviceId>
+    <Event enc:arrayType="cwmp:EventStruct[2]">          
+       <EventStruct>
+       <EventCode>1 BOOT</EventCode>
+       <CommandKey></CommandKey>
+     </EventStruct>
+       <EventStruct>
+       <EventCode>0 BOOTSTRAP</EventCode>
+       <CommandKey></CommandKey>
+     </EventStruct>
+    </Event>
+       <MaxEnvelopes>1</MaxEnvelopes>
+       <CurrentTime>0001-01-01T00:00:41</CurrentTime>
+       <RetryCount>0</RetryCount>
+    <ParameterList enc:arrayType="cwmp:ParameterValueStruct[11]">         
+       <ParameterValueStruct>
+       <Name>Device.DeviceSummary</Name>
+       <Value xsi:type="xsd:string">Device:1.1[](Baseline:1,Time:1,IPPing:1,TraceRoute:1)</Value>
+     </ParameterValueStruct>
+       <ParameterValueStruct>
+       <Name>Device.DeviceInfo.HardwareVersion</Name>
+       <Value xsi:type="xsd:string">02.00</Value>
+     </ParameterValueStruct>
+       <ParameterValueStruct>
+       <Name>Device.DeviceInfo.SoftwareVersion</Name>
+       <Value xsi:type="xsd:string">0.1.4</Value>
+     </ParameterValueStruct>
+       <ParameterValueStruct>
+       <Name>Device.DeviceInfo.ProvisioningCode</Name>
+       <Value xsi:type="xsd:string"></Value>
+     </ParameterValueStruct>
+       <ParameterValueStruct>
+       <Name>Device.ManagementServer.ParameterKey</Name>
+       <Value xsi:type="xsd:string"></Value>
+     </ParameterValueStruct>
+       <ParameterValueStruct>
+       <Name>Device.ManagementServer.ConnectionRequestURL</Name>
+       <Value xsi:type="xsd:string">http://192.168.1.35:7547/whereever</Value>
+     </ParameterValueStruct>
+       <ParameterValueStruct>
+       <Name>Device.GatewayInfo.ManufacturerOUI</Name>
+       <Value xsi:type="xsd:string">123456</Value>
+     </ParameterValueStruct>
+       <ParameterValueStruct>
+       <Name>Device.GatewayInfo.ProductClass</Name>
+       <Value xsi:type="xsd:string">GWPC</Value>
+     </ParameterValueStruct>
+       <ParameterValueStruct>
+       <Name>Device.GatewayInfo.SerialNumber</Name>
+       <Value xsi:type="xsd:string">S987654321</Value>
+     </ParameterValueStruct>
+       <ParameterValueStruct>
+       <Name>Device.LAN.IPAddress</Name>
+       <Value xsi:type="xsd:string">192.168.1.35</Value>
+     </ParameterValueStruct>
+       <ParameterValueStruct>
+       <Name>Device.LAN.MACAddress</Name>
+       <Value xsi:type="xsd:string">AA:BB:CC:DD:EE:FF</Value>
+     </ParameterValueStruct>
+    </ParameterList>
+   </cwmp:Inform>
+ </soap:Body>
+</soap:Envelope>

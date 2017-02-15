@@ -309,8 +309,14 @@ defmodule ACS.Session do
         case has_inform?(message.entries) do
           true ->
             Logger.debug("Session server saw inform, generating response")
+            id = if !is_nil(message.header) && Map.has_key?(message.header, :id) do
+              message.header.id
+            else
+              0
+            end
+
             {{200,CWMP.Protocol.Generator.generate!(
-               %CWMP.Protocol.Messages.Header{id: message.header.id},
+               %CWMP.Protocol.Messages.Header{id: id},
                %CWMP.Protocol.Messages.InformResponse{max_envelopes: 1}, message.cwmp_version)},state.script_element,[],state.sspid}
           false ->
             case state.script_element do
