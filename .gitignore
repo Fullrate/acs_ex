@@ -3,3 +3,7 @@
 /deps
 erl_crash.dump
 *.ez
+*.swp
+*.swo
+*.swn
+mix.lock
