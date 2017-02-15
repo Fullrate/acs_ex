@@ -1,3 +1,7 @@
+0.2.19  session has to handle an Inform with no SOAP header, and this no requesting ID. We just reply with 0 as id
+        because such an Inform would mean that the device dont care about such things, so we can reply whatever
+        we like.
+
 0.2.18  Minor bug fix - the session_filter need only the inform data hd(:entries) not the complete envelope as param 2
 
 0.2.17  The session_filter method needs the inform aswell, because it might need to inspect
