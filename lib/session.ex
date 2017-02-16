@@ -428,6 +428,13 @@ defmodule ACS.Session do
 
   defp construct_reply( message ) do
     entry = hd(message.entries)
+    id = cond do
+      Map.has_key?(message, :header) && message.header != nil ->
+        message.header.id
+      true ->
+        0
+    end
+
     case message_type(entry) do
       {:cpe,_messagetype} ->
         # ...Response and that type
@@ -436,31 +443,31 @@ defmodule ACS.Session do
         {{204,""},[message]}
       {:acs,CWMP.Protocol.Messages.GetRPCMethods} ->
         {{200,CWMP.Protocol.Generator.generate!(
-          %CWMP.Protocol.Messages.Header{id: message.header.id},
+          %CWMP.Protocol.Messages.Header{id: id},
           %CWMP.Protocol.Messages.GetRPCMethodsResponse{methods: ["GetRPCMethods","Inform","TransferComplete","AutonomousTransferComplete","Kicked","RequestDownload","DUStateChangeComplete","AutonomousDUStateChangeComplete"]},message.cwmp_version)},[message]}
       {:acs,CWMP.Protocol.Messages.TransferComplete} ->
         {{200,CWMP.Protocol.Generator.generate!(
-          %CWMP.Protocol.Messages.Header{id: message.header.id},
+          %CWMP.Protocol.Messages.Header{id: id},
           %CWMP.Protocol.Messages.TransferCompleteResponse{},message.cwmp_version)},[message]}
       {:acs,CWMP.Protocol.Messages.AutonomousTransferComplete} ->
         {{200,CWMP.Protocol.Generator.generate!(
-          %CWMP.Protocol.Messages.Header{id: message.header.id},
+          %CWMP.Protocol.Messages.Header{id: id},
           %CWMP.Protocol.Messages.AutonomousTransferCompleteResponse{},message.cwmp_version)},[message]}
       {:acs,CWMP.Protocol.Messages.Kicked} ->
         {{200,CWMP.Protocol.Generator.generate!(
-          %CWMP.Protocol.Messages.Header{id: message.header.id},
+          %CWMP.Protocol.Messages.Header{id: id},
           %CWMP.Protocol.Messages.KickedResponse{next_url: entry.next},message.cwmp_version)},[message]}
       {:acs,CWMP.Protocol.Messages.RequestDownload} ->
         {{200,CWMP.Protocol.Generator.generate!(
-          %CWMP.Protocol.Messages.Header{id: message.header.id},
+          %CWMP.Protocol.Messages.Header{id: id},
           %CWMP.Protocol.Messages.RequestDownloadResponse{},message.cwmp_version)},[message]}
       {:acs,CWMP.Protocol.Messages.DUStateChangeComplete} ->
         {{200,CWMP.Protocol.Generator.generate!(
-          %CWMP.Protocol.Messages.Header{id: message.header.id},
+          %CWMP.Protocol.Messages.Header{id: id},
           %CWMP.Protocol.Messages.DUStateChangeCompleteResponse{},message.cwmp_version)},[message]}
       {:acs,CWMP.Protocol.Messages.AutonomousDUStateChangeComplete} ->
         {{200,CWMP.Protocol.Generator.generate!(
-          %CWMP.Protocol.Messages.Header{id: message.header.id},
+          %CWMP.Protocol.Messages.Header{id: id},
           %CWMP.Protocol.Messages.AutonomousDUStateChangeCompleteResponse{},message.cwmp_version)},[message]}
 
       _ ->

@@ -1,3 +1,6 @@
+0.2.20  All messages now has a default value for id in the header when construct replies, in case of
+        the header being nil or otherwise defunct.
+
 0.2.19  session has to handle an Inform with no SOAP header, and this no requesting ID. We just reply with 0 as id
         because such an Inform would mean that the device dont care about such things, so we can reply whatever
         we like.
