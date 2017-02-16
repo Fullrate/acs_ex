@@ -27,9 +27,19 @@ defmodule RequestSenders do
     sendStr(data, sessioncookie)
   end
 
+  defp get_random_port do
+    port=Application.fetch_env!(:acs_ex, :acs_port)
+    cond do
+      is_list(port) ->
+        hd(Enum.take_random(port, 1))
+      true ->
+        port
+    end
+  end
+
   # sends a POST request, and eats the response and returns it
   def sendStr(str, sessioncookie \\ []) do
-    port=Application.fetch_env!(:acs_ex, :acs_port)
+    port = get_random_port()
     resp = case sessioncookie do
       [] -> HTTPoison.post("http://localhost:#{port}/", str, %{"Content-type" => "text/xml"})
       [s] -> HTTPoison.post("http://localhost:#{port}/", str, %{"Content-type" => "text/xml"}, [hackney: [cookie: [s]]])

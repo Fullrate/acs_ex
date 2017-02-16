@@ -1,3 +1,5 @@
+0.2.21  Now possible to configure a list of ACS ports to listen to.
+
 0.2.20  All messages now has a default value for id in the header when construct replies, in case of
         the header being nil or otherwise defunct.
 
