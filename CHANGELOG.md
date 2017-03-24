@@ -1,3 +1,5 @@
+0.2.23  Fixed a bug - the terminate/2 reason in the session can be a non-string
+
 0.2.22  Improved handling of unexpected read_body results in the CWMP parser.
 
 0.2.21  Now possible to configure a list of ACS ports to listen to.

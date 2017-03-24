@@ -182,7 +182,7 @@ defmodule ACS.Session do
   end
 
   def terminate(reason, state) do
-    Logger.debug("Session terminate called: #{reason}, #{inspect state}")
+    Logger.debug("Session terminate called: #{inspect reason}, #{inspect state}")
     Gauge.dec([name: :acs_ex_nof_sessions, labels: [state.device_id.product_class]])
     :normal
   end
