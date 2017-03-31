@@ -1,3 +1,6 @@
+0.2.24  Timex/tzdata dependency removed. All times in the ACS are UTC anyway, so it
+        was never really needed.
+
 0.2.23  Fixed a bug - the terminate/2 reason in the session can be a non-string
 
 0.2.22  Improved handling of unexpected read_body results in the CWMP parser.

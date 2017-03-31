@@ -3,18 +3,28 @@ defmodule ACS.Mixfile do
 
   def project do
     [app: :acs_ex,
-     version: "0.2.23",
-     elixir: "~> 1.2",
+     version: "0.3.0",
+     elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     description: "An ACS server based on the cwmp_ex module",
+     package: package(),
      deps: deps(),
      dialyzer: [plt_apps: [:cwmp_ex, :plug, :poison, :timex]]]
   end
 
   def application do
     [applications: [:logger, :cowboy, :plug, :httpoison,
-      :tzdata, :poolboy, :gproc, :crypto, :prometheus_ex],
-     included_applications: [:cwmp_ex, :tools, :timex, :poison]]
+      :poolboy, :gproc, :crypto, :prometheus_ex],
+     included_applications: [:cwmp_ex, :tools, :poison]]
+  end
+
+  defp package do
+    [
+      maintainers: ["Jesper Dalberg"],
+      licenses: ["Artistic"],
+      links: %{"GitHub" => "https://github.com/Fullrate/acs_ex"}
+    ]
   end
 
   defp deps do
@@ -22,12 +32,12 @@ defmodule ACS.Mixfile do
       {:cowboy, "~> 1.0"},
       {:uuid, "~> 1.1"},
       {:plug, "~> 1.1"},
-      {:cwmp_ex, github: "Fullrate/cwmp_ex"},
-      {:httpoison, "~> 0.8.0"},
+      {:cwmp_ex, "~> 0.2.1"},
+      {:httpoison, "~> 0.11.1"},
       {:poison, "~> 2.0"},
       {:poolboy, "~> 1.5.1"},
+      {:gproc, "~> 0.6.1"},
       {:mock, "~> 0.1.1", only: :test},
-      {:gproc, git: "https://github.com/uwiger/gproc.git", tag: "0.6"},
       {:prometheus_ex, "~> 1.1.0"}
     ]
   end

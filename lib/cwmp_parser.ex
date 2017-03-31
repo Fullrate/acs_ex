@@ -15,6 +15,7 @@ defmodule ACS.CWMP.Parser do
   The resulting CWMP requests and responses are returned so they can be set as
   the body_params field of the connection.
   """
+  @spec parse(Plug.Conn.t, String.t, String.t, List.t, Keyword.t) :: Plug.Conn.t
   def parse(conn, type, subtype, headers, opts)
 
   def parse(conn, "text", "xml", _headers, _opts) do

@@ -26,7 +26,7 @@ defmodule ACS.ACSHandler do
     conn = ACS.RealIPSetter.call(conn, nil)
     entry = %{
       "ip"           => "#{:inet_parse.ntoa(conn.remote_ip)}",
-      "ts"           => Timex.DateTime.now(:local) |> Timex.format!("{ISO}"),
+      "ts"           => DateTime.utc_now() |> DateTime.to_iso8601,
       "host"         => conn.host,
       "msg"          => "ERROR: Unhandled exception occured",
       "trace"        => %{

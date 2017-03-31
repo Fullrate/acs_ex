@@ -1,4 +1,6 @@
 # acs_ex
+[![Build Status](https://travis-ci.org/Fullrate/acs_ex.svg?branch=master)](https://travis-ci.org/Fullrate/acs_ex)
+[![Hex.pm Version](http://img.shields.io/hexpm/v/acs_ex.svg?style=flat)](https://hex.pm/packages/acs_ex)
 
 An implementation of the Auto Configuration Server mentioned in the TR-069 spec.
 
