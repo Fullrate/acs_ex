@@ -1,0 +1,774 @@
+    <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.15.0">
+    <title>ACS.Session.Script.Vendor.Helpers – acs_ex v0.3.0</title>
+    <link rel="stylesheet" href="dist/app-f7824c48e6.css" />
+    
+      <link rel="canonical" href="https://hexdocs.pm/acs_ex/ACS.Session.Script.Vendor.Helpers.html" />
+    
+    <script src="dist/sidebar_items-2dc9a987f6.js"></script>
+  </head>
+  <body data-type="modules">
+    <script>if(localStorage.getItem('night-mode')) document.body.className += ' night-mode';</script>
+
+    <div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+
+  
+  <a href="api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        acs_ex
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.3.0
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+
+    
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+
+      <h1>
+        <small class="visible-xs">acs_ex v0.3.0</small>
+        ACS.Session.Script.Vendor.Helpers
+        
+        
+      </h1>
+
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <i class="icon-link"></i>
+            </a>
+            Summary
+          </h1>
+          
+
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#addObject/2">addObject(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>args must be a map with keys: “object_name” where the object name ends with</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#cancelTransfer/2">cancelTransfer(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Sends a GetOptions request info the session</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#changeDUState/2">changeDUState(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Sends a ChangeDUState request info the session</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#deleteObject/2">deleteObject(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>args must be a map with keys: “object_name” where the object name ends with</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#download/2">download(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Sends a Download request info the session</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#extract_params/1">extract_params(inform)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Extracts the Parameters from an inform. Returns a map with parameters and values</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#factoryReset/1">factoryReset(session)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Sends a FactoryReset request info the session</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#getAllQueuedTransfers/1">getAllQueuedTransfers(session)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Sends an GetAllQueuedTransfers request info the session</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#getOptions/2">getOptions(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Sends a GetOptions request info the session</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#getParameterAttributes/2">getParameterAttributes(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>args will be a list of string with paramter names for which you want to retrieve attributes</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#getParameterNames/2">getParameterNames(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>args will be a maps with keys “parameter_path” and “next_level”</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#getParameterValues/2">getParameterValues(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>args will be a list of names for the actual cwmp request</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#getQueuedTransfers/1">getQueuedTransfers(session)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Sends a GetQueuedTransfers request info the session</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#getRPCMethods/1">getRPCMethods(session)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>GetRPCMethods, no args</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#has_event?/2">has_event?(inform, eventname)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Determines if an EventStruct of an Inform contains a specific event</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#reboot/1">reboot(session)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>call the session server with the script_commmand: reboot</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#scheduleDownload/2">scheduleDownload(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Sends a ScheduleDownload request info the session</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#scheduleInform/2">scheduleInform(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Sends a ScheduleInform request info the session</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#session_call/2">session_call(session, command)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#session_messages/1">session_messages(session)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Get the current list of ACS messages, i.e. TransferComplete aso from the session</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#setParameterAttributes/2">setParameterAttributes(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>args will be a list of maps each with keys “name”, “notification_change”, “notification”, “accesslist_change”
+and “accesslist”</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#setParameterValues/2">setParameterValues(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>args must be a list of maps with “name”, “type”, “value”</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#setVouchers/2">setVouchers(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Sends a SetVouchers request info the session</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#upload/2">upload(session, args)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Sends an Upload request info the session</p>
+</div>
+  
+</div>
+
+  </div>
+
+
+          
+
+        </section>
+      
+
+      
+
+      
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <i class="icon-link"></i>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="addObject/2">
+  
+  <div class="detail-header">
+    <a href="#addObject/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">addObject(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>args must be a map with keys: “object_name” where the object name ends with .</p>
+
+  </section>
+</div>
+<div class="detail" id="cancelTransfer/2">
+  
+  <div class="detail-header">
+    <a href="#cancelTransfer/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">cancelTransfer(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Sends a GetOptions request info the session.</p>
+<p>Args is a commandkey, just a string</p>
+
+  </section>
+</div>
+<div class="detail" id="changeDUState/2">
+  
+  <div class="detail-header">
+    <a href="#changeDUState/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">changeDUState(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Sends a ChangeDUState request info the session.</p>
+<p>args is a map containing the keys needed to generate at CWMP.Protocol.Messages.ChangeDUState
+structure. This means that the elements in the operations list need to be one (or more) of the
+struct types:
+   %CWMP.Protocol.Messages.InstallOpStruct{url: url, uuid: uuid, username: user, password: pass, execution_env_ref: eer}
+   %CWMP.Protocol.Messages.UpdateOpStruct{url: url, uuid: uuid, username: user, password: pass, version: ver}
+   %CWMP.Protocol.Messages.UninstallOpStruct{url: url, uuid: uuid, execution_env_ref: eer}</p>
+<p>For example:</p>
+<pre><code class="elixir">  commandkey (May be &quot;&quot;)
+  operations: [
+    %CWMP.Protocol.Messages.InstallOpStruct{
+      url
+      uuid
+      username (May be &quot;&quot;)
+      password (May be &quot;&quot;)
+      execution_env_ref
+    }]</code></pre>
+
+  </section>
+</div>
+<div class="detail" id="deleteObject/2">
+  
+  <div class="detail-header">
+    <a href="#deleteObject/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">deleteObject(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>args must be a map with keys: “object_name” where the object name ends with .</p>
+<p>An optional parameter_key can be given</p>
+<p>Returns a CWMP.Protocol.Messages.AddObjectResponse</p>
+
+  </section>
+</div>
+<div class="detail" id="download/2">
+  
+  <div class="detail-header">
+    <a href="#download/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">download(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Sends a Download request info the session.</p>
+<p>args is a map containing the keys needed to generate at CWMP.Protocol.Messages.Download
+structure. i.e. “url”, “filetype”, “filesize” at least.</p>
+
+  </section>
+</div>
+<div class="detail" id="extract_params/1">
+  
+  <div class="detail-header">
+    <a href="#extract_params/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">extract_params(inform)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Extracts the Parameters from an inform. Returns a map with parameters and values.</p>
+
+  </section>
+</div>
+<div class="detail" id="factoryReset/1">
+  
+  <div class="detail-header">
+    <a href="#factoryReset/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">factoryReset(session)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Sends a FactoryReset request info the session.</p>
+
+  </section>
+</div>
+<div class="detail" id="getAllQueuedTransfers/1">
+  
+  <div class="detail-header">
+    <a href="#getAllQueuedTransfers/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">getAllQueuedTransfers(session)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Sends an GetAllQueuedTransfers request info the session.</p>
+
+  </section>
+</div>
+<div class="detail" id="getOptions/2">
+  
+  <div class="detail-header">
+    <a href="#getOptions/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">getOptions(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Sends a GetOptions request info the session.</p>
+<p>Args is the option name, just a string</p>
+
+  </section>
+</div>
+<div class="detail" id="getParameterAttributes/2">
+  
+  <div class="detail-header">
+    <a href="#getParameterAttributes/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">getParameterAttributes(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>args will be a list of string with paramter names for which you want to retrieve attributes.</p>
+<p>Return value will be a CWMP.Protocol.Messages.GetParameterAttributesResponse struct</p>
+
+  </section>
+</div>
+<div class="detail" id="getParameterNames/2">
+  
+  <div class="detail-header">
+    <a href="#getParameterNames/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">getParameterNames(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>args will be a maps with keys “parameter_path” and “next_level”</p>
+
+  </section>
+</div>
+<div class="detail" id="getParameterValues/2">
+  
+  <div class="detail-header">
+    <a href="#getParameterValues/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">getParameterValues(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>args will be a list of names for the actual cwmp request.</p>
+
+  </section>
+</div>
+<div class="detail" id="getQueuedTransfers/1">
+  
+  <div class="detail-header">
+    <a href="#getQueuedTransfers/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">getQueuedTransfers(session)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Sends a GetQueuedTransfers request info the session.</p>
+
+  </section>
+</div>
+<div class="detail" id="getRPCMethods/1">
+  
+  <div class="detail-header">
+    <a href="#getRPCMethods/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">getRPCMethods(session)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>GetRPCMethods, no args</p>
+
+  </section>
+</div>
+<div class="detail" id="has_event?/2">
+  
+  <div class="detail-header">
+    <a href="#has_event?/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">has_event?(inform, eventname)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Determines if an EventStruct of an Inform contains a specific event.</p>
+
+  </section>
+</div>
+<div class="detail" id="reboot/1">
+  
+  <div class="detail-header">
+    <a href="#reboot/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">reboot(session)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>call the session server with the script_commmand: reboot</p>
+
+  </section>
+</div>
+<div class="detail" id="scheduleDownload/2">
+  
+  <div class="detail-header">
+    <a href="#scheduleDownload/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">scheduleDownload(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Sends a ScheduleDownload request info the session.</p>
+<p>args is a map containing the keys needed to generate at CWMP.Protocol.Messages.ScheduleDownload
+structure. i.e.</p>
+<pre><code class="elixir">  commandkey (May be empty)
+  filetype
+  url
+  username (Optional)
+  password (Optional)
+  filesize
+  target_filename (Optional)
+  timewindowlist [%{
+    window_start
+    window_end
+    window_mode
+    user_message (May be &quot;&quot;)
+    max_retries}]</code></pre>
+
+  </section>
+</div>
+<div class="detail" id="scheduleInform/2">
+  
+  <div class="detail-header">
+    <a href="#scheduleInform/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">scheduleInform(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Sends a ScheduleInform request info the session.</p>
+
+  </section>
+</div>
+<div class="detail" id="session_call/2">
+  
+  <div class="detail-header">
+    <a href="#session_call/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">session_call(session, command)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="session_messages/1">
+  
+  <div class="detail-header">
+    <a href="#session_messages/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">session_messages(session)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Get the current list of ACS messages, i.e. TransferComplete aso from the session.</p>
+
+  </section>
+</div>
+<div class="detail" id="setParameterAttributes/2">
+  
+  <div class="detail-header">
+    <a href="#setParameterAttributes/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">setParameterAttributes(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>args will be a list of maps each with keys “name”, “notification_change”, “notification”, “accesslist_change”
+and “accesslist”.</p>
+
+  </section>
+</div>
+<div class="detail" id="setParameterValues/2">
+  
+  <div class="detail-header">
+    <a href="#setParameterValues/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">setParameterValues(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>args must be a list of maps with “name”, “type”, “value”</p>
+
+  </section>
+</div>
+<div class="detail" id="setVouchers/2">
+  
+  <div class="detail-header">
+    <a href="#setVouchers/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">setVouchers(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Sends a SetVouchers request info the session.</p>
+
+  </section>
+</div>
+<div class="detail" id="upload/2">
+  
+  <div class="detail-header">
+    <a href="#upload/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">upload(session, args)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Sends an Upload request info the session.</p>
+<p>Args is a map containing at least commandkey, filetype and url out of the following
+possible keys, here listed with defaults:</p>
+<pre><code class="elixir">      commandkey: &quot;&quot;,
+      filetype: nil,
+      url: nil,
+      username: &quot;&quot;,
+      password: &quot;&quot;,
+      delay_seconds: 0</code></pre>
+
+  </section>
+</div>
+
+        </section>
+      
+
+      
+          <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.15.0),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            </span>
+        </p>
+        <button class="night-mode-toggle" />
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  <script src="dist/app-372682077e.js"></script>
+  </body>
+</html>
+
