@@ -3,7 +3,7 @@ defmodule ACS.Mixfile do
 
   def project do
     [app: :acs_ex,
-     version: "0.3.1",
+     version: "0.3.2",
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -32,7 +32,7 @@ defmodule ACS.Mixfile do
       {:cowboy, "~> 1.0"},
       {:uuid, "~> 1.1"},
       {:plug, "~> 1.1"},
-      {:cwmp_ex, "~> 0.2.1"},
+      {:cwmp_ex, "~> 0.2.2"},
       {:httpoison, "~> 0.11.1"},
       {:poison, "~> 2.0"},
       {:poolboy, "~> 1.5.1"},
