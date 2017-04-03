@@ -3,7 +3,7 @@ defmodule ACS.Mixfile do
 
   def project do
     [app: :acs_ex,
-     version: "0.3.0",
+     version: "0.3.1",
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -38,7 +38,8 @@ defmodule ACS.Mixfile do
       {:poolboy, "~> 1.5.1"},
       {:gproc, "~> 0.6.1"},
       {:mock, "~> 0.1.1", only: :test},
-      {:prometheus_ex, "~> 1.1.0"}
+      {:prometheus_ex, "~> 1.1.0"},
+      {:ex_doc, "~> 0.15.0", only: :dev}
     ]
   end
 end

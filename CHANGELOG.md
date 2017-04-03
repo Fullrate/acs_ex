@@ -1,3 +1,5 @@
+0.3.1   ex_doc in dev mode only.
+
 0.2.24  Timex/tzdata dependency removed. All times in the ACS are UTC anyway, so it
         was never really needed.
 
