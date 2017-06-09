@@ -77,7 +77,7 @@ defmodule ACS.Handlers.ACS do
       "" ->
         {400, "Bad request", ""}
       {:reject,reason} ->
-        Logger.error("Request rejected: #{reason}")
+        Logger.error("Request rejected: #{inspect reason}")
         {404, "Not found", ""}
       _  ->
         {c,r} = ACS.Session.process_message( session_id, conn.body_params )
