@@ -67,13 +67,13 @@ defmodule ACS.Session do
         {:ok, to} -> to
         :error -> 30000
       end
-      GenServer.call(via_tuple(session_id), {:verify_remotehost, [remote_host]}, timeout)
+      case GenServer.call(via_tuple(session_id), {:verify_remotehost, [remote_host]}, timeout) do
+        {:noproc, _} -> false
+        host_verify_result -> host_verify_result
+      end
     catch
       # timeout comes as :exit, reason.
-      :exit, reason -> case reason do
-        {:timeout,_} -> {:error, "timeout"}
-        {what,ever} -> {what,ever}
-      end
+      :exit, _reason -> false
     end
   end
 
