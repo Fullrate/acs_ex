@@ -3,7 +3,7 @@ defmodule ACS.Mixfile do
 
   def project do
     [app: :acs_ex,
-     version: "0.3.5",
+     version: "0.3.6",
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -16,7 +16,7 @@ defmodule ACS.Mixfile do
   def application do
     [applications: [:cowboy, :plug, :httpoison,
       :poolboy, :gproc, :crypto, :prometheus_ex],
-     included_applications: [:cwmp_ex, :tools, :poison]]
+     included_applications: [:cwmp_ex, :tools]]
   end
 
   defp package do
