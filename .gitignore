@@ -7,3 +7,4 @@ erl_crash.dump
 *.swo
 *.swn
 mix.lock
+.elixir_ls
