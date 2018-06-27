@@ -270,7 +270,11 @@ defmodule ACS.Session.Script.Vendor.Helpers do
   # do the gen_server call
   def session_call(session, command) do
     Logger.debug("Vendor.Helpers session_call :script_command called: command: #{command.method} with args: #{inspect(command.args)}")
-    GenServer.call(session, {:script_command, [command]}, 30000)
+    timeout=case Application.fetch_env(:acs_ex, :session_timeout) do
+      {:ok, to} -> to
+      :error -> 30000
+    end
+    GenServer.call(session, {:script_command, [command]}, timeout)
   end
 
 end
