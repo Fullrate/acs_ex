@@ -264,7 +264,11 @@ defmodule ACS.Session.Script.Vendor.Helpers do
   """
   def session_messages(session) do
     Logger.debug("Vendor.Helpers session_call :unscripted called")
-    GenServer.call(session, {:script_command, [:unscripted]})
+    timeout=case Application.fetch_env(:acs_ex, :session_timeout) do
+      {:ok, to} -> to
+      :error -> 30000
+    end
+    GenServer.call(session, {:script_command, [:unscripted]}, timeout)
   end
 
   # do the gen_server call
