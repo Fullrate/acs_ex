@@ -4,5 +4,5 @@ config :logger,
   level: :error
 
 config :acs_ex,
-  acs_port: [65432,65431]
+  acs_port: 65432
 
