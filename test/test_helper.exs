@@ -3,6 +3,7 @@ ExUnit.start
 defmodule TestHelpers do
   defmacro acsex(module, do: body) do
     quote do
+      Process.sleep(100) # Allow for teardown...
       {:ok,acs_ex_pid} = ACS.start_link(unquote(module), Application.fetch_env!(:acs_ex, :acs_port), Application.fetch_env!(:acs_ex, :acs_ip), Application.fetch_env!(:acs_ex, :acs_ip6))
       unquote(body)
       Supervisor.stop(acs_ex_pid)
@@ -61,6 +62,6 @@ defmodule RequestSenders do
 
   def readFixture!(file) do
     { :ok, data } = File.read(file)
-    String.rstrip(data,?\n)
+    String.trim_trailing(data,?\n)
   end
 end
