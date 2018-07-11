@@ -10,6 +10,13 @@ defmodule ACS.CWMP.Parser do
   require Logger
 
   @doc """
+  Just an init that must be here.
+  """
+  def init(opts) do
+    opts
+  end
+  
+  @doc """
   Parses text/xml requests as CWMP requests/responses.
 
   The resulting CWMP requests and responses are returned so they can be set as
