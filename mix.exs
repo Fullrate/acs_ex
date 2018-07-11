@@ -32,7 +32,7 @@ defmodule ACS.Mixfile do
       {:cowboy, "~> 1.0"},
       {:uuid, "~> 1.1"},
       {:plug, "~> 1.1"},
-      {:cwmp_ex, "~> 0.2.2"},
+      {:cwmp_ex, "~> 0.2.3"},
       {:httpoison, "~> 0.11.1"},
       {:poison, "~> 2.0"},
       {:poolboy, "~> 1.5.1"},
