@@ -62,6 +62,6 @@ defmodule RequestSenders do
 
   def readFixture!(file) do
     { :ok, data } = File.read(file)
-    String.trim_trailing(data,?\n)
+    String.trim_trailing(data,"\n")
   end
 end
