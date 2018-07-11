@@ -3,8 +3,8 @@ defmodule ACS.Mixfile do
 
   def project do
     [app: :acs_ex,
-     version: "0.3.6",
-     elixir: "~> 1.4",
+     version: "0.3.7",
+     elixir: "~> 1.6",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      description: "An ACS server based on the cwmp_ex module",
