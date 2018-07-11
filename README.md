@@ -37,6 +37,6 @@ is doing.
 
 ## Examples
 
-TODO: Add some examples of how to setup an external actual ACS module to interact with acs_ex
+An example of how to use acs_ex can be found [here](https://github.com/Fullrate/my_acs)
 
 
