@@ -29,11 +29,11 @@ defmodule ACS do
   end
 
   defp ipv6_listeners(session_handler, ip6, port) when is_integer(port) do
-    [Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet6, port: port, ip: ip6, ipv6_v6only: true, ref: String.to_atom("ipv6_listener_#{port}")])]
+    [Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet6, port: port, ip: ip6, ipv6_v6only: true, timeout: 30000, ref: String.to_atom("ipv6_listener_#{port}")])]
   end
 
   defp ipv6_listeners(session_handler, ip6, [port]) when is_integer(port) do
-    [Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet6, port: port, ip: ip6, ipv6_v6only: true, ref: String.to_atom("ipv6_listener_#{port}")])]
+    [Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet6, port: port, ip: ip6, ipv6_v6only: true, timeout: 30000, ref: String.to_atom("ipv6_listener_#{port}")])]
   end
 
   defp ipv6_listeners(session_handler, ip6, [ port | rest ] ) do
@@ -41,11 +41,11 @@ defmodule ACS do
   end
 
   defp ipv4_listeners(session_handler, ip, port) when is_integer(port) do
-    [ Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [port: port, ip: ip, ref: String.to_atom("ipv4_listener_#{port}")]) ]
+    [ Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [port: port, ip: ip, timeout: 30000, ref: String.to_atom("ipv4_listener_#{port}")]) ]
   end
 
   defp ipv4_listeners(session_handler, ip, [port] ) when is_integer(port) do
-    [ Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [port: port, ip: ip, ref: String.to_atom("ipv4_listener_#{port}")]) ]
+    [ Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [port: port, ip: ip, timeout: 30000, ref: String.to_atom("ipv4_listener_#{port}")]) ]
   end
 
   defp ipv4_listeners(session_handler, ip, [ port | rest ] ) do
