@@ -89,7 +89,7 @@ defmodule ACS.Session do
     try do
       timeout=case Application.fetch_env(:acs_ex, :script_timeout) do
         {:ok, to} -> to
-        :error -> 2000
+        :error -> 29000
       end
       Logger.debug("API script_command got timeout value: #{timeout}")
       GenServer.call(via_tuple(device_id), {:script_command, [command]}, timeout)
