@@ -4,7 +4,15 @@ defmodule ACS.Mixfile do
   def project do
     [app: :acs_ex,
      version: "0.3.9",
-     elixir: "~> 1.6",
+     elixir: "~> 1.7",
+
+     # Docs
+     name: "acs_ex",
+     source_url: "https://github.com/Fullrate/acs_ex",
+     docs: [
+       main: "acs_ex",
+       extras: ["README.md"]
+     ],
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      description: "An ACS server based on the cwmp_ex module",
@@ -39,7 +47,7 @@ defmodule ACS.Mixfile do
       {:gproc, "~> 0.6.1"},
       {:mock, "~> 0.1.1", only: :test},
       {:prometheus_ex, "~> 3.0.2"},
-      {:ex_doc, "~> 0.15.0", only: :dev}
+      {:ex_doc, "~> 0.19.0", only: :dev, runtime: false}
     ]
   end
 end

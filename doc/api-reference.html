@@ -1,54 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.15.1">
-    <title>API Reference – acs_ex v0.3.8</title>
-    <link rel="stylesheet" href="dist/app-af302bfcc4.css" />
+    <meta name="generator" content="ExDoc v0.19.1">
+    <title>API Reference – acs_ex v0.3.9</title>
+    <link rel="stylesheet" href="dist/app-240d7fc7e5.css" />
+    <script src="dist/sidebar_items-4789302719.js"></script>
     
-      <link rel="canonical" href="https://hexdocs.pm/acs_ex/api-reference.html" />
-    
-    <script src="dist/sidebar_items-6105f655dc.js"></script>
   </head>
   <body data-type="extras">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
-
 <div class="main">
-<button class="sidebar-toggle">
-  <i class="icon-menu"></i>
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" aria-hidden="true"></span>
+  <span class="sr-only">Toggle Sidebar</span>
+</button>
+<button class="sidebar-button night-mode-toggle">
+  <span class="icon-theme" aria-hidden="true"></span>
+  <span class="sr-only">Toggle Theme</span>
 </button>
 <section class="sidebar">
 
-  
-  <a href="api-reference.html" class="sidebar-projectLink">
+  <a href="acs_ex.html" class="sidebar-projectLink">
     <div class="sidebar-projectDetails">
       <h1 class="sidebar-projectName">
-        acs_ex
-      </h1>
+acs_ex      </h1>
       <h2 class="sidebar-projectVersion">
-        v0.3.8
+        v0.3.9
       </h2>
     </div>
-    
   </a>
 
-  <div class="sidebar-search">
-    <i class="icon-search"></i>
-    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
-  </div>
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+    <input name="q" type="text" id="search-list" class="search-input" placeholder="Search" aria-label="Search" autocomplete="off" />
+  </form>
 
   <ul class="sidebar-listNav">
     <li><a id="extras-list" href="#full-list">Pages</a></li>
 
-    
       <li><a id="modules-list" href="#full-list">Modules</a></li>
-    
 
-    
 
-    
   </ul>
   <div class="gradient"></div>
   <ul id="full-list" class="sidebar-fullList"></ul>
@@ -60,109 +57,107 @@
 
 
 <h1>
-  <small class="visible-xs">acs_ex v0.3.8</small>
+  <small class="visible-xs">acs_ex v0.3.9</small>
   API Reference
 </h1>
 
-
   <section class="details-list">
     <h2 id="modules" class="section-heading">
-  <a href="#modules" class="hover-link"><i class="icon-link"></i></a>
+  <a href="#modules" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Modules
 </h2>
 
     <div class="summary">
-      <div class="summary-row">
-  <div class="summary-signature"><a href="ACS.html">ACS</a></div>
-  
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="ACS.html">ACS</a>
+  </div>
     <div class="summary-synopsis"><p>Request router for CPE-&gt;ACS</p>
 </div>
-  
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="ACS.ACSHandler.html">ACS.ACSHandler</a></div>
-  
+  <div class="summary-signature">
+    <a href="ACS.ACSHandler.html">ACS.ACSHandler</a>
+  </div>
     <div class="summary-synopsis"><p>CWMP southbound interface handler plug</p>
 </div>
-  
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="ACS.CWMP.Parser.html">ACS.CWMP.Parser</a></div>
-  
+  <div class="summary-signature">
+    <a href="ACS.CWMP.Parser.html">ACS.CWMP.Parser</a>
+  </div>
     <div class="summary-synopsis"><p>This module implements a simple wrapper around the cwmp_ex CWMP library
 parser. The request body is assumed to be a SOAP envelope containing one or
 more CWMP requests/responses</p>
 </div>
-  
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="ACS.Handlers.ACS.html">ACS.Handlers.ACS</a></div>
-  
+  <div class="summary-signature">
+    <a href="ACS.Handlers.ACS.html">ACS.Handlers.ACS</a>
+  </div>
     <div class="summary-synopsis"><p>Handles CWMP requests coming in over the CWMP southbound interface</p>
 </div>
-  
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="ACS.RealIPSetter.html">ACS.RealIPSetter</a></div>
-  
+  <div class="summary-signature">
+    <a href="ACS.RealIPSetter.html">ACS.RealIPSetter</a>
+  </div>
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="ACS.Session.html">ACS.Session</a></div>
-  
+  <div class="summary-signature">
+    <a href="ACS.Session.html">ACS.Session</a>
+  </div>
     <div class="summary-synopsis"><p>The actual ACS-CPE session is handled here. A session is initiated
   when an Inform arrives, therefore the init function takes a parsed
   Inform request as an argument</p>
 </div>
-  
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="ACS.Session.Script.Vendor.html">ACS.Session.Script.Vendor</a></div>
-  
+  <div class="summary-signature">
+    <a href="ACS.Session.Script.Vendor.html">ACS.Session.Script.Vendor</a>
+  </div>
     <div class="summary-synopsis"><p>This is the main vendor specific logic module, and the one
 you want to write if you have stuff that needs to happen in
 your specific environment</p>
 </div>
-  
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="ACS.Session.Script.Vendor.Helpers.html">ACS.Session.Script.Vendor.Helpers</a></div>
-  
+  <div class="summary-signature">
+    <a href="ACS.Session.Script.Vendor.Helpers.html">ACS.Session.Script.Vendor.Helpers</a>
+  </div>
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="ACS.Session.Supervisor.html">ACS.Session.Supervisor</a></div>
-  
+  <div class="summary-signature">
+    <a href="ACS.Session.Supervisor.html">ACS.Session.Supervisor</a>
+  </div>
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="ACS.SessionScript.html">ACS.SessionScript</a></div>
-  
+  <div class="summary-signature">
+    <a href="ACS.SessionScript.html">ACS.SessionScript</a>
+  </div>
 </div>
-
     </div>
   </section>
-
-
-
-
 
 
       <footer class="footer">
         <p>
           <span class="line">
             Built using
-            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.15.1),
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.19.1),
           </span>
           <span class="line">
             designed by
-            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
             </span>
         </p>
-        <button class="night-mode-toggle" />
       </footer>
     </div>
   </div>
 </section>
 </div>
-  <script src="dist/app-e9767fa739.js"></script>
+  <script src="dist/app-a0c90688fa.js"></script>
+  
   </body>
 </html>
 

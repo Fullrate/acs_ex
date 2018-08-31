@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.19.1">
+    <title>acs_ex – acs_ex v0.3.9</title>
+    <link rel="stylesheet" href="dist/app-240d7fc7e5.css" />
+    <script src="dist/sidebar_items-4789302719.js"></script>
+    
+  </head>
+  <body data-type="extras">
+    <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
+<div class="main">
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" aria-hidden="true"></span>
+  <span class="sr-only">Toggle Sidebar</span>
+</button>
+<button class="sidebar-button night-mode-toggle">
+  <span class="icon-theme" aria-hidden="true"></span>
+  <span class="sr-only">Toggle Theme</span>
+</button>
+<section class="sidebar">
+
+  <a href="acs_ex.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+acs_ex      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.3.9
+      </h2>
+    </div>
+  </a>
+
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+    <input name="q" type="text" id="search-list" class="search-input" placeholder="Search" aria-label="Search" autocomplete="off" />
+  </form>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+
+<h1>acs_ex</h1>
+<p><a href="https://travis-ci.org/Fullrate/acs_ex"><img src="https://travis-ci.org/Fullrate/acs_ex.svg?branch=master" alt="Build Status"/></a>
+<a href="https://hex.pm/packages/acs_ex"><img src="http://img.shields.io/hexpm/v/acs_ex.svg?style=flat" alt="Hex.pm Version"/></a></p>
+<p>An implementation of the Auto Configuration Server mentioned in the TR-069 spec.</p>
+<p>CWMP has the unfortunate effect of flipping the logic towards the CPE’s. acs_ex aims to flip it
+back.</p>
+<p>It sets up a GenServer to handle sessions from CPE’s. When a session starts an external handler that
+can be configured is called. This handler has one method, <code class="inline">start_session</code> (Meaning an Inform was seen).</p>
+<p>Seen from that handler, the logic is now shifted and you can just ask the GenServer for the stuff you need,
+like “getParameterValues”, “setParameterValues” aso, and the functions will return as were the
+synchroneous.</p>
+<p>So you write you own module that uses acs_ex as an application, and from that module you can
+write whatever it is you actually want to do with the CPE’s based on type, firmware version and
+whatever else you can think up.</p>
+<h2 id="configuration" class="section-heading">
+  <a href="#configuration" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Configuration
+</h2>
+
+<p>Our config.exs would have an entry similar to this:</p>
+<pre><code class="nohighlight makeup elixir"><span class="n">config</span><span class="w"> </span><span class="ss">:acs_ex</span><span class="p">,</span><span class="w"> </span><span class="ss">:acs_port</span><span class="p">,</span><span class="w"> </span><span class="mi">7547</span><span class="w">
+</span><span class="c1"># crypt stuff is needed beacuse the CPE&lt;&gt;ACS cookie is an encrypted one.</span><span class="w">
+</span><span class="n">config</span><span class="w"> </span><span class="ss">:acs_ex</span><span class="p">,</span><span class="w">
+  </span><span class="ss">crypt_keybase</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;31de9f7d766287c7565801f30babbd4f&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">crypt_cookie_salt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SomeSalt&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">crypt_signed_cookie_salt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SomeSignedSalt&quot;</span><span class="w">
+</span></code></pre>
+<p>acs_ex uses <a href="https://hexdocs.pm/logger/Logger.html"><code class="inline">Logger</code></a> for logging, so setup a backend that suits you if you want to see what it
+is doing.</p>
+<h2 id="examples" class="section-heading">
+  <a href="#examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<p>An example of how to use acs_ex can be found <a href="https://github.com/Fullrate/my_acs">here</a></p>
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.19.1),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            </span>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  <script src="dist/app-a0c90688fa.js"></script>
+  
+  </body>
+</html>
+

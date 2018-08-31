@@ -1,54 +1,51 @@
-    <!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.15.1">
-    <title>ACS.Session.Script.Vendor – acs_ex v0.3.8</title>
-    <link rel="stylesheet" href="dist/app-af302bfcc4.css" />
+    <meta name="generator" content="ExDoc v0.19.1">
+    <title>ACS.Session.Script.Vendor – acs_ex v0.3.9</title>
+    <link rel="stylesheet" href="dist/app-240d7fc7e5.css" />
+    <script src="dist/sidebar_items-4789302719.js"></script>
     
-      <link rel="canonical" href="https://hexdocs.pm/acs_ex/ACS.Session.Script.Vendor.html" />
-    
-    <script src="dist/sidebar_items-6105f655dc.js"></script>
   </head>
   <body data-type="modules">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
-
     <div class="main">
-<button class="sidebar-toggle">
-  <i class="icon-menu"></i>
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" aria-hidden="true"></span>
+  <span class="sr-only">Toggle Sidebar</span>
+</button>
+<button class="sidebar-button night-mode-toggle">
+  <span class="icon-theme" aria-hidden="true"></span>
+  <span class="sr-only">Toggle Theme</span>
 </button>
 <section class="sidebar">
 
-  
-  <a href="api-reference.html" class="sidebar-projectLink">
+  <a href="acs_ex.html" class="sidebar-projectLink">
     <div class="sidebar-projectDetails">
       <h1 class="sidebar-projectName">
-        acs_ex
-      </h1>
+acs_ex      </h1>
       <h2 class="sidebar-projectVersion">
-        v0.3.8
+        v0.3.9
       </h2>
     </div>
-    
   </a>
 
-  <div class="sidebar-search">
-    <i class="icon-search"></i>
-    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
-  </div>
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+    <input name="q" type="text" id="search-list" class="search-input" placeholder="Search" aria-label="Search" autocomplete="off" />
+  </form>
 
   <ul class="sidebar-listNav">
     <li><a id="extras-list" href="#full-list">Pages</a></li>
 
-    
       <li><a id="modules-list" href="#full-list">Modules</a></li>
-    
 
-    
 
-    
   </ul>
   <div class="gradient"></div>
   <ul id="full-list" class="sidebar-fullList"></ul>
@@ -60,15 +57,17 @@
 
 
       <h1>
-        <small class="visible-xs">acs_ex v0.3.8</small>
-        ACS.Session.Script.Vendor
-        
-        
+        <small class="visible-xs">acs_ex v0.3.9</small>
+ACS.Session.Script.Vendor        
+          <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor.ex#L1" title="View Source" class="view-source" rel="help">
+            <span class="icon-code" aria-hidden="true"></span>
+            <span class="sr-only">View Source</span>
+          </a>
       </h1>
 
-      
+
         <section id="moduledoc">
-          <p>This is the main vendor specific logic module, and the one
+<p>This is the main vendor specific logic module, and the one
 you want to write if you have stuff that needs to happen in
 your specific environment.</p>
 <p>In the real world you would write a new module that starts acs_ex
@@ -76,117 +75,101 @@ using the child_spec, giving it the name of your handler module.</p>
 <p>That would make acs_ex use your module when initiating the script
 session.</p>
 <p>An example of this is available right next to this module.</p>
-
         </section>
-      
 
-      
         <section id="summary" class="details-list">
           <h1 class="section-heading">
             <a class="hover-link" href="#summary">
-              <i class="icon-link"></i>
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
             </a>
             Summary
           </h1>
-          
-
           
   <div class="summary-functions summary">
     <h2>
       <a href="#functions">Functions</a>
     </h2>
-    <div class="summary-row">
+<div class="summary-row">
   <div class="summary-signature">
     <a href="#session_filter/2">session_filter(device_id, inform)</a>
   </div>
-  
     <div class="summary-synopsis"><p>Callback implementation for <a href="ACS.SessionScript.html#c:session_filter/2"><code class="inline">ACS.SessionScript.session_filter/2</code></a></p>
 </div>
-  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#session_start/3">session_start(session, did, inform)</a>
   </div>
-  
     <div class="summary-synopsis"><p>Callback implementation for <a href="ACS.SessionScript.html#c:session_start/3"><code class="inline">ACS.SessionScript.session_start/3</code></a></p>
 </div>
-  
 </div>
-
   </div>
-
-
           
-
         </section>
-      
 
-      
 
-      
+
         <section id="functions" class="details-list">
           <h1 class="section-heading">
             <a class="hover-link" href="#functions">
-              <i class="icon-link"></i>
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
             </a>
             Functions
           </h1>
-          <div class="detail" id="session_filter/2">
-  
-  <div class="detail-header">
+<div class="detail" id="session_filter/2">
+    <div class="detail-header">
     <a href="#session_filter/2" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
     </a>
     <span class="signature">session_filter(device_id, inform)</span>
-    
-    
-    
-  </div>
+      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor.ex#L3" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+          </div>
   <section class="docstring">
-    <p>Callback implementation for <a href="ACS.SessionScript.html#c:session_filter/2"><code class="inline">ACS.SessionScript.session_filter/2</code></a>.</p>
-
+<p>Callback implementation for <a href="ACS.SessionScript.html#c:session_filter/2"><code class="inline">ACS.SessionScript.session_filter/2</code></a>.</p>
   </section>
 </div>
 <div class="detail" id="session_start/3">
-  
-  <div class="detail-header">
+    <div class="detail-header">
     <a href="#session_start/3" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
     </a>
     <span class="signature">session_start(session, did, inform)</span>
-    
-    
-    
-  </div>
+      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor.ex#L22" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+          </div>
   <section class="docstring">
-    <p>Callback implementation for <a href="ACS.SessionScript.html#c:session_start/3"><code class="inline">ACS.SessionScript.session_start/3</code></a>.</p>
-
+<p>Callback implementation for <a href="ACS.SessionScript.html#c:session_start/3"><code class="inline">ACS.SessionScript.session_start/3</code></a>.</p>
   </section>
 </div>
-
         </section>
-      
 
-      
           <footer class="footer">
         <p>
           <span class="line">
             Built using
-            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.15.1),
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.19.1),
           </span>
           <span class="line">
             designed by
-            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
             </span>
         </p>
-        <button class="night-mode-toggle" />
       </footer>
     </div>
   </div>
 </section>
 </div>
-  <script src="dist/app-e9767fa739.js"></script>
+  <script src="dist/app-a0c90688fa.js"></script>
+  
   </body>
 </html>
 
