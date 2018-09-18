@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.19.1">
-    <title>ACS.Session.Script.Vendor.Helpers – acs_ex v0.3.9</title>
+    <title>ACS.Session.Script.Vendor.Helpers – acs_ex v0.3.10</title>
     <link rel="stylesheet" href="dist/app-240d7fc7e5.css" />
       <link rel="canonical" href="https://hexdocs.pm/acs_ex/ACS.Session.Script.Vendor.Helpers.html" />
     <script src="dist/sidebar_items-4789302719.js"></script>
@@ -29,7 +29,7 @@
       <h1 class="sidebar-projectName">
 acs_ex      </h1>
       <h2 class="sidebar-projectVersion">
-        v0.3.9
+        v0.3.10
       </h2>
     </div>
   </a>
@@ -58,7 +58,7 @@ acs_ex      </h1>
 
 
       <h1>
-        <small class="visible-xs">acs_ex v0.3.9</small>
+        <small class="visible-xs">acs_ex v0.3.10</small>
 ACS.Session.Script.Vendor.Helpers        
           <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L1" title="View Source" class="view-source" rel="help">
             <span class="icon-code" aria-hidden="true"></span>
@@ -316,15 +316,15 @@ struct types:
    %CWMP.Protocol.Messages.UpdateOpStruct{url: url, uuid: uuid, username: user, password: pass, version: ver}
    %CWMP.Protocol.Messages.UninstallOpStruct{url: url, uuid: uuid, execution_env_ref: eer}</p>
 <p>For example:</p>
-<pre><code class="nohighlight makeup elixir"><span class="w">  </span><span class="n">commandkey</span><span class="w"> </span><span class="p" data-group-id="1802336946-1">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="1802336946-1">)</span><span class="w">
-  </span><span class="ss">operations</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1802336946-2">[</span><span class="w">
-    </span><span class="p" data-group-id="1802336946-3">%</span><span class="nc" data-group-id="1802336946-3">CWMP.Protocol.Messages.InstallOpStruct</span><span class="p" data-group-id="1802336946-3">{</span><span class="w">
+<pre><code class="nohighlight makeup elixir"><span class="w">  </span><span class="n">commandkey</span><span class="w"> </span><span class="p" data-group-id="9500117379-1">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="9500117379-1">)</span><span class="w">
+  </span><span class="ss">operations</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="9500117379-2">[</span><span class="w">
+    </span><span class="p" data-group-id="9500117379-3">%</span><span class="nc" data-group-id="9500117379-3">CWMP.Protocol.Messages.InstallOpStruct</span><span class="p" data-group-id="9500117379-3">{</span><span class="w">
       </span><span class="n">url</span><span class="w">
       </span><span class="n">uuid</span><span class="w">
-      </span><span class="n">username</span><span class="w"> </span><span class="p" data-group-id="1802336946-4">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="1802336946-4">)</span><span class="w">
-      </span><span class="n">password</span><span class="w"> </span><span class="p" data-group-id="1802336946-5">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="1802336946-5">)</span><span class="w">
+      </span><span class="n">username</span><span class="w"> </span><span class="p" data-group-id="9500117379-4">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="9500117379-4">)</span><span class="w">
+      </span><span class="n">password</span><span class="w"> </span><span class="p" data-group-id="9500117379-5">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="9500117379-5">)</span><span class="w">
       </span><span class="n">execution_env_ref</span><span class="w">
-    </span><span class="p" data-group-id="1802336946-3">}</span><span class="p" data-group-id="1802336946-2">]</span></code></pre>
+    </span><span class="p" data-group-id="9500117379-3">}</span><span class="p" data-group-id="9500117379-2">]</span></code></pre>
   </section>
 </div>
 <div class="detail" id="deleteObject/2">
@@ -557,19 +557,19 @@ structure. i.e. “url”, “filetype”, “filesize” at least.</p>
 <p>Sends a ScheduleDownload request info the session.</p>
 <p>args is a map containing the keys needed to generate at CWMP.Protocol.Messages.ScheduleDownload
 structure. i.e.</p>
-<pre><code class="nohighlight makeup elixir"><span class="w">  </span><span class="n">commandkey</span><span class="w"> </span><span class="p" data-group-id="6604441756-1">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">empty</span><span class="p" data-group-id="6604441756-1">)</span><span class="w">
+<pre><code class="nohighlight makeup elixir"><span class="w">  </span><span class="n">commandkey</span><span class="w"> </span><span class="p" data-group-id="1617875699-1">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">empty</span><span class="p" data-group-id="1617875699-1">)</span><span class="w">
   </span><span class="n">filetype</span><span class="w">
   </span><span class="n">url</span><span class="w">
-  </span><span class="n">username</span><span class="w"> </span><span class="p" data-group-id="6604441756-2">(</span><span class="nc">Optional</span><span class="p" data-group-id="6604441756-2">)</span><span class="w">
-  </span><span class="n">password</span><span class="w"> </span><span class="p" data-group-id="6604441756-3">(</span><span class="nc">Optional</span><span class="p" data-group-id="6604441756-3">)</span><span class="w">
+  </span><span class="n">username</span><span class="w"> </span><span class="p" data-group-id="1617875699-2">(</span><span class="nc">Optional</span><span class="p" data-group-id="1617875699-2">)</span><span class="w">
+  </span><span class="n">password</span><span class="w"> </span><span class="p" data-group-id="1617875699-3">(</span><span class="nc">Optional</span><span class="p" data-group-id="1617875699-3">)</span><span class="w">
   </span><span class="n">filesize</span><span class="w">
-  </span><span class="n">target_filename</span><span class="w"> </span><span class="p" data-group-id="6604441756-4">(</span><span class="nc">Optional</span><span class="p" data-group-id="6604441756-4">)</span><span class="w">
-  </span><span class="n">timewindowlist</span><span class="w"> </span><span class="p" data-group-id="6604441756-5">[</span><span class="p" data-group-id="6604441756-6">%{</span><span class="w">
+  </span><span class="n">target_filename</span><span class="w"> </span><span class="p" data-group-id="1617875699-4">(</span><span class="nc">Optional</span><span class="p" data-group-id="1617875699-4">)</span><span class="w">
+  </span><span class="n">timewindowlist</span><span class="w"> </span><span class="p" data-group-id="1617875699-5">[</span><span class="p" data-group-id="1617875699-6">%{</span><span class="w">
     </span><span class="n">window_start</span><span class="w">
     </span><span class="n">window_end</span><span class="w">
     </span><span class="n">window_mode</span><span class="w">
-    </span><span class="n">user_message</span><span class="w"> </span><span class="p" data-group-id="6604441756-7">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="6604441756-7">)</span><span class="w">
-    </span><span class="n">max_retries</span><span class="p" data-group-id="6604441756-6">}</span><span class="p" data-group-id="6604441756-5">]</span></code></pre>
+    </span><span class="n">user_message</span><span class="w"> </span><span class="p" data-group-id="1617875699-7">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="1617875699-7">)</span><span class="w">
+    </span><span class="n">max_retries</span><span class="p" data-group-id="1617875699-6">}</span><span class="p" data-group-id="1617875699-5">]</span></code></pre>
   </section>
 </div>
 <div class="detail" id="scheduleInform/2">

@@ -354,7 +354,7 @@ defmodule ACS.Session do
                   # We have nothing to reply with here, so we must stuff this in OutstandingPlug and
                   # wait for someting from the Script, either next message or :EXIT
                   # we have to answer :noreply here, and
-                  {:noreply, nil, state.unmatched_incomming_list, state.sspid}
+                  {:noreply, nil, [], state.sspid}
                 else
                   Logger.debug("Incomming message is unmatched to script - we should reply somehow?")
                   # If this is a Response to a CPE request, then we have to end the session at once with
