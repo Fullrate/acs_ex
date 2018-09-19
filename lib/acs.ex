@@ -25,15 +25,17 @@ defmodule ACS do
 
     setup_prometheus()
     opts = [strategy: :one_for_one, name: ACS.Supervisor]
-    supervise(children, opts)
+   # supervise(children, opts)
+   Supervisor.init(children, opts)
   end
 
   defp ipv6_listeners(session_handler, ip6, port) when is_integer(port) do
-    [Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet6, port: port, ip: ip6, ipv6_v6only: true, timeout: 30000, ref: String.to_atom("ipv6_listener_#{port}")])]
+    #[Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet6, port: port, ip: ip6, ipv6_v6only: true, timeout: 30000, ref: String.to_atom("ipv6_listener_#{port}")])]
+    [{Plug.Adapters.Cowboy2, scheme: :http, plug: {ACS.ACSHandler, [session_handler]}, options: [:inet6, port: port, ip: ip6, ipv6_v6only: true, timeout: 30000, ref: String.to_atom("ipv6_listener_#{port}")]}]
   end
 
   defp ipv6_listeners(session_handler, ip6, [port]) when is_integer(port) do
-    [Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [:inet6, port: port, ip: ip6, ipv6_v6only: true, timeout: 30000, ref: String.to_atom("ipv6_listener_#{port}")])]
+     ipv6_listeners(session_handler, ip6, port)
   end
 
   defp ipv6_listeners(session_handler, ip6, [ port | rest ] ) do
@@ -41,11 +43,12 @@ defmodule ACS do
   end
 
   defp ipv4_listeners(session_handler, ip, port) when is_integer(port) do
-    [ Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [port: port, ip: ip, timeout: 30000, ref: String.to_atom("ipv4_listener_#{port}")]) ]
+#    [ Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [port: port, ip: ip, timeout: 30000, ref: String.to_atom("ipv4_listener_#{port}")]) ]
+    [{Plug.Adapters.Cowboy2, scheme: :http, plug: {ACS.ACSHandler, [session_handler]}, options: [port: port, ip: ip, timeout: 30000, ref: String.to_atom("ipv4_listener_#{port}")]}]
   end
 
   defp ipv4_listeners(session_handler, ip, [port] ) when is_integer(port) do
-    [ Plug.Adapters.Cowboy.child_spec(:http, ACS.ACSHandler, [session_handler], [port: port, ip: ip, timeout: 30000, ref: String.to_atom("ipv4_listener_#{port}")]) ]
+    ipv4_listeners(session_handler, ip, port)
   end
 
   defp ipv4_listeners(session_handler, ip, [ port | rest ] ) do

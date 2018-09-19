@@ -396,9 +396,9 @@ defmodule ACS.Session do
     end
   end
 
-  def handle_call(request,from,state) do
-    super(request,from,state)
-  end
+  # def handle_call(request,from,state) do
+  #   super(request,from,state)
+  # end
 
   def has_inform?([]), do: false
   def has_inform?([%CWMP.Protocol.Messages.Inform{} | _]), do: true
