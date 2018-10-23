@@ -13,6 +13,7 @@ defmodule ACS.Handlers.ACS do
   """
   require Logger
   use Plug.Builder
+  use Plug.ErrorHandler
 
   plug Plug.Parsers, parsers: [ACS.CWMP.Parser]
   plug :dispatch
@@ -90,6 +91,24 @@ defmodule ACS.Handlers.ACS do
       |> put_resp_content_type("text/xml")
       |> put_resp_cookie("session", session_id)
       |> send_resp(code,resp)
+  end
+
+  @doc """
+  When our cwmp parser thows, we end up here. So when some CPE sends bogus
+  xml, or half a record or whatever else they might do, this is where we capture
+  that parser error from CWMP.Parser.
+  """
+  def handle_errors(conn, %{kind: _kind, reason: reason, stack: _stack}) do
+    error = case reason do
+      %Plug.Parsers.ParseError{exception: %CWMP.Protocol.Parser.ParseError{message: err_message}} ->
+        "CWMP.Parser error: #{err_message}"
+      %Plug.Parsers.ParseError{exception: _some_other_exception} ->
+        "Plug.Parsers.ParseError raised"
+      _ ->
+        "Exception raised by Plug.Parsers"
+    end
+    Logger.error "Plug error: #{error}"
+    send_resp(conn, conn.status, error)
   end
 
 end
