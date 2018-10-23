@@ -5,10 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.19.1">
-    <title>ACS.Handlers.ACS – acs_ex v0.3.12</title>
+    <title>ACS.Handlers.ACS – acs_ex v0.3.13</title>
     <link rel="stylesheet" href="dist/app-240d7fc7e5.css" />
       <link rel="canonical" href="https://hexdocs.pm/acs_ex/ACS.Handlers.ACS.html" />
-    <script src="dist/sidebar_items-4789302719.js"></script>
+    <script src="dist/sidebar_items-fd7a106fff.js"></script>
     
   </head>
   <body data-type="modules">
@@ -29,7 +29,7 @@
       <h1 class="sidebar-projectName">
 acs_ex      </h1>
       <h2 class="sidebar-projectVersion">
-        v0.3.12
+        v0.3.13
       </h2>
     </div>
   </a>
@@ -58,7 +58,7 @@ acs_ex      </h1>
 
 
       <h1>
-        <small class="visible-xs">acs_ex v0.3.12</small>
+        <small class="visible-xs">acs_ex v0.3.13</small>
 ACS.Handlers.ACS        
           <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/handlers/acs.ex#L1" title="View Source" class="view-source" rel="help">
             <span class="icon-code" aria-hidden="true"></span>
@@ -104,6 +104,15 @@ the custom logic module.</p>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="#handle_errors/2">handle_errors(conn, assigns)</a>
+  </div>
+    <div class="summary-synopsis"><p>When our cwmp parser thows, we end up here. So when some CPE sends bogus
+xml, or half a record or whatever else they might do, this is where we capture
+that parser error from CWMP.Parser</p>
+</div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#init/1">init(opts)</a>
   </div>
     <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/plug/1.6.3/Plug.html#c:init/1"><code class="inline">Plug.init/1</code></a></p>
@@ -130,7 +139,7 @@ the custom logic module.</p>
       <span class="sr-only">Link to this function</span>
     </a>
     <span class="signature">call(conn, opts)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/handlers/acs.ex#L15" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/handlers/acs.ex#L1" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -146,12 +155,30 @@ the custom logic module.</p>
       <span class="sr-only">Link to this function</span>
     </a>
     <span class="signature">dispatch(conn, params)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/handlers/acs.ex#L32" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/handlers/acs.ex#L33" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
           </div>
   <section class="docstring">
+  </section>
+</div>
+<div class="detail" id="handle_errors/2">
+    <div class="detail-header">
+    <a href="#handle_errors/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">handle_errors(conn, assigns)</span>
+      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/handlers/acs.ex#L101" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+          </div>
+  <section class="docstring">
+<p>When our cwmp parser thows, we end up here. So when some CPE sends bogus
+xml, or half a record or whatever else they might do, this is where we capture
+that parser error from CWMP.Parser.</p>
   </section>
 </div>
 <div class="detail" id="init/1">
