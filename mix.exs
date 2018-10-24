@@ -3,7 +3,7 @@ defmodule ACS.Mixfile do
 
   def project do
     [app: :acs_ex,
-     version: "0.3.13",
+     version: "0.3.14",
      elixir: "~> 1.7",
 
      # Docs
@@ -37,9 +37,8 @@ defmodule ACS.Mixfile do
 
   defp deps do
     [
-      {:cowboy, "~> 2.4"},
+      {:plug_cowboy, "~> 2.0"},
       {:uuid, "~> 1.1.8"},
-      {:plug, "~> 1.6.3"},
       {:cwmp_ex, "~> 0.2.5"},
       {:httpoison, "~> 1.3.1"},
       {:poison, "~> 4.0.1"},
