@@ -3,8 +3,8 @@ defmodule ACS.Mixfile do
 
   def project do
     [app: :acs_ex,
-     version: "0.3.14",
-     elixir: "~> 1.7",
+     version: "0.3.15",
+     elixir: "~> 1.8",
 
      # Docs
      name: "acs_ex",

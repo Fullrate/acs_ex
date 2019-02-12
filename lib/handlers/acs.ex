@@ -18,18 +18,6 @@ defmodule ACS.Handlers.ACS do
   plug Plug.Parsers, parsers: [ACS.CWMP.Parser]
   plug :dispatch
 
-  #
-  # This method is meant as a way to reject requests early.
-  #
-  defp auth_request(conn,device_id,inform) do
-    case conn.private[:session_handler] do
-      nil ->
-        :ok
-      handler ->
-        apply(handler, :session_filter, [device_id,inform])
-    end
-  end
-
   def dispatch(conn, _params) do
     cookies = fetch_cookies(conn).req_cookies
 
@@ -59,13 +47,10 @@ defmodule ACS.Handlers.ACS do
                 Logger.debug( "device_id in the body - must be Inform, start session" )
                 session_id=UUID.uuid4(:hex)
                 extended_deviceid=Map.merge(Map.from_struct(didstruct), %{ip: to_string(:inet_parse.ntoa(conn.remote_ip))})
-                case auth_request(conn, extended_deviceid, hd(entries)) do
-                  :ok ->
-                    ACS.Session.Supervisor.start_session(session_id,extended_deviceid,conn.body_params)
-                    session_id
-                  {:reject, reason} ->
-                    {:reject, reason}
-                end
+            
+                ACS.Session.Supervisor.start_session(session_id,extended_deviceid,conn.body_params)
+                session_id
+                 
             end # has device_id
           _ ->
             # unparseable body and no cookie, bogus
