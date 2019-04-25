@@ -52,6 +52,90 @@ defmodule ACSSetParameterValuesTest do
     end
   end
 
+
+  test "queue SetParameterValues slow response" do
+    acsex(ACS.Test.Sessions.SingleSetParameterValues) do
+      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
+      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert resp.status_code == 200
+      {:ok,resp,cookie} = sendStr("",cookie) # This should cause a GetParameterValue response
+      assert resp.status_code == 200
+
+      # Parse the response received
+      {pres,parsed}=CWMP.Protocol.Parser.parse(resp.body)
+      if ( pres != :ok ) do
+        IO.inspect("SPV #{pres} #{resp.body}")
+      end
+      assert pres == :ok
+
+      # IO.inspect(parsed.header.id)
+
+      # assert values are what we expect them to be.
+      params=for p <- hd(parsed.entries).parameters, do: {p.name,p.value}
+      params_map=Enum.into(params, %{})
+
+      assert Map.has_key?(params_map,"Device.Test")
+      assert Map.has_key?(params_map,"Device.Test2")
+      assert params_map["Device.Test"] == "SomeValue"
+      assert params_map["Device.Test2"] == "1"
+
+      assert Supervisor.count_children(:session_supervisor).active == 1
+
+      # Emulate a slow cpe
+      :timer.sleep( 29000 )
+            
+      # Send a Response to end it. Should return "", end session by sending "" back
+      spv_response=to_string(:io_lib.format(@spv_sample_response,[parsed.header.id]))
+      {:ok,resp,_} = sendStr(spv_response,cookie)
+      assert resp.body == ""
+      assert resp.status_code == 204
+      assert Supervisor.count_children(:session_supervisor).active == 0
+    end
+  end
+
+
+
+  test "queue SetParameterValues too slow response" do
+    acsex(ACS.Test.Sessions.SingleSetParameterValues) do
+      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
+      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert resp.status_code == 200
+      {:ok,resp,cookie} = sendStr("",cookie) # This should cause a GetParameterValue response
+      assert resp.status_code == 200
+
+      # Parse the response received
+      {pres,parsed}=CWMP.Protocol.Parser.parse(resp.body)
+      if ( pres != :ok ) do
+        IO.inspect("SPV #{pres} #{resp.body}")
+      end
+      assert pres == :ok
+
+      # IO.inspect(parsed.header.id)
+
+      # assert values are what we expect them to be.
+      params=for p <- hd(parsed.entries).parameters, do: {p.name,p.value}
+      params_map=Enum.into(params, %{})
+
+      assert Map.has_key?(params_map,"Device.Test")
+      assert Map.has_key?(params_map,"Device.Test2")
+      assert params_map["Device.Test"] == "SomeValue"
+      assert params_map["Device.Test2"] == "1"
+
+      assert Supervisor.count_children(:session_supervisor).active == 1
+
+      # Emulate a too slow cpe
+      :timer.sleep( 31000 )
+            
+      # Send a Response to end it. Should return "", end session by sending "" back
+      spv_response=to_string(:io_lib.format(@spv_sample_response,[parsed.header.id]))
+      {:ok,resp,_} = sendStr(spv_response,cookie)
+      assert resp.body == ""
+      assert resp.status_code == 204
+      assert Supervisor.count_children(:session_supervisor).active == 0
+    end
+  end
+
+
   test "queue SetParameterValues, bogus args" do
     acsex(ACS.Test.Sessions.SingleSetParameterValuesBogus) do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
