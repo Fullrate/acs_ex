@@ -4,50 +4,80 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.19.1">
-    <title>ACS – acs_ex v0.3.17</title>
-    <link rel="stylesheet" href="dist/app-240d7fc7e5.css" />
-      <link rel="canonical" href="https://hexdocs.pm/acs_ex/ACS.html" />
-    <script src="dist/sidebar_items-fd7a106fff.js"></script>
-    
+    <meta name="generator" content="ExDoc v0.28.3">
+    <meta name="project" content="acs_ex v0.3.18">
+
+    <title>ACS — acs_ex v0.3.18</title>
+    <link rel="stylesheet" href="dist/elixir-d5ff82e6b0f5651c0ac0.css" />
+
+    <script src="dist/sidebar_items-9840f25ca5.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-a088a6cc33ae3464193e.js"></script>
+
+
   </head>
   <body data-type="modules">
-    <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
-    <div class="main">
-<button class="sidebar-button sidebar-toggle">
-  <span class="icon-menu" aria-hidden="true"></span>
-  <span class="sr-only">Toggle Sidebar</span>
-</button>
-<button class="sidebar-button night-mode-toggle">
-  <span class="icon-theme" aria-hidden="true"></span>
-  <span class="sr-only">Toggle Theme</span>
-</button>
-<section class="sidebar">
+    <script>
 
-  <a href="acs_ex.html" class="sidebar-projectLink">
-    <div class="sidebar-projectDetails">
-      <h1 class="sidebar-projectName">
-acs_ex      </h1>
-      <h2 class="sidebar-projectVersion">
-        v0.3.17
-      </h2>
-    </div>
-  </a>
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+
+<section class="sidebar">
+  <button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+    <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+  </button>
 
   <form class="sidebar-search" action="search.html">
-    <button type="submit" class="search-button">
-      <span class="icon-search" aria-hidden="true"></span>
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
     </button>
-    <input name="q" type="text" id="search-list" class="search-input" placeholder="Search" aria-label="Search" autocomplete="off" />
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
+    </button>
+    <label class="search-label">
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
   </form>
 
-  <ul class="sidebar-listNav">
-    <li><a id="extras-list" href="#full-list">Pages</a></li>
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
 
-      <li><a id="modules-list" href="#full-list">Modules</a></li>
+  <div class="sidebar-header">
+
+    <div class="sidebar-projectDetails">
+      <a href="acs_ex.html" class="sidebar-projectName" translate="no">
+acs_ex
+      </a>
+      <strong class="sidebar-projectVersion" translate="no">
+        v0.3.18
+      </strong>
+    </div>
+    <ul class="sidebar-listNav">
+      <li><a id="extras-list-link" href="#full-list">Pages</a></li>
+
+        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
 
 
-  </ul>
+    </ul>
+  </div>
+
   <div class="gradient"></div>
   <ul id="full-list" class="sidebar-fullList"></ul>
 </section>
@@ -56,140 +86,184 @@ acs_ex      </h1>
   <div class="content-outer">
     <div id="content" class="content-inner">
 
-
-      <h1>
-        <small class="visible-xs">acs_ex v0.3.17</small>
-ACS        
-          <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/acs.ex#L1" title="View Source" class="view-source" rel="help">
-            <span class="icon-code" aria-hidden="true"></span>
-            <span class="sr-only">View Source</span>
-          </a>
-      </h1>
+<h1>
+<button class="settings display-settings">
+  <i class="ri-settings-3-line"></i>
+  <span class="sr-only">Settings</span>
+</button>
 
 
-        <section id="moduledoc">
+    <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/acs.ex#L1" title="View Source" class="view-source" rel="help">
+      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+      <span class="sr-only">View Source</span>
+    </a>
+
+  <span translate="no">ACS</span> 
+  <small class="app-vsn" translate="no">(acs_ex v0.3.18)</small>
+
+</h1>
+
+
+  <section id="moduledoc">
 <p>Request router for CPE-&gt;ACS</p>
-        </section>
+  </section>
 
-        <section id="summary" class="details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#summary">
-              <span class="icon-link" aria-hidden="true"></span>
-              <span class="sr-only">Link to this section</span>
-            </a>
-            Summary
-          </h1>
-          
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+      Summary
+    </h1>
+
   <div class="summary-functions summary">
     <h2>
       <a href="#functions">Functions</a>
     </h2>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#child_spec/1">child_spec(init_arg)</a>
-  </div>
-    <div class="summary-synopsis"><p>Returns a specification to start this module under a supervisor</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#init/1">init(arg)</a>
-  </div>
-    <div class="summary-synopsis"><p>Callback invoked to start the supervisor and during hot code upgrades</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#start_link/5">start_link(session_handler, port, ip, ip6, opts \\ [])</a>
-  </div>
-</div>
-  </div>
-          
-        </section>
 
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#child_spec/1" translate="no">child_spec(init_arg)</a>
 
+        </div>
 
-        <section id="functions" class="details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#functions">
-              <span class="icon-link" aria-hidden="true"></span>
-              <span class="sr-only">Link to this section</span>
-            </a>
-            Functions
-          </h1>
-<div class="detail" id="child_spec/1">
-    <div class="detail-header">
-    <a href="#child_spec/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">child_spec(init_arg)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/acs.ex#L7" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
-       <span class="sr-only">View Source</span>
-     </a>
-          </div>
-  <section class="docstring">
-<p>Returns a specification to start this module under a supervisor.</p>
-<p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>
+          <div class="summary-synopsis"><p>Returns a specification to start this module under a supervisor.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#init/1" translate="no">init(arg)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/elixir/Supervisor.html#c:init/1"><code class="inline">Supervisor.init/1</code></a>.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#start_link/1" translate="no">start_link(arg)</a>
+
+        </div>
+
+      </div>
+
+  </div>
+
   </section>
-</div>
-<div class="detail" id="init/1">
-    <div class="detail-header">
-    <a href="#init/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+Functions
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="child_spec/1">
+
+  <div class="detail-header">
+    <a href="#child_spec/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">init(arg)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/acs.ex#L13" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">child_spec(init_arg)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/acs.ex#L7" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
-<p>Callback invoked to start the supervisor and during hot code upgrades.</p>
-<p>Developers typically invoke <a href="https://hexdocs.pm/elixir/Supervisor.html#init/2"><code class="inline">Supervisor.init/2</code></a> at the end of their
-init callback to return the proper supervision flags.</p>
+
+<p>Returns a specification to start this module under a supervisor.</p><p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="init/1">
+
+  <div class="detail-header">
+    <a href="#init/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">init(arg)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/acs.ex#L21" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
 <p>Callback implementation for <a href="https://hexdocs.pm/elixir/Supervisor.html#c:init/1"><code class="inline">Supervisor.init/1</code></a>.</p>
   </section>
-</div>
-<div class="detail" id="start_link/5">
-  
-    <span id="start_link/4"></span>
+</section>
+<section class="detail" id="start_link/1">
+
   <div class="detail-header">
-    <a href="#start_link/5" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+    <a href="#start_link/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">start_link(session_handler, port, ip, ip6, opts \\ [])</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/acs.ex#L9" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">start_link(arg)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/acs.ex#L9" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
-  <section class="docstring">
-  </section>
-</div>
-        </section>
 
-          <footer class="footer">
-        <p>
-          <span class="line">
-            Built using
-            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.19.1),
-          </span>
-          <span class="line">
-            designed by
-            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+      <footer class="footer">
+
+          <p>
+            On Hex.pm:
+
+            <span class="line">
+              <a href="https://hex.pm/packages/acs_ex/0.3.18" class="line footer-hex-package">Package</a>
+              <a href="https://preview.hex.pm/preview/acs_ex/0.3.18" class="line">Preview</a>
+
+                <a href="https://preview.hex.pm/preview/acs_ex/0.3.18/show/lib/acs.ex">(current file)</a>
+
             </span>
+
+            <button class="line footer-button display-quick-switch">
+              Search
+            </button>
+          </p>
+
+        <p>
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.28.3) for the
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
         </p>
       </footer>
     </div>
   </div>
 </section>
 </div>
-  <script src="dist/app-a0c90688fa.js"></script>
-  
+
+
   </body>
 </html>
-

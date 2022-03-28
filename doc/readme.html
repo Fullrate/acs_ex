@@ -4,50 +4,80 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.19.1">
-    <title>acs_ex – acs_ex v0.3.17</title>
-    <link rel="stylesheet" href="dist/app-240d7fc7e5.css" />
-      <link rel="canonical" href="https://hexdocs.pm/acs_ex/readme.html" />
-    <script src="dist/sidebar_items-fd7a106fff.js"></script>
-    
+    <meta name="generator" content="ExDoc v0.28.3">
+    <meta name="project" content="acs_ex v0.3.18">
+
+    <title>acs_ex — acs_ex v0.3.18</title>
+    <link rel="stylesheet" href="dist/elixir-d5ff82e6b0f5651c0ac0.css" />
+
+    <script src="dist/sidebar_items-9840f25ca5.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-a088a6cc33ae3464193e.js"></script>
+
+
   </head>
   <body data-type="extras">
-    <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
-<div class="main">
-<button class="sidebar-button sidebar-toggle">
-  <span class="icon-menu" aria-hidden="true"></span>
-  <span class="sr-only">Toggle Sidebar</span>
-</button>
-<button class="sidebar-button night-mode-toggle">
-  <span class="icon-theme" aria-hidden="true"></span>
-  <span class="sr-only">Toggle Theme</span>
-</button>
-<section class="sidebar">
+    <script>
 
-  <a href="acs_ex.html" class="sidebar-projectLink">
-    <div class="sidebar-projectDetails">
-      <h1 class="sidebar-projectName">
-acs_ex      </h1>
-      <h2 class="sidebar-projectVersion">
-        v0.3.17
-      </h2>
-    </div>
-  </a>
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+
+<section class="sidebar">
+  <button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+    <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+  </button>
 
   <form class="sidebar-search" action="search.html">
-    <button type="submit" class="search-button">
-      <span class="icon-search" aria-hidden="true"></span>
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
     </button>
-    <input name="q" type="text" id="search-list" class="search-input" placeholder="Search" aria-label="Search" autocomplete="off" />
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
+    </button>
+    <label class="search-label">
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
   </form>
 
-  <ul class="sidebar-listNav">
-    <li><a id="extras-list" href="#full-list">Pages</a></li>
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
 
-      <li><a id="modules-list" href="#full-list">Modules</a></li>
+  <div class="sidebar-header">
+
+    <div class="sidebar-projectDetails">
+      <a href="acs_ex.html" class="sidebar-projectName" translate="no">
+acs_ex
+      </a>
+      <strong class="sidebar-projectVersion" translate="no">
+        v0.3.18
+      </strong>
+    </div>
+    <ul class="sidebar-listNav">
+      <li><a id="extras-list-link" href="#full-list">Pages</a></li>
+
+        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
 
 
-  </ul>
+    </ul>
+  </div>
+
   <div class="gradient"></div>
   <ul id="full-list" class="sidebar-fullList"></ul>
 </section>
@@ -56,60 +86,95 @@ acs_ex      </h1>
   <div class="content-outer">
     <div id="content" class="content-inner">
 
+<h1>
+<button class="settings display-settings">
+  <i class="ri-settings-3-line"></i>
+  <span class="sr-only">Settings</span>
+</button>
 
-<h1>acs_ex</h1>
+
+    <a href="https://github.com/Fullrate/acs_ex/blob/main/README.md#L1" title="View Source" class="view-source" rel="help">
+      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+      <span class="sr-only">View Source</span>
+    </a>
+
+  <span>acs_ex</span>
+</h1>
+
 <p><a href="https://travis-ci.org/Fullrate/acs_ex"><img src="https://travis-ci.org/Fullrate/acs_ex.svg?branch=master" alt="Build Status"/></a>
-<a href="https://hex.pm/packages/acs_ex"><img src="http://img.shields.io/hexpm/v/acs_ex.svg?style=flat" alt="Hex.pm Version"/></a></p>
-<p>An implementation of the Auto Configuration Server mentioned in the TR-069 spec.</p>
-<p>CWMP has the unfortunate effect of flipping the logic towards the CPE’s. acs_ex aims to flip it
-back.</p>
-<p>It sets up a GenServer to handle sessions from CPE’s. When a session starts an external handler that
-can be configured is called. This handler has one method, <code class="inline">start_session</code> (Meaning an Inform was seen).</p>
-<p>Seen from that handler, the logic is now shifted and you can just ask the GenServer for the stuff you need,
-like “getParameterValues”, “setParameterValues” aso, and the functions will return as were the
-synchroneous.</p>
-<p>So you write you own module that uses acs_ex as an application, and from that module you can
-write whatever it is you actually want to do with the CPE’s based on type, firmware version and
-whatever else you can think up.</p>
-<h2 id="configuration" class="section-heading">
-  <a href="#configuration" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+<a href="https://hex.pm/packages/acs_ex"><img src="http://img.shields.io/hexpm/v/acs_ex.svg?style=flat" alt="Hex.pm Version"/></a></p><p>An implementation of the Auto Configuration Server mentioned in the TR-069 spec.</p><p>CWMP has the unfortunate effect of flipping the logic towards the CPE's. acs_ex aims to flip it
+back.</p><p>It sets up a GenServer to handle sessions from CPE's. When a session starts an external handler that
+can be configured is called. This handler has one method, <code class="inline">start_session</code> (Meaning an Inform was seen).</p><p>Seen from that handler, the logic is now shifted and you can just ask the GenServer for the stuff you need,
+like &quot;getParameterValues&quot;, &quot;setParameterValues&quot; aso, and the functions will return as were the
+synchroneous.</p><p>So you write you own module that uses acs_ex as an application, and from that module you can
+write whatever it is you actually want to do with the CPE's based on type, firmware version and
+whatever else you can think up.</p><h2 id="configuration" class="section-heading">
+  <a href="#configuration" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">configuration</p>
+  </a>
   Configuration
 </h2>
-
-<p>Our config.exs would have an entry similar to this:</p>
-<pre><code class="nohighlight makeup elixir"><span class="n">config</span><span class="w"> </span><span class="ss">:acs_ex</span><span class="p">,</span><span class="w"> </span><span class="ss">:acs_port</span><span class="p">,</span><span class="w"> </span><span class="mi">7547</span><span class="w">
+<p>Our config.exs would have an entry similar to this:</p><pre><code class="makeup elixir" translate="no"><span class="n">config</span><span class="w"> </span><span class="ss">:acs_ex</span><span class="p">,</span><span class="w"> </span><span class="ss">:acs_port</span><span class="p">,</span><span class="w"> </span><span class="mi">7547</span><span class="w">
 </span><span class="c1"># crypt stuff is needed beacuse the CPE&lt;&gt;ACS cookie is an encrypted one.</span><span class="w">
 </span><span class="n">config</span><span class="w"> </span><span class="ss">:acs_ex</span><span class="p">,</span><span class="w">
   </span><span class="ss">crypt_keybase</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;31de9f7d766287c7565801f30babbd4f&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">crypt_cookie_salt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SomeSalt&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">crypt_signed_cookie_salt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SomeSignedSalt&quot;</span><span class="w">
-</span></code></pre>
-<p>acs_ex uses <a href="https://hexdocs.pm/logger/Logger.html"><code class="inline">Logger</code></a> for logging, so setup a backend that suits you if you want to see what it
-is doing.</p>
-<h2 id="examples" class="section-heading">
-  <a href="#examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+</span></code></pre><p>acs_ex uses <a href="https://hexdocs.pm/logger/Logger.html"><code class="inline">Logger</code></a> for logging, so setup a backend that suits you if you want to see what it
+is doing.</p><h2 id="examples" class="section-heading">
+  <a href="#examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">examples</p>
+  </a>
   Examples
 </h2>
-
 <p>An example of how to use acs_ex can be found <a href="https://github.com/Fullrate/my_acs">here</a></p>
+<div class="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="api-reference.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+API Reference
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+  </div>
+</div>
+
       <footer class="footer">
-        <p>
-          <span class="line">
-            Built using
-            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.19.1),
-          </span>
-          <span class="line">
-            designed by
-            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+
+          <p>
+            On Hex.pm:
+
+            <span class="line">
+              <a href="https://hex.pm/packages/acs_ex/0.3.18" class="line footer-hex-package">Package</a>
+              <a href="https://preview.hex.pm/preview/acs_ex/0.3.18" class="line">Preview</a>
+
+                <a href="https://preview.hex.pm/preview/acs_ex/0.3.18/show/README.md">(current file)</a>
+
             </span>
+
+            <button class="line footer-button display-quick-switch">
+              Search
+            </button>
+          </p>
+
+        <p>
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.28.3) for the
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
         </p>
       </footer>
     </div>
   </div>
 </section>
 </div>
-  <script src="dist/app-a0c90688fa.js"></script>
-  
+
+
   </body>
 </html>
-

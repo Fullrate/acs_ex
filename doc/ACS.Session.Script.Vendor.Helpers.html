@@ -4,50 +4,80 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.19.1">
-    <title>ACS.Session.Script.Vendor.Helpers – acs_ex v0.3.17</title>
-    <link rel="stylesheet" href="dist/app-240d7fc7e5.css" />
-      <link rel="canonical" href="https://hexdocs.pm/acs_ex/ACS.Session.Script.Vendor.Helpers.html" />
-    <script src="dist/sidebar_items-fd7a106fff.js"></script>
-    
+    <meta name="generator" content="ExDoc v0.28.3">
+    <meta name="project" content="acs_ex v0.3.18">
+
+    <title>ACS.Session.Script.Vendor.Helpers — acs_ex v0.3.18</title>
+    <link rel="stylesheet" href="dist/elixir-d5ff82e6b0f5651c0ac0.css" />
+
+    <script src="dist/sidebar_items-9840f25ca5.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-a088a6cc33ae3464193e.js"></script>
+
+
   </head>
   <body data-type="modules">
-    <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
-    <div class="main">
-<button class="sidebar-button sidebar-toggle">
-  <span class="icon-menu" aria-hidden="true"></span>
-  <span class="sr-only">Toggle Sidebar</span>
-</button>
-<button class="sidebar-button night-mode-toggle">
-  <span class="icon-theme" aria-hidden="true"></span>
-  <span class="sr-only">Toggle Theme</span>
-</button>
-<section class="sidebar">
+    <script>
 
-  <a href="acs_ex.html" class="sidebar-projectLink">
-    <div class="sidebar-projectDetails">
-      <h1 class="sidebar-projectName">
-acs_ex      </h1>
-      <h2 class="sidebar-projectVersion">
-        v0.3.17
-      </h2>
-    </div>
-  </a>
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+
+<section class="sidebar">
+  <button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+    <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+  </button>
 
   <form class="sidebar-search" action="search.html">
-    <button type="submit" class="search-button">
-      <span class="icon-search" aria-hidden="true"></span>
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
     </button>
-    <input name="q" type="text" id="search-list" class="search-input" placeholder="Search" aria-label="Search" autocomplete="off" />
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
+    </button>
+    <label class="search-label">
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
   </form>
 
-  <ul class="sidebar-listNav">
-    <li><a id="extras-list" href="#full-list">Pages</a></li>
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
 
-      <li><a id="modules-list" href="#full-list">Modules</a></li>
+  <div class="sidebar-header">
+
+    <div class="sidebar-projectDetails">
+      <a href="acs_ex.html" class="sidebar-projectName" translate="no">
+acs_ex
+      </a>
+      <strong class="sidebar-projectVersion" translate="no">
+        v0.3.18
+      </strong>
+    </div>
+    <ul class="sidebar-listNav">
+      <li><a id="extras-list-link" href="#full-list">Pages</a></li>
+
+        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
 
 
-  </ul>
+    </ul>
+  </div>
+
   <div class="gradient"></div>
   <ul id="full-list" class="sidebar-fullList"></ul>
 </section>
@@ -56,662 +86,887 @@ acs_ex      </h1>
   <div class="content-outer">
     <div id="content" class="content-inner">
 
-
-      <h1>
-        <small class="visible-xs">acs_ex v0.3.17</small>
-ACS.Session.Script.Vendor.Helpers        
-          <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L1" title="View Source" class="view-source" rel="help">
-            <span class="icon-code" aria-hidden="true"></span>
-            <span class="sr-only">View Source</span>
-          </a>
-      </h1>
+<h1>
+<button class="settings display-settings">
+  <i class="ri-settings-3-line"></i>
+  <span class="sr-only">Settings</span>
+</button>
 
 
+    <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L1" title="View Source" class="view-source" rel="help">
+      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+      <span class="sr-only">View Source</span>
+    </a>
 
-        <section id="summary" class="details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#summary">
-              <span class="icon-link" aria-hidden="true"></span>
-              <span class="sr-only">Link to this section</span>
-            </a>
-            Summary
-          </h1>
-          
+  <span translate="no">ACS.Session.Script.Vendor.Helpers</span> 
+  <small class="app-vsn" translate="no">(acs_ex v0.3.18)</small>
+
+</h1>
+
+
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+      Summary
+    </h1>
+
   <div class="summary-functions summary">
     <h2>
       <a href="#functions">Functions</a>
     </h2>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#addObject/2">addObject(session, args)</a>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#addObject/2" translate="no">addObject(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>args must be a map with keys: &quot;object_name&quot; where the object name ends with .</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#cancelTransfer/2" translate="no">cancelTransfer(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Sends a GetOptions request info the session.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#changeDUState/2" translate="no">changeDUState(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Sends a ChangeDUState request info the session.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#deleteObject/2" translate="no">deleteObject(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>args must be a map with keys: &quot;object_name&quot; where the object name ends with .</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#download/2" translate="no">download(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Sends a Download request info the session.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#extract_params/1" translate="no">extract_params(inform)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Extracts the Parameters from an inform. Returns a map with parameters and values.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#factoryReset/1" translate="no">factoryReset(session)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Sends a FactoryReset request info the session.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#getAllQueuedTransfers/1" translate="no">getAllQueuedTransfers(session)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Sends an GetAllQueuedTransfers request info the session.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#getOptions/2" translate="no">getOptions(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Sends a GetOptions request info the session.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#getParameterAttributes/2" translate="no">getParameterAttributes(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>args will be a list of string with paramter names for which you want to retrieve attributes.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#getParameterNames/2" translate="no">getParameterNames(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>args will be a maps with keys &quot;parameter_path&quot; and &quot;next_level&quot;</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#getParameterValues/2" translate="no">getParameterValues(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>args will be a list of names for the actual cwmp request.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#getQueuedTransfers/1" translate="no">getQueuedTransfers(session)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Sends a GetQueuedTransfers request info the session.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#getRPCMethods/1" translate="no">getRPCMethods(session)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>GetRPCMethods, no args</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#has_event?/2" translate="no">has_event?(inform, eventname)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Determines if an EventStruct of an Inform contains a specific event.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#reboot/1" translate="no">reboot(session)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>call the session server with the script_commmand: reboot</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#scheduleDownload/2" translate="no">scheduleDownload(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Sends a ScheduleDownload request info the session.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#scheduleInform/2" translate="no">scheduleInform(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Sends a ScheduleInform request info the session.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#session_call/2" translate="no">session_call(session, command)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#session_messages/1" translate="no">session_messages(session)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Get the current list of ACS messages, i.e. TransferComplete aso from the session.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#setParameterAttributes/2" translate="no">setParameterAttributes(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>args will be a list of maps each with keys &quot;name&quot;, &quot;notification_change&quot;, &quot;notification&quot;, &quot;accesslist_change&quot;
+and &quot;accesslist&quot;.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#setParameterValues/2" translate="no">setParameterValues(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>args must be a list of maps with &quot;name&quot;, &quot;type&quot;, &quot;value&quot;</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#setVouchers/2" translate="no">setVouchers(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Sends a SetVouchers request info the session.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#upload/2" translate="no">upload(session, args)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Sends an Upload request info the session.</p></div>
+
+      </div>
+
   </div>
-    <div class="summary-synopsis"><p>args must be a map with keys: “object_name” where the object name ends with</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#cancelTransfer/2">cancelTransfer(session, args)</a>
-  </div>
-    <div class="summary-synopsis"><p>Sends a GetOptions request info the session</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#changeDUState/2">changeDUState(session, args)</a>
-  </div>
-    <div class="summary-synopsis"><p>Sends a ChangeDUState request info the session</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#deleteObject/2">deleteObject(session, args)</a>
-  </div>
-    <div class="summary-synopsis"><p>args must be a map with keys: “object_name” where the object name ends with</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#download/2">download(session, args)</a>
-  </div>
-    <div class="summary-synopsis"><p>Sends a Download request info the session</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#extract_params/1">extract_params(inform)</a>
-  </div>
-    <div class="summary-synopsis"><p>Extracts the Parameters from an inform. Returns a map with parameters and values</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#factoryReset/1">factoryReset(session)</a>
-  </div>
-    <div class="summary-synopsis"><p>Sends a FactoryReset request info the session</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#getAllQueuedTransfers/1">getAllQueuedTransfers(session)</a>
-  </div>
-    <div class="summary-synopsis"><p>Sends an GetAllQueuedTransfers request info the session</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#getOptions/2">getOptions(session, args)</a>
-  </div>
-    <div class="summary-synopsis"><p>Sends a GetOptions request info the session</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#getParameterAttributes/2">getParameterAttributes(session, args)</a>
-  </div>
-    <div class="summary-synopsis"><p>args will be a list of string with paramter names for which you want to retrieve attributes</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#getParameterNames/2">getParameterNames(session, args)</a>
-  </div>
-    <div class="summary-synopsis"><p>args will be a maps with keys “parameter_path” and “next_level”</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#getParameterValues/2">getParameterValues(session, args)</a>
-  </div>
-    <div class="summary-synopsis"><p>args will be a list of names for the actual cwmp request</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#getQueuedTransfers/1">getQueuedTransfers(session)</a>
-  </div>
-    <div class="summary-synopsis"><p>Sends a GetQueuedTransfers request info the session</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#getRPCMethods/1">getRPCMethods(session)</a>
-  </div>
-    <div class="summary-synopsis"><p>GetRPCMethods, no args</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#has_event?/2">has_event?(inform, eventname)</a>
-  </div>
-    <div class="summary-synopsis"><p>Determines if an EventStruct of an Inform contains a specific event</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#reboot/1">reboot(session)</a>
-  </div>
-    <div class="summary-synopsis"><p>call the session server with the script_commmand: reboot</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#scheduleDownload/2">scheduleDownload(session, args)</a>
-  </div>
-    <div class="summary-synopsis"><p>Sends a ScheduleDownload request info the session</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#scheduleInform/2">scheduleInform(session, args)</a>
-  </div>
-    <div class="summary-synopsis"><p>Sends a ScheduleInform request info the session</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#session_call/2">session_call(session, command)</a>
-  </div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#session_messages/1">session_messages(session)</a>
-  </div>
-    <div class="summary-synopsis"><p>Get the current list of ACS messages, i.e. TransferComplete aso from the session</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#setParameterAttributes/2">setParameterAttributes(session, args)</a>
-  </div>
-    <div class="summary-synopsis"><p>args will be a list of maps each with keys “name”, “notification_change”, “notification”, “accesslist_change”
-and “accesslist”</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#setParameterValues/2">setParameterValues(session, args)</a>
-  </div>
-    <div class="summary-synopsis"><p>args must be a list of maps with “name”, “type”, “value”</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#setVouchers/2">setVouchers(session, args)</a>
-  </div>
-    <div class="summary-synopsis"><p>Sends a SetVouchers request info the session</p>
-</div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#upload/2">upload(session, args)</a>
-  </div>
-    <div class="summary-synopsis"><p>Sends an Upload request info the session</p>
-</div>
-</div>
-  </div>
-          
-        </section>
+
+  </section>
 
 
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+Functions
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="addObject/2">
 
-        <section id="functions" class="details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#functions">
-              <span class="icon-link" aria-hidden="true"></span>
-              <span class="sr-only">Link to this section</span>
-            </a>
-            Functions
-          </h1>
-<div class="detail" id="addObject/2">
-    <div class="detail-header">
+  <div class="detail-header">
     <a href="#addObject/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">addObject(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L66" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">addObject(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L66" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
-<p>args must be a map with keys: “object_name” where the object name ends with .</p>
+
+<p>args must be a map with keys: &quot;object_name&quot; where the object name ends with .</p>
   </section>
-</div>
-<div class="detail" id="cancelTransfer/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="cancelTransfer/2">
+
+  <div class="detail-header">
     <a href="#cancelTransfer/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">cancelTransfer(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L210" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">cancelTransfer(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L210" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
-<p>Sends a GetOptions request info the session.</p>
-<p>Args is a commandkey, just a string</p>
+
+<p>Sends a GetOptions request info the session.</p><p>Args is a commandkey, just a string</p>
   </section>
-</div>
-<div class="detail" id="changeDUState/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="changeDUState/2">
+
+  <div class="detail-header">
     <a href="#changeDUState/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">changeDUState(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L237" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">changeDUState(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L237" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
-<p>Sends a ChangeDUState request info the session.</p>
-<p>args is a map containing the keys needed to generate at CWMP.Protocol.Messages.ChangeDUState
+
+<p>Sends a ChangeDUState request info the session.</p><p>args is a map containing the keys needed to generate at CWMP.Protocol.Messages.ChangeDUState
 structure. This means that the elements in the operations list need to be one (or more) of the
 struct types:
    %CWMP.Protocol.Messages.InstallOpStruct{url: url, uuid: uuid, username: user, password: pass, execution_env_ref: eer}
    %CWMP.Protocol.Messages.UpdateOpStruct{url: url, uuid: uuid, username: user, password: pass, version: ver}
-   %CWMP.Protocol.Messages.UninstallOpStruct{url: url, uuid: uuid, execution_env_ref: eer}</p>
-<p>For example:</p>
-<pre><code class="nohighlight makeup elixir"><span class="w">  </span><span class="n">commandkey</span><span class="w"> </span><span class="p" data-group-id="8832821878-1">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="8832821878-1">)</span><span class="w">
-  </span><span class="ss">operations</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8832821878-2">[</span><span class="w">
-    </span><span class="p" data-group-id="8832821878-3">%</span><span class="nc" data-group-id="8832821878-3">CWMP.Protocol.Messages.InstallOpStruct</span><span class="p" data-group-id="8832821878-3">{</span><span class="w">
+   %CWMP.Protocol.Messages.UninstallOpStruct{url: url, uuid: uuid, execution_env_ref: eer}</p><p>For example:</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="n">commandkey</span><span class="w"> </span><span class="p" data-group-id="0506917684-1">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="0506917684-1">)</span><span class="w">
+  </span><span class="ss">operations</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0506917684-2">[</span><span class="w">
+    </span><span class="p" data-group-id="0506917684-3">%</span><span class="nc" data-group-id="0506917684-3">CWMP.Protocol.Messages.InstallOpStruct</span><span class="p" data-group-id="0506917684-3">{</span><span class="w">
       </span><span class="n">url</span><span class="w">
       </span><span class="n">uuid</span><span class="w">
-      </span><span class="n">username</span><span class="w"> </span><span class="p" data-group-id="8832821878-4">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="8832821878-4">)</span><span class="w">
-      </span><span class="n">password</span><span class="w"> </span><span class="p" data-group-id="8832821878-5">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="8832821878-5">)</span><span class="w">
+      </span><span class="n">username</span><span class="w"> </span><span class="p" data-group-id="0506917684-4">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="0506917684-4">)</span><span class="w">
+      </span><span class="n">password</span><span class="w"> </span><span class="p" data-group-id="0506917684-5">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="0506917684-5">)</span><span class="w">
       </span><span class="n">execution_env_ref</span><span class="w">
-    </span><span class="p" data-group-id="8832821878-3">}</span><span class="p" data-group-id="8832821878-2">]</span></code></pre>
+    </span><span class="p" data-group-id="0506917684-3">}</span><span class="p" data-group-id="0506917684-2">]</span></code></pre>
   </section>
-</div>
-<div class="detail" id="deleteObject/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="deleteObject/2">
+
+  <div class="detail-header">
     <a href="#deleteObject/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">deleteObject(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L79" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">deleteObject(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L79" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
-<p>args must be a map with keys: “object_name” where the object name ends with .</p>
-<p>An optional parameter_key can be given</p>
-<p>Returns a CWMP.Protocol.Messages.AddObjectResponse</p>
+
+<p>args must be a map with keys: &quot;object_name&quot; where the object name ends with .</p><p>An optional parameter_key can be given</p><p>Returns a CWMP.Protocol.Messages.AddObjectResponse</p>
   </section>
-</div>
-<div class="detail" id="download/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="download/2">
+
+  <div class="detail-header">
     <a href="#download/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">download(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L100" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">download(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L100" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
-<p>Sends a Download request info the session.</p>
-<p>args is a map containing the keys needed to generate at CWMP.Protocol.Messages.Download
-structure. i.e. “url”, “filetype”, “filesize” at least.</p>
+
+<p>Sends a Download request info the session.</p><p>args is a map containing the keys needed to generate at CWMP.Protocol.Messages.Download
+structure. i.e. &quot;url&quot;, &quot;filetype&quot;, &quot;filesize&quot; at least.</p>
   </section>
-</div>
-<div class="detail" id="extract_params/1">
-    <div class="detail-header">
+</section>
+<section class="detail" id="extract_params/1">
+
+  <div class="detail-header">
     <a href="#extract_params/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">extract_params(inform)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L255" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">extract_params(inform)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L255" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
+
 <p>Extracts the Parameters from an inform. Returns a map with parameters and values.</p>
   </section>
-</div>
-<div class="detail" id="factoryReset/1">
-    <div class="detail-header">
+</section>
+<section class="detail" id="factoryReset/1">
+
+  <div class="detail-header">
     <a href="#factoryReset/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">factoryReset(session)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L165" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">factoryReset(session)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L165" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
+
 <p>Sends a FactoryReset request info the session.</p>
   </section>
-</div>
-<div class="detail" id="getAllQueuedTransfers/1">
-    <div class="detail-header">
+</section>
+<section class="detail" id="getAllQueuedTransfers/1">
+
+  <div class="detail-header">
     <a href="#getAllQueuedTransfers/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">getAllQueuedTransfers(session)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L174" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">getAllQueuedTransfers(session)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L174" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
+
 <p>Sends an GetAllQueuedTransfers request info the session.</p>
   </section>
-</div>
-<div class="detail" id="getOptions/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="getOptions/2">
+
+  <div class="detail-header">
     <a href="#getOptions/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">getOptions(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L138" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">getOptions(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L138" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
-<p>Sends a GetOptions request info the session.</p>
-<p>Args is the option name, just a string</p>
+
+<p>Sends a GetOptions request info the session.</p><p>Args is the option name, just a string</p>
   </section>
-</div>
-<div class="detail" id="getParameterAttributes/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="getParameterAttributes/2">
+
+  <div class="detail-header">
     <a href="#getParameterAttributes/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">getParameterAttributes(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L48" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">getParameterAttributes(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L48" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
-<p>args will be a list of string with paramter names for which you want to retrieve attributes.</p>
-<p>Return value will be a CWMP.Protocol.Messages.GetParameterAttributesResponse struct</p>
+
+<p>args will be a list of string with paramter names for which you want to retrieve attributes.</p><p>Return value will be a CWMP.Protocol.Messages.GetParameterAttributesResponse struct</p>
   </section>
-</div>
-<div class="detail" id="getParameterNames/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="getParameterNames/2">
+
+  <div class="detail-header">
     <a href="#getParameterNames/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">getParameterNames(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L27" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">getParameterNames(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L27" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
-<p>args will be a maps with keys “parameter_path” and “next_level”</p>
+
+<p>args will be a maps with keys &quot;parameter_path&quot; and &quot;next_level&quot;</p>
   </section>
-</div>
-<div class="detail" id="getParameterValues/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="getParameterValues/2">
+
+  <div class="detail-header">
     <a href="#getParameterValues/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">getParameterValues(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L18" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">getParameterValues(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L18" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
+
 <p>args will be a list of names for the actual cwmp request.</p>
   </section>
-</div>
-<div class="detail" id="getQueuedTransfers/1">
-    <div class="detail-header">
+</section>
+<section class="detail" id="getQueuedTransfers/1">
+
+  <div class="detail-header">
     <a href="#getQueuedTransfers/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">getQueuedTransfers(session)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L109" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">getQueuedTransfers(session)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L109" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
+
 <p>Sends a GetQueuedTransfers request info the session.</p>
   </section>
-</div>
-<div class="detail" id="getRPCMethods/1">
-    <div class="detail-header">
+</section>
+<section class="detail" id="getRPCMethods/1">
+
+  <div class="detail-header">
     <a href="#getRPCMethods/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">getRPCMethods(session)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L57" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">getRPCMethods(session)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L57" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
+
 <p>GetRPCMethods, no args</p>
   </section>
-</div>
-<div class="detail" id="has_event?/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="has_event?/2">
+
+  <div class="detail-header">
     <a href="#has_event?/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">has_event?(inform, eventname)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L246" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">has_event?(inform, eventname)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L246" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
+
 <p>Determines if an EventStruct of an Inform contains a specific event.</p>
   </section>
-</div>
-<div class="detail" id="reboot/1">
-    <div class="detail-header">
+</section>
+<section class="detail" id="reboot/1">
+
+  <div class="detail-header">
     <a href="#reboot/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">reboot(session)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L88" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">reboot(session)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L88" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
+
 <p>call the session server with the script_commmand: reboot</p>
   </section>
-</div>
-<div class="detail" id="scheduleDownload/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="scheduleDownload/2">
+
+  <div class="detail-header">
     <a href="#scheduleDownload/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">scheduleDownload(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L199" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">scheduleDownload(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L199" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
-<p>Sends a ScheduleDownload request info the session.</p>
-<p>args is a map containing the keys needed to generate at CWMP.Protocol.Messages.ScheduleDownload
-structure. i.e.</p>
-<pre><code class="nohighlight makeup elixir"><span class="w">  </span><span class="n">commandkey</span><span class="w"> </span><span class="p" data-group-id="0958050718-1">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">empty</span><span class="p" data-group-id="0958050718-1">)</span><span class="w">
+
+<p>Sends a ScheduleDownload request info the session.</p><p>args is a map containing the keys needed to generate at CWMP.Protocol.Messages.ScheduleDownload
+structure. i.e.</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="n">commandkey</span><span class="w"> </span><span class="p" data-group-id="7824538555-1">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">empty</span><span class="p" data-group-id="7824538555-1">)</span><span class="w">
   </span><span class="n">filetype</span><span class="w">
   </span><span class="n">url</span><span class="w">
-  </span><span class="n">username</span><span class="w"> </span><span class="p" data-group-id="0958050718-2">(</span><span class="nc">Optional</span><span class="p" data-group-id="0958050718-2">)</span><span class="w">
-  </span><span class="n">password</span><span class="w"> </span><span class="p" data-group-id="0958050718-3">(</span><span class="nc">Optional</span><span class="p" data-group-id="0958050718-3">)</span><span class="w">
+  </span><span class="n">username</span><span class="w"> </span><span class="p" data-group-id="7824538555-2">(</span><span class="nc">Optional</span><span class="p" data-group-id="7824538555-2">)</span><span class="w">
+  </span><span class="n">password</span><span class="w"> </span><span class="p" data-group-id="7824538555-3">(</span><span class="nc">Optional</span><span class="p" data-group-id="7824538555-3">)</span><span class="w">
   </span><span class="n">filesize</span><span class="w">
-  </span><span class="n">target_filename</span><span class="w"> </span><span class="p" data-group-id="0958050718-4">(</span><span class="nc">Optional</span><span class="p" data-group-id="0958050718-4">)</span><span class="w">
-  </span><span class="n">timewindowlist</span><span class="w"> </span><span class="p" data-group-id="0958050718-5">[</span><span class="p" data-group-id="0958050718-6">%{</span><span class="w">
+  </span><span class="n">target_filename</span><span class="w"> </span><span class="p" data-group-id="7824538555-4">(</span><span class="nc">Optional</span><span class="p" data-group-id="7824538555-4">)</span><span class="w">
+  </span><span class="n">timewindowlist</span><span class="w"> </span><span class="p" data-group-id="7824538555-5">[</span><span class="p" data-group-id="7824538555-6">%{</span><span class="w">
     </span><span class="n">window_start</span><span class="w">
     </span><span class="n">window_end</span><span class="w">
     </span><span class="n">window_mode</span><span class="w">
-    </span><span class="n">user_message</span><span class="w"> </span><span class="p" data-group-id="0958050718-7">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="0958050718-7">)</span><span class="w">
-    </span><span class="n">max_retries</span><span class="p" data-group-id="0958050718-6">}</span><span class="p" data-group-id="0958050718-5">]</span></code></pre>
+    </span><span class="n">user_message</span><span class="w"> </span><span class="p" data-group-id="7824538555-7">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="7824538555-7">)</span><span class="w">
+    </span><span class="n">max_retries</span><span class="p" data-group-id="7824538555-6">}</span><span class="p" data-group-id="7824538555-5">]</span></code></pre>
   </section>
-</div>
-<div class="detail" id="scheduleInform/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="scheduleInform/2">
+
+  <div class="detail-header">
     <a href="#scheduleInform/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">scheduleInform(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L118" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">scheduleInform(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L118" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
+
 <p>Sends a ScheduleInform request info the session.</p>
   </section>
-</div>
-<div class="detail" id="session_call/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="session_call/2">
+
+  <div class="detail-header">
     <a href="#session_call/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">session_call(session, command)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L275" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">session_call(session, command)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L275" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
+
+
   </section>
-</div>
-<div class="detail" id="session_messages/1">
-    <div class="detail-header">
+</section>
+<section class="detail" id="session_messages/1">
+
+  <div class="detail-header">
     <a href="#session_messages/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">session_messages(session)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L265" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">session_messages(session)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L265" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
+
 <p>Get the current list of ACS messages, i.e. TransferComplete aso from the session.</p>
   </section>
-</div>
-<div class="detail" id="setParameterAttributes/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="setParameterAttributes/2">
+
+  <div class="detail-header">
     <a href="#setParameterAttributes/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">setParameterAttributes(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L37" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">setParameterAttributes(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L37" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
-<p>args will be a list of maps each with keys “name”, “notification_change”, “notification”, “accesslist_change”
-and “accesslist”.</p>
+
+<p>args will be a list of maps each with keys &quot;name&quot;, &quot;notification_change&quot;, &quot;notification&quot;, &quot;accesslist_change&quot;
+and &quot;accesslist&quot;.</p>
   </section>
-</div>
-<div class="detail" id="setParameterValues/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="setParameterValues/2">
+
+  <div class="detail-header">
     <a href="#setParameterValues/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">setParameterValues(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L9" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">setParameterValues(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L9" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
-<p>args must be a list of maps with “name”, “type”, “value”</p>
+
+<p>args must be a list of maps with &quot;name&quot;, &quot;type&quot;, &quot;value&quot;</p>
   </section>
-</div>
-<div class="detail" id="setVouchers/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="setVouchers/2">
+
+  <div class="detail-header">
     <a href="#setVouchers/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">setVouchers(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L127" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">setVouchers(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L127" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
+
 <p>Sends a SetVouchers request info the session.</p>
   </section>
-</div>
-<div class="detail" id="upload/2">
-    <div class="detail-header">
+</section>
+<section class="detail" id="upload/2">
+
+  <div class="detail-header">
     <a href="#upload/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
+      <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">upload(session, args)</span>
-      <a href="https://github.com/Fullrate/acs_ex/blob/master/lib/script/vendor_helpers.ex#L156" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
+    <h1 class="signature" translate="no">upload(session, args)</h1>
+
+      <a href="https://github.com/Fullrate/acs_ex/blob/main/lib/script/vendor_helpers.ex#L156" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
-          </div>
+
+
+  </div>
+
   <section class="docstring">
-<p>Sends an Upload request info the session.</p>
-<p>Args is a map containing at least commandkey, filetype and url out of the following
-possible keys, here listed with defaults:</p>
-<pre><code class="nohighlight makeup elixir"><span class="w">      </span><span class="ss">commandkey</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w">
+
+<p>Sends an Upload request info the session.</p><p>Args is a map containing at least commandkey, filetype and url out of the following
+possible keys, here listed with defaults:</p><pre><code class="makeup elixir" translate="no"><span class="w">      </span><span class="ss">commandkey</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w">
       </span><span class="ss">filetype</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
       </span><span class="ss">url</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
       </span><span class="ss">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w">
       </span><span class="ss">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w">
       </span><span class="ss">delay_seconds</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span></code></pre>
   </section>
-</div>
-        </section>
+</section>
 
-          <footer class="footer">
-        <p>
-          <span class="line">
-            Built using
-            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.19.1),
-          </span>
-          <span class="line">
-            designed by
-            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+    </div>
+  </section>
+
+      <footer class="footer">
+
+          <p>
+            On Hex.pm:
+
+            <span class="line">
+              <a href="https://hex.pm/packages/acs_ex/0.3.18" class="line footer-hex-package">Package</a>
+              <a href="https://preview.hex.pm/preview/acs_ex/0.3.18" class="line">Preview</a>
+
+                <a href="https://preview.hex.pm/preview/acs_ex/0.3.18/show/lib/script/vendor_helpers.ex">(current file)</a>
+
             </span>
+
+            <button class="line footer-button display-quick-switch">
+              Search
+            </button>
+          </p>
+
+        <p>
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.28.3) for the
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
         </p>
       </footer>
     </div>
   </div>
 </section>
 </div>
-  <script src="dist/app-a0c90688fa.js"></script>
-  
+
+
   </body>
 </html>
-
