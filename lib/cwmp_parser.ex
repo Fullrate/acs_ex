@@ -15,32 +15,34 @@ defmodule ACS.CWMP.Parser do
   def init(opts) do
     opts
   end
-  
+
   @doc """
   Parses text/xml requests as CWMP requests/responses.
 
   The resulting CWMP requests and responses are returned so they can be set as
   the body_params field of the connection.
   """
-  @spec parse(Plug.Conn.t, String.t, String.t, List.t, Keyword.t) :: Plug.Conn.t
   def parse(conn, type, subtype, headers, opts)
 
   def parse(conn, "text", "xml", _headers, _opts) do
     case read_body(conn, []) do
       {:ok, body, conn} ->
         case body do
-          "" -> {:ok, %{}, conn}
-          _ -> case CWMP.Protocol.Parser.parse(body) do
-            {:ok, parsed} -> {:ok, parsed, conn}
-            {:error, err} -> raise Plug.Parsers.ParseError, exception: err
-          end
+          "" ->
+            {:ok, %{}, conn}
+
+          _ ->
+            case CWMP.Protocol.Parser.parse(body) do
+              {:ok, parsed} -> {:ok, parsed, conn}
+              {:error, err} -> raise Plug.Parsers.ParseError, exception: err
+            end
         end
+
       {:more, _partial, _conn} ->
         raise Plug.Parsers.ParseError, exception: "Parser does not support partial bodies"
+
       {:error, reason} ->
         raise Plug.Parsers.ParseError, exception: reason
-      _ ->
-        raise Plug.Parsers.ParseError, exception: "Something unexpected returned from read_body"
     end
   end
 
@@ -48,4 +50,3 @@ defmodule ACS.CWMP.Parser do
     {:next, conn}
   end
 end
-

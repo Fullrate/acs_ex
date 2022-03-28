@@ -9,9 +9,9 @@ defmodule ACS.ACSHandler do
   use Plug.ErrorHandler
   require Logger
 
-  plug ACS.RealIPSetter
-  plug :match
-  plug :dispatch
+  plug(ACS.RealIPSetter)
+  plug(:match)
+  plug(:dispatch)
 
   @doc """
 
@@ -24,17 +24,19 @@ defmodule ACS.ACSHandler do
 
   defp handle_errors(conn, %{kind: kind, reason: reason, stack: stack}) do
     conn = ACS.RealIPSetter.call(conn, nil)
+
     entry = %{
-      "ip"           => "#{:inet_parse.ntoa(conn.remote_ip)}",
-      "ts"           => DateTime.utc_now() |> DateTime.to_iso8601,
-      "host"         => conn.host,
-      "msg"          => "ERROR: Unhandled exception occured",
-      "trace"        => %{
+      "ip" => "#{:inet_parse.ntoa(conn.remote_ip)}",
+      "ts" => DateTime.utc_now() |> DateTime.to_iso8601(),
+      "host" => conn.host,
+      "msg" => "ERROR: Unhandled exception occured",
+      "trace" => %{
         "kind" => inspect(kind),
         "reason" => inspect(reason),
-        "stack" => inspect(stack),
+        "stack" => inspect(stack)
       }
     }
+
     :ok = Logger.info(Poison.encode!(entry))
     send_resp(conn, conn.status, "Error handling request")
   end
@@ -44,8 +46,8 @@ defmodule ACS.ACSHandler do
     ACS.call(conn, ACS.init([]))
   end
 
+  @impl true
   def init(opts) do
     opts
   end
 end
-

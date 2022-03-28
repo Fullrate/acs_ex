@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :acs_ex,
   acs_port: 7548,

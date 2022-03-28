@@ -1,8 +1,7 @@
-use Mix.Config
+import Config
 
 config :logger,
-  level: :error
+  level: :info
 
 config :acs_ex,
   acs_port: 65432
-
