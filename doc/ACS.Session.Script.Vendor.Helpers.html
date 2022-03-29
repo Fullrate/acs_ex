@@ -5,9 +5,9 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.28.3">
-    <meta name="project" content="acs_ex v0.3.18">
+    <meta name="project" content="acs_ex v0.3.19">
 
-    <title>ACS.Session.Script.Vendor.Helpers — acs_ex v0.3.18</title>
+    <title>ACS.Session.Script.Vendor.Helpers — acs_ex v0.3.19</title>
     <link rel="stylesheet" href="dist/elixir-d5ff82e6b0f5651c0ac0.css" />
 
     <script src="dist/sidebar_items-9840f25ca5.js"></script>
@@ -66,7 +66,7 @@
 acs_ex
       </a>
       <strong class="sidebar-projectVersion" translate="no">
-        v0.3.18
+        v0.3.19
       </strong>
     </div>
     <ul class="sidebar-listNav">
@@ -99,7 +99,7 @@ acs_ex
     </a>
 
   <span translate="no">ACS.Session.Script.Vendor.Helpers</span> 
-  <small class="app-vsn" translate="no">(acs_ex v0.3.18)</small>
+  <small class="app-vsn" translate="no">(acs_ex v0.3.19)</small>
 
 </h1>
 
@@ -440,15 +440,15 @@ structure. This means that the elements in the operations list need to be one (o
 struct types:
    %CWMP.Protocol.Messages.InstallOpStruct{url: url, uuid: uuid, username: user, password: pass, execution_env_ref: eer}
    %CWMP.Protocol.Messages.UpdateOpStruct{url: url, uuid: uuid, username: user, password: pass, version: ver}
-   %CWMP.Protocol.Messages.UninstallOpStruct{url: url, uuid: uuid, execution_env_ref: eer}</p><p>For example:</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="n">commandkey</span><span class="w"> </span><span class="p" data-group-id="0506917684-1">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="0506917684-1">)</span><span class="w">
-  </span><span class="ss">operations</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0506917684-2">[</span><span class="w">
-    </span><span class="p" data-group-id="0506917684-3">%</span><span class="nc" data-group-id="0506917684-3">CWMP.Protocol.Messages.InstallOpStruct</span><span class="p" data-group-id="0506917684-3">{</span><span class="w">
+   %CWMP.Protocol.Messages.UninstallOpStruct{url: url, uuid: uuid, execution_env_ref: eer}</p><p>For example:</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="n">commandkey</span><span class="w"> </span><span class="p" data-group-id="6162228211-1">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="6162228211-1">)</span><span class="w">
+  </span><span class="ss">operations</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6162228211-2">[</span><span class="w">
+    </span><span class="p" data-group-id="6162228211-3">%</span><span class="nc" data-group-id="6162228211-3">CWMP.Protocol.Messages.InstallOpStruct</span><span class="p" data-group-id="6162228211-3">{</span><span class="w">
       </span><span class="n">url</span><span class="w">
       </span><span class="n">uuid</span><span class="w">
-      </span><span class="n">username</span><span class="w"> </span><span class="p" data-group-id="0506917684-4">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="0506917684-4">)</span><span class="w">
-      </span><span class="n">password</span><span class="w"> </span><span class="p" data-group-id="0506917684-5">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="0506917684-5">)</span><span class="w">
+      </span><span class="n">username</span><span class="w"> </span><span class="p" data-group-id="6162228211-4">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="6162228211-4">)</span><span class="w">
+      </span><span class="n">password</span><span class="w"> </span><span class="p" data-group-id="6162228211-5">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="6162228211-5">)</span><span class="w">
       </span><span class="n">execution_env_ref</span><span class="w">
-    </span><span class="p" data-group-id="0506917684-3">}</span><span class="p" data-group-id="0506917684-2">]</span></code></pre>
+    </span><span class="p" data-group-id="6162228211-3">}</span><span class="p" data-group-id="6162228211-2">]</span></code></pre>
   </section>
 </section>
 <section class="detail" id="deleteObject/2">
@@ -758,19 +758,19 @@ structure. i.e. &quot;url&quot;, &quot;filetype&quot;, &quot;filesize&quot; at l
   <section class="docstring">
 
 <p>Sends a ScheduleDownload request info the session.</p><p>args is a map containing the keys needed to generate at CWMP.Protocol.Messages.ScheduleDownload
-structure. i.e.</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="n">commandkey</span><span class="w"> </span><span class="p" data-group-id="7824538555-1">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">empty</span><span class="p" data-group-id="7824538555-1">)</span><span class="w">
+structure. i.e.</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="n">commandkey</span><span class="w"> </span><span class="p" data-group-id="2266108879-1">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">empty</span><span class="p" data-group-id="2266108879-1">)</span><span class="w">
   </span><span class="n">filetype</span><span class="w">
   </span><span class="n">url</span><span class="w">
-  </span><span class="n">username</span><span class="w"> </span><span class="p" data-group-id="7824538555-2">(</span><span class="nc">Optional</span><span class="p" data-group-id="7824538555-2">)</span><span class="w">
-  </span><span class="n">password</span><span class="w"> </span><span class="p" data-group-id="7824538555-3">(</span><span class="nc">Optional</span><span class="p" data-group-id="7824538555-3">)</span><span class="w">
+  </span><span class="n">username</span><span class="w"> </span><span class="p" data-group-id="2266108879-2">(</span><span class="nc">Optional</span><span class="p" data-group-id="2266108879-2">)</span><span class="w">
+  </span><span class="n">password</span><span class="w"> </span><span class="p" data-group-id="2266108879-3">(</span><span class="nc">Optional</span><span class="p" data-group-id="2266108879-3">)</span><span class="w">
   </span><span class="n">filesize</span><span class="w">
-  </span><span class="n">target_filename</span><span class="w"> </span><span class="p" data-group-id="7824538555-4">(</span><span class="nc">Optional</span><span class="p" data-group-id="7824538555-4">)</span><span class="w">
-  </span><span class="n">timewindowlist</span><span class="w"> </span><span class="p" data-group-id="7824538555-5">[</span><span class="p" data-group-id="7824538555-6">%{</span><span class="w">
+  </span><span class="n">target_filename</span><span class="w"> </span><span class="p" data-group-id="2266108879-4">(</span><span class="nc">Optional</span><span class="p" data-group-id="2266108879-4">)</span><span class="w">
+  </span><span class="n">timewindowlist</span><span class="w"> </span><span class="p" data-group-id="2266108879-5">[</span><span class="p" data-group-id="2266108879-6">%{</span><span class="w">
     </span><span class="n">window_start</span><span class="w">
     </span><span class="n">window_end</span><span class="w">
     </span><span class="n">window_mode</span><span class="w">
-    </span><span class="n">user_message</span><span class="w"> </span><span class="p" data-group-id="7824538555-7">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="7824538555-7">)</span><span class="w">
-    </span><span class="n">max_retries</span><span class="p" data-group-id="7824538555-6">}</span><span class="p" data-group-id="7824538555-5">]</span></code></pre>
+    </span><span class="n">user_message</span><span class="w"> </span><span class="p" data-group-id="2266108879-7">(</span><span class="nc">May</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="2266108879-7">)</span><span class="w">
+    </span><span class="n">max_retries</span><span class="p" data-group-id="2266108879-6">}</span><span class="p" data-group-id="2266108879-5">]</span></code></pre>
   </section>
 </section>
 <section class="detail" id="scheduleInform/2">
@@ -944,10 +944,10 @@ possible keys, here listed with defaults:</p><pre><code class="makeup elixir" tr
             On Hex.pm:
 
             <span class="line">
-              <a href="https://hex.pm/packages/acs_ex/0.3.18" class="line footer-hex-package">Package</a>
-              <a href="https://preview.hex.pm/preview/acs_ex/0.3.18" class="line">Preview</a>
+              <a href="https://hex.pm/packages/acs_ex/0.3.19" class="line footer-hex-package">Package</a>
+              <a href="https://preview.hex.pm/preview/acs_ex/0.3.19" class="line">Preview</a>
 
-                <a href="https://preview.hex.pm/preview/acs_ex/0.3.18/show/lib/script/vendor_helpers.ex">(current file)</a>
+                <a href="https://preview.hex.pm/preview/acs_ex/0.3.19/show/lib/script/vendor_helpers.ex">(current file)</a>
 
             </span>
 
