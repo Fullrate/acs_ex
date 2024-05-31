@@ -17,7 +17,8 @@ defmodule ACSFactoryReset do
     acsex(ACS.Test.Sessions.SingleFactoryReset) do
       assert Supervisor.count_children(:session_supervisor).active == 0
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
+#      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
       assert resp.status_code == 200
       {:ok,resp,cookie} = sendStr("",cookie) # This should cause a FactoryReset response
       assert resp.status_code == 200

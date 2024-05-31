@@ -17,7 +17,7 @@ defmodule ACSScheduleDownloadTest do
   test "queue ScheduleDownload" do
     acsex(ACS.Test.Sessions.ScheduleDownload) do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
       assert resp.status_code == 200
       {:ok,resp,cookie} = sendStr("",cookie) # This should cause a ScheduleDownload request
       assert resp.status_code == 200
@@ -52,7 +52,7 @@ defmodule ACSScheduleDownloadTest do
   test "queue ScheduleDownload with bogus parameters" do
     acsex(ACS.Test.Sessions.ScheduleDownloadBogusParams) do
      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-     assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+     assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
      assert resp.status_code == 200
 
      {:ok,resp,_cookie} = sendStr("",cookie) # This should cause the Bogus ScheduleDownload request

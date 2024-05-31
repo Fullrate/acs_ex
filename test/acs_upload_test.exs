@@ -21,7 +21,7 @@ defmodule ACSUploadTest do
   test "queue Upload" do
     acsex(ACS.Test.Sessions.Upload) do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
       assert resp.status_code == 200
       {:ok,resp,cookie} = sendStr("",cookie) # This should cause a Download request
       assert resp.status_code == 200
@@ -53,7 +53,7 @@ defmodule ACSUploadTest do
   test "queue Upload with bogus parameters" do
     acsex(ACS.Test.Sessions.UploadBogusParams) do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
       assert resp.status_code == 200
 
       {:ok,resp,_cookie} = sendStr("",cookie) # This should cause the Bogus Upload request

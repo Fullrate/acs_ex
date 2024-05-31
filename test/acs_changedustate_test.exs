@@ -15,9 +15,9 @@ defmodule ACSChangeDUStateTest do
 
 
   test "queue ChangeDUState" do
-    acsex(ACS.Test.Sessions.ChangeDUState) do 
+    acsex(ACS.Test.Sessions.ChangeDUState) do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
       assert resp.status_code == 200
       {:ok,resp,cookie} = sendStr("",cookie) # This should cause a ChangeDUState request
       assert resp.status_code == 200
@@ -53,9 +53,9 @@ defmodule ACSChangeDUStateTest do
   end
 
   test "queue ChangeDUState with bogus parameters" do
-    acsex(ACS.Test.Sessions.ChangeDUStateBogusParams) do 
+    acsex(ACS.Test.Sessions.ChangeDUStateBogusParams) do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
       assert resp.status_code == 200
 
       {:ok,resp,_cookie} = sendStr("",cookie) # This should cause the Bogus ChangeDUState request
