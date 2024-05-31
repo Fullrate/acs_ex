@@ -97,12 +97,20 @@ defmodule ACS.Handlers.ACS do
           {c, r, session_id}
       end
 
-    if resp == "", do: ACS.Session.Supervisor.end_session(session_id)
+      cond do
+        resp == "" ->
+          ACS.Session.Supervisor.end_session(session_id)
+          conn
+            |> put_resp_content_type("text/xml")
+            |> put_resp_cookie("session", "", max_age: 0)
+            |> send_resp(code,resp)
+        true ->
+          conn
+            |> put_resp_content_type("text/xml")
+            |> put_resp_cookie("session", session_id)
+            |> send_resp(code,resp)
+      end
 
-    conn
-    |> put_resp_content_type("text/xml")
-    |> put_resp_cookie("session", session_id)
-    |> send_resp(code, resp)
   end
 
   @doc """
