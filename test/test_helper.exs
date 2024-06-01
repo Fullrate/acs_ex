@@ -104,4 +104,28 @@ defmodule RequestSenders do
     {:ok, data} = File.read(file)
     String.trim_trailing(data, "\n")
   end
+
+  def compare_envelopes(env1, env2) do
+    # first line of envelope contains the attributes which have random order out of the component
+    lines1 = String.split(env1, "\n", trim: true)
+    lines2 = String.split(env2, "\n", trim: true)
+
+    case {lines1, lines2} do
+      {[first_line1 | rest1], [first_line2 | rest2]} ->
+        trimmed_first_line1 = String.replace(first_line1, ~r/[<>]/, "")
+        trimmed_first_line2 = String.replace(first_line2, ~r/[<>]/, "")
+
+        words1 = String.split(trimmed_first_line1, " ") |> Enum.sort()
+        words2 = String.split(trimmed_first_line2, " ") |> Enum.sort()
+
+        if words1 == words2 and rest1 == rest2 do
+          {:ok, :match}
+        else
+          {:error, :no_match}
+        end
+
+      _ ->
+        {:error, :invalid_input}
+    end
+  end
 end

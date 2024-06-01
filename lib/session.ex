@@ -247,7 +247,7 @@ defmodule ACS.Session do
 
   def handle_info(:timeout, state) do
     # Kill self...
-    Logger.warn("Session died due to timeout")
+    Logger.warning("Session died due to timeout")
     # Update the Prometheus metrics
     Counter.inc(name: :acs_ex_dead_sessions, labels: [state.device_id.product_class])
     {:stop, :timeout, state}

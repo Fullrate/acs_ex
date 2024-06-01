@@ -17,7 +17,7 @@ defmodule ACSCancelTransferTest do
   test "queue CancelTransfer" do
     acsex(ACS.Test.Sessions.CancelTransfer) do # the no-script
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
       assert resp.status_code == 200
       {:ok,resp,cookie} = sendStr("",cookie) # This should cause a CancelTransfer request
       assert resp.status_code == 200
@@ -55,4 +55,3 @@ defmodule ACS.Test.Sessions.CancelTransfer do
   end
 
 end
-

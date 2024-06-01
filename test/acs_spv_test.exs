@@ -18,7 +18,7 @@ defmodule ACSSetParameterValuesTest do
   test "queue SetParameterValues" do
     acsex(ACS.Test.Sessions.SingleSetParameterValues) do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
       assert resp.status_code == 200
       {:ok,resp,cookie} = sendStr("",cookie) # This should cause a GetParameterValue response
       assert resp.status_code == 200
@@ -56,7 +56,7 @@ defmodule ACSSetParameterValuesTest do
   test "queue SetParameterValues slow response" do
     acsex(ACS.Test.Sessions.SingleSetParameterValues) do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
       assert resp.status_code == 200
       {:ok,resp,cookie} = sendStr("",cookie) # This should cause a GetParameterValue response
       assert resp.status_code == 200
@@ -83,7 +83,7 @@ defmodule ACSSetParameterValuesTest do
 
       # Emulate a slow cpe
       :timer.sleep( 29000 )
-            
+
       # Send a Response to end it. Should return "", end session by sending "" back
       spv_response=to_string(:io_lib.format(@spv_sample_response,[parsed.header.id]))
       {:ok,resp,_} = sendStr(spv_response,cookie)
@@ -98,7 +98,7 @@ defmodule ACSSetParameterValuesTest do
   test "queue SetParameterValues too slow response" do
     acsex(ACS.Test.Sessions.SingleSetParameterValues) do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
       assert resp.status_code == 200
       {:ok,resp,cookie} = sendStr("",cookie) # This should cause a GetParameterValue response
       assert resp.status_code == 200
@@ -125,7 +125,7 @@ defmodule ACSSetParameterValuesTest do
 
       # Emulate a too slow cpe
       :timer.sleep( 31000 )
-            
+
       # Send a Response to end it. Should return "", end session by sending "" back
       spv_response=to_string(:io_lib.format(@spv_sample_response,[parsed.header.id]))
       {:ok,resp,_} = sendStr(spv_response,cookie)
@@ -139,7 +139,7 @@ defmodule ACSSetParameterValuesTest do
   test "queue SetParameterValues, bogus args" do
     acsex(ACS.Test.Sessions.SingleSetParameterValuesBogus) do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
       assert resp.status_code == 200
       assert Supervisor.count_children(:session_supervisor).active == 1
       {:ok,resp,_cookie} = sendStr("",cookie) # This should cause an attempt to send the SetParameterValue response

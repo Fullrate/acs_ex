@@ -19,7 +19,7 @@ defmodule ACSAddObjectTest do
   test "queue AddObject" do
     acsex(ACS.Test.Sessions.AddObject) do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
       assert resp.status_code == 200
       {:ok,resp,cookie} = sendStr("",cookie) # This should cause an AddObject request
       assert resp.status_code == 200
@@ -49,7 +49,7 @@ defmodule ACSAddObjectTest do
   test "queue AddObject with bogus parameters" do
     acsex(ACS.Test.Sessions.AddObjectParams) do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
       assert resp.status_code == 200
 
       {:ok,resp,_cookie} = sendStr("",cookie) # This should cause the Bogus AddObject request

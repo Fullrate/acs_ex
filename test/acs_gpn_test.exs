@@ -24,7 +24,7 @@ defmodule ACSGetParameterNamesTest do
   test "queue GetParameterNames" do
     acsex(ACS.Test.Sessions.SingleGetParameterNames) do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
       assert resp.status_code == 200
       {:ok,resp,cookie} = sendStr("",cookie) # This should cause a GetParameterValue response
       assert resp.status_code == 200
@@ -56,7 +56,7 @@ defmodule ACSGetParameterNamesTest do
   test "queue GetParameterNames, bogus params" do
     acsex(ACS.Test.Sessions.SingleGetParameterNamesBogus) do
       {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert resp.body == readFixture!(fixture_path("informs/plain1_response"))
+      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
       assert resp.status_code == 200
       assert Supervisor.count_children(:session_supervisor).active == 1
       {:ok,resp,_cookie} = sendStr("",cookie) # This should cause an attempt to send the GetParameterValue response
@@ -90,4 +90,3 @@ defmodule ACS.Test.Sessions.SingleGetParameterNamesBogus do
   end
 
 end
-
