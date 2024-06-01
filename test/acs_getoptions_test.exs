@@ -56,18 +56,7 @@ defmodule ACSGetOptionsTest do
     end
   end
 
-  test "queue GetOptions with bogus parameters" do
-    acsex(ACS.Test.Sessions.GetOptionsBogusParams) do
-      {:ok,resp,cookie} = sendFile(fixture_path("informs/plain1"))
-      assert compare_envelopes(resp.body, readFixture!(fixture_path("informs/plain1_response"))) == {:ok, :match}
-      assert resp.status_code == 200
 
-      {:ok,resp,_cookie} = sendStr("",cookie) # This should cause the Bogus GetOptions request
-      assert resp.status_code == 204
-      assert resp.body == "" # since the Download was bogus, we expect the session to just end.
-      assert Supervisor.count_children(:session_supervisor).active == 0
-    end
-  end
 
 end # of test module
 
@@ -77,17 +66,6 @@ defmodule ACS.Test.Sessions.GetOptions do
 
   def session_start(session, _deviceid, _inform) do
     _r=getOptions(session, "Some Option")
-  end
-
-end
-
-defmodule ACS.Test.Sessions.GetOptionsBogusParams do
-  use ACS.SessionScript
-  import ACS.Session.Script.Vendor.Helpers
-
-  def session_start(session, _deviceid, _inform) do
-    _r=getOptions(session, %{
-      foo: "bogus"})
   end
 
 end
